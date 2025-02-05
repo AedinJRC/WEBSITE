@@ -1,0 +1,53 @@
+:root
+{
+   --light-gray: #ebebeb;
+   --dark-gray: #bcbcbc;
+   --sidebar-width: 350px;
+   --maroon: #80050d;
+}
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   text-decoration: none;
+   color: black;
+}
+body
+{
+   font-family: 'Roboto', sans-serif;
+   background-color: white;
+}
+.sidebar
+{
+   position: fixed;
+   left: 0;
+   top: 0;
+   height: 100%;
+   width: var(--sidebar-width);
+   background-color: var(--light-gray);
+   transition: 0.5s;
+}
+li
+{
+   
+   list-style: none;
+}
+#navlogo
+{
+   display: flex;
+   gap: 10px;
+   justify-content: center;
+   align-items: center;
+   height: 150px;
+}
+#navlogo span
+{
+   font-size: 2.2rem;
+   font-weight: bold;
+   color: var(--maroon);
+}
+#logo
+{
+   height: 100px;
+   width: 100px;
+}
