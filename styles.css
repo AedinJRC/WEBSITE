@@ -2,8 +2,9 @@
 {
    --light-gray: #ebebeb;
    --dark-gray: #bcbcbc;
-   --sidebar-width: 350px;
+   --sidebar-width: 550px;
    --maroon: #80050d;
+   --yellow: #efb954;
 }
 * {
    margin: 0;
@@ -16,38 +17,301 @@ body
 {
    font-family: 'Roboto', sans-serif;
    background-color: white;
+   display: flex;
+   flex-direction: row;
 }
-.sidebar
+main
 {
-   position: fixed;
-   left: 0;
-   top: 0;
-   height: 100%;
-   width: var(--sidebar-width);
-   background-color: var(--light-gray);
    transition: 0.5s;
+   padding: 30px;
+   .container 
+   {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid black;
+      margin-bottom: 20px;
+      padding: min(3em, 15%);
+      border-radius: 1em;
+      h2, p
+      {
+         margin-top: 1em;
+      }
+   }
 }
 li
 {
-   
    list-style: none;
 }
-#navlogo
+.sidebar
 {
-   display: flex;
-   gap: 10px;
-   justify-content: center;
-   align-items: center;
-   height: 150px;
+   position: sticky;
+   top: 0;
+   align-self: start;
+   padding: 20px;
+   left: 0;
+   top: 0;
+   height: 100vh;
+   width: 120px;
+   background-color: var(--light-gray);
+   transition: 0.3s;
+   border-right: 2px solid var(--dark-gray);
+   span{
+      display: none;
+   }
+   a span, .dropdown-btn span
+   {
+      flex-grow: 1;
+   }
+   .dropdown-btn
+   {
+      width: 90%;
+      display: flex;
+      justify-content: space-between;
+      border: 0;
+      background-color: transparent;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-radius: 0.5em;
+      margin-left: 15px;
+      transition: 0.3s;
+      font-size: 1.3rem;
+      align-items: center;
+   }
+   .dropdown-btn:hover
+   {
+      background-color: white;
+   }
+   .dropdown-container a:hover
+   {
+      background-color: white;
+      border-left: 4px solid #555555;
+   }
+   .dropdown-btn img:first-child,.icon img
+   {
+      width: 27px;
+      height: 27px;
+   }
+   .dropdown-btn img:last-child 
+   {
+      display:none;
+      transition: 0.3s;
+      width: 20px;
+      height: 20px;
+   }
+   .dropdown-container
+   {
+      display: grid;
+      grid-template-rows: 0fr;
+      padding-left: 3em;
+      font-size: 1.07rem;
+      transition: 0.3s;
+      margin-left: -0.9em;
+      > div{
+         overflow: hidden;
+      }
+   }
+   .dropdown-container.show
+   {
+      grid-template-rows: 1fr;
+   }
+   .dropdown-container a
+   {
+      margin-right: 2em;
+      border-radius: 0 1rem 1rem 0;
+      display: block;
+      padding: 25px 10px;
+      border-left: 4px solid var(--dark-gray);
+      transition: 0.3s;
+   }
+   .rotate img:last-child
+   {
+      transform: rotate(180deg);
+   }
+   #home div
+   {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+      border-radius: 50px;
+      padding: 10px 25px;
+      font-size: 1.5rem;
+   }
+   #home
+   {
+      margin-bottom: 2.5em;
+   }
+   #home div a
+   {
+      display: flex;
+      align-items: center;
+      gap : 20px;
+      font-weight: bold;
+   }
+   #home div img
+   {
+      width: 30px;
+      height: 30px;
+   }
+   #logo
+   {
+      border: 0;
+      background-color: transparent;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      gap:20px;
+      margin-bottom: 50px;
+   }
+   #logo img
+   {
+      width: 100px;
+      height: 100px;
+   }
+   #logo span
+   {
+      color: var(--maroon);
+   }
 }
-#navlogo span
+.sidebar.active
 {
-   font-size: 2.2rem;
-   font-weight: bold;
-   color: var(--maroon);
-}
-#logo
-{
-   height: 100px;
-   width: 100px;
+   position: sticky;
+   top: 0;
+   align-self: start;
+   padding: 20px;
+   left: 0;
+   top: 0;
+   height: 100vh;
+   width: var(--sidebar-width);
+   background-color: var(--light-gray);
+   transition: 0.3s;
+   border-right: 2px solid var(--dark-gray);
+   
+   span, a
+   {
+      display:inline;
+   }
+   a span, .dropdown-btn span
+   {
+      flex-grow: 1;
+   }
+   .dropdown-btn
+   {
+      width: 90%;
+      min-width: 220px;
+      display: flex;
+      justify-content: space-between;
+      border: 0;
+      background-color: transparent;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-radius: 0.5em;
+      margin-left: 15px;
+      transition: 0.3s;
+      font-size: 1.3rem;
+      align-items: center;
+   }
+   .dropdown-btn:hover
+   {
+      background-color: white;
+   }
+   .dropdown-container
+   {
+      display: grid;
+      grid-template-rows: 0fr;
+      padding-left: 3em;
+      font-size: 1.07rem;
+      transition: 0.3s;
+      margin-left: -0.9em;
+      > div{
+         overflow: hidden;
+      }
+   }
+   .dropdown-container.show
+   {
+      grid-template-rows: 1fr;
+   }
+   .dropdown-container a
+   {
+      margin-right: 2em;
+      border-radius: 0 1rem 1rem 0;
+      display: block;
+      padding: 25px 10px;
+      border-left: 4px solid var(--dark-gray);
+      transition: 0.3s;
+   }
+   .dropdown-container a:hover
+   {
+      background-color: white;
+      border-left: 4px solid #555555;
+   }
+   .dropdown-btn img:first-child,.icon img
+   {
+      width: 27px;
+      height: 27px;
+   }
+   .dropdown-btn img:last-child 
+   {
+      display:block;
+      transition: 0.3s;
+      width: 20px;
+      height: 20px;
+   }
+   .rotate img:last-child
+   {
+      transform: rotate(180deg);
+   }
+   #home div
+   {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      margin: 5px 0;
+      border-radius: 50px;
+      padding: 10px 25px;
+      font-size: 1.5rem;
+   }
+   #home
+   {
+      margin-bottom: 2.5em;
+   }
+   #home div a
+   {
+      display: flex;
+      align-items: center;
+      gap : 20px;
+      font-weight: bold;
+   }
+   #home div img
+   {
+      width: 30px;
+      height: 30px;
+   }
+   #logo
+   {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      gap:20px;
+      margin-bottom: 50px;
+   }
+   #logo img
+   {
+      width: 100px;
+      height: 100px;
+   }
+   #logo span
+   {
+      color: var(--maroon);
+   }
 }
