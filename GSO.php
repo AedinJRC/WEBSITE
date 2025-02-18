@@ -8,7 +8,7 @@
    <script type="text/javascript" src="app.js" defer></script>
 </head>
 <body>
-   <nav class="sidebar">
+   <nav class="sidebar active" onclick="openSidebar()">
       <button onclick="toggleSidebar()" id="logo">
          <img src="PNG/GSO_Logo.png" alt="">
          <span class="logo">GSO</span>
@@ -65,19 +65,10 @@
          </li>
       </ul>
    </nav>
-   <main>
-      <div class="container">
-         <h2>Hello World</h2>
-         <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui tenetur hic praesentium impedit itaque libero error doloribus deserunt enim ut natus eius dignissimos aut reiciendis aliquam dolorum aperiam, odio dolorem?</p>
-      </div>
-      <div class="container">
-         <h2>Example Heading</h2>
-         <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nesciunt, tempora doloremque, esse, autem vitae tenetur exercitationem pariatur error fuga unde accusamus atque? Maxime dolor possimus est corporis doloremque voluptatibus rerum!</p>
-      </div>
-      <div class="container">
-         <h2>Lorem Ipsum</h2>
-         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat nisi iste ut magnam ipsa a illo culpa blanditiis nemo dolorem unde cumque deserunt eaque, sit dicta harum, quas iure numquam?</p>
-      </div>
+   <main onclick="closeSidebar()">
+      <?php
+         
+      ?>
    </main>
 </body>
 </html>

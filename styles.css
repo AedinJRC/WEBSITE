@@ -48,14 +48,19 @@ li
    position: sticky;
    top: 0;
    align-self: start;
-   padding: 20px;
+   padding-top: 20px;
    left: 0;
    top: 0;
    height: 100vh;
-   width: 120px;
+   width: 150px;
    background-color: var(--light-gray);
    transition: 0.3s;
    border-right: 2px solid var(--dark-gray);
+   overflow-y: auto;
+   scroll-behavior: smooth;
+   scrollbar-width: thin; /* Firefox */
+   scrollbar-color: #888 #f1f1f1; /* Firefox */
+   scroll-behavior: smooth;
    span{
       display: none;
    }
@@ -76,7 +81,7 @@ li
       padding-right: 10px;
       border-radius: 0.5em;
       margin-left: 15px;
-      transition: 0.3s;
+      transition: ease-in-out 0.3s;
       font-size: 1.3rem;
       align-items: center;
    }
@@ -170,8 +175,9 @@ li
    }
    #logo img
    {
-      width: 100px;
-      height: 100px;
+      height: 75px;
+      width: 75px;
+      transition: 0.3s;
    }
    #logo span
    {
@@ -189,12 +195,17 @@ li
    height: 100vh;
    width: var(--sidebar-width);
    background-color: var(--light-gray);
-   transition: 0.3s;
+   transition: ease-in-out 0.3s;
    border-right: 2px solid var(--dark-gray);
+   overflow-y: auto;
+   scroll-behavior: smooth;
+   scrollbar-width: thin; /* Firefox */
+   scrollbar-color: #888 #f1f1f1; /* Firefox */
    
    span, a
    {
       display:inline;
+      overflow-wrap: break-word;
    }
    a span, .dropdown-btn span
    {
