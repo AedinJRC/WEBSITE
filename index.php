@@ -3,186 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <title>Responsive Navigation Bar</title>
     <style>
+        
     
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            text-decoration: none;
-        }
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f1f0f0;
-        }
+:root
+         {
+            --maroonColor: #80050d;
+            --arrowSize: 5%;
+            --yellowColor: #efb954;
+         }
 
-        .navbar {
-            background: white;
-            padding: 15px 20px;
-            border: 2px solid #80050d; 
-            border-radius: 8px;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f0f0;
+}
 
-        .navdiv {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
+.vh_1 {
+    height: 100vh;
+}
 
-        .logo {
-            display: flex;
-            align-items: center;
-        }
+.vh_2 {
+    height: 100vh;
+}
 
-        .logo img {
-            width: 65px;  /* Set width for the image */
-            height: auto;
-            margin-right: 10px;  /* Add some space between the image and text */
-            margin-left: 20px;
-        }
 
-        .logo a {
-            font-size: 29px;
-            font-weight: 600;
-            color: #80050d;
-        }
+.navbar {
+    background: white;
+    padding: 15px 20px;
+    border: 2px solid #80050d;
+    border-radius: 8px;
+}
 
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex: 1;
-        }
+.navdiv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
 
-        .nav-links li a {
-            color: black;
-            font-size: 16px;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
+.logo {
+    display: flex;
+    align-items: center;
+}
 
-        .nav-links li a:hover {
-            color: #80050d; /* Change the color on hover */
-        }
+.logo img {
+    width: 65px;
+    height: auto;
+    margin-right: 10px;
+    margin-left: 20px;
+}
 
-        .nav-actions button {
-            border: none;
-            border-radius: 10px;
-            padding: 10px;
-            margin: 0 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+.logo a {
+    font-size: 29px;
+    font-weight: 600;
+    color: #80050d;
+}
 
-        .nav-actions button:hover {
-            background-color: #efb954; /* Change background color on hover */
-            color: #80050d; /* Change text color on hover */
-        }
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
 
-        .nav-actions a {
-            color: #80050d;
-            font-size: 15px;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
+.nav-links li a {
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
 
-        .nav-actions a:hover {
-            color: #efb954; /* Change color on hover */
-        }
+.nav-links li a:hover {
+    color: #80050d;
+}
 
-        .nav-actions button.signup {
-    background-color: #80050d;
+.nav-actions button {
     border: none;
     border-radius: 10px;
     padding: 10px;
+    margin: 0 20px;
     cursor: pointer;
-    border: 3px solid #80050d; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-actions button:hover {
+    background-color: #efb954;
+    color: #80050d;
+}
+
+.nav-actions a {
+    color: #80050d;
+    font-size: 15px;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.nav-actions a:hover {
+    color: #efb954;
+}
+
+.nav-actions button.signup {
+    background-color: #80050d;
+    border: 3px solid #80050d;
+    padding: 10px;
+    cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .nav-actions button.signup a {
-    color: #efb954; /* Change the text color to yellow */
+    color: #efb954;
     font-size: 15px;
     font-weight: bold;
-    text-decoration: none; /* Remove underline from the link */
-    box-sizing: border-box;
+    text-decoration: none;
 }
 
 .nav-actions button.signup:hover {
-background-color: #efb954;
+    background-color: #efb954;
 }
 
 .nav-actions button.signup:hover a {
-    color: #80050d; /* Change the text color to red on hover */
+    color: #80050d;
 }
 
-        .menu-toggle {
-            display: none;
-            font-size: 24px;
-            color: #80050d;
-            cursor: pointer;
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            user-select: none;
-        }
+.menu-toggle {
+    display: none;
+    font-size: 24px;
+    color: #80050d;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    user-select: none;
+}
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                flex-direction: column;
-                display: none;
-                width: 100%;
-                background: white;
-                text-align: center;
-                padding: 10px 0;
-            }
-
-            .nav-links.show {
-                display: flex;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            .navdiv {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            /* Hide buttons in navbar on small screens */
-            .nav-actions {
-                display: none;
-            }
-
-            /* Show buttons inside the toggle menu when it's open */
-            .nav-actions.show {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                margin-top: 10px;
-                align-items: center;
-                width: 100%;
-            }
-
-            button {
-                width: 80%;
-                text-align: center;
-            }
-        }
-
-
-        .main-container {
-      width: 100%;
-      max-width: 1200px;
+/* Responsive Navbar */
+@media (max-width: 768px) {
+    .nav-links {
+        flex-direction: column;
+        display: none;
+        width: 100%;
+        background: white;
+        text-align: center;
+        padding: 10px 0;
     }
 
-    .header {
+    .nav-links.show {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .navdiv {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-actions {
+        display: none;
+    }
+
+    .nav-actions.show {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+        align-items: center;
+        width: 100%;
+    }
+
+    button {
+        width: 80%;
+        text-align: center;
+    }
+}
+
+
+
+/* Header Section */
+.header {
     display: grid;
     grid-template-columns: 1fr 1fr;
     height: 70vh;
@@ -193,31 +204,27 @@ background-color: #efb954;
 
 .left-section {
     display: flex;
-    align-items: center; /* Aligns content vertically */
-    gap: 15px; /* Space between red bar and text */
-    padding: 20px;
+    align-items: center;
+    gap: 45px;
+    padding: 15px;
     background-color: #f9f9f9;
     color: #80050d;
 }
 
 .red-bar {
     width: 30px;
-    height: 300px;
+    height: 400px;
     border-radius: 10px;
     background-color: #80050d;
-    margin: 80px;
+    margin-left: 80px;
 }
 
-.text-section span {
-    font-size: 38px; /* Adjust size for "Vehicle Monitoring and Maintenance" */
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: gray;
+.text-section {
+    max-width: 600px;
 }
 
 .text-section h1 {
-    font-size: 70px;
+    font-size: 80px;
     font-weight: bold;
     margin-bottom: 10px;
 }
@@ -229,9 +236,18 @@ background-color: #efb954;
     color: gray;
 }
 
+
+/* Main Container */
+.main-container {
+    width: calc(100% - 100px);
+    max-width: 1700px;
+    margin: 0 auto 0 100px;
+    padding: 20px;
+}
 .right-section {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-right: 100px;
     align-items: center;
     background-color: #f9f9f9;
 }
@@ -241,38 +257,646 @@ background-color: #efb954;
     border-radius: 50%;
 }
 
-    .footer {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background-color: #fff;
-      padding: 20px;
-      margin-top: 20px;
-      border: 2px solid #80050d;
-      border-radius: 10px;
+/* Five Logo Section */
+.five_logo {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #fff;
+    padding: 5px;
+    margin-top: 20px;
+    border: 2px solid #80050d;
+    border-radius: 10px;
+}
+
+.five_logo img {
+    max-width: 80px;
+    height: auto;
+    border: 1px solid #80050d;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        width: 85%;
+        margin: 0 auto;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .five_logo {
+        padding: 10px;
+        width: 100%; /* Ensuring five_logo takes full width */
+        justify-content: space-around;
+        align-items: center;
     }
 
-    .footer img {
-      max-width: 100px;
-      height: auto;
-      border: 1px solid #80050d;
-      border-radius: 50%;
-      padding: 5px;
+    .five_logo img {
+        max-width: 50px; /* Even smaller image on mobile */
+        padding: 5px;
     }
+}
 
-    @media (max-width: 768px) {
-      .header {
+/* Responsive Header & Five Logo */
+@media (max-width: 768px) {
+    .header {
         grid-template-columns: 1fr;
         height: auto;
-      }
-
-      .footer img {
-        max-width: 70px;
-      }
+        text-align: center;
+        padding: 20px;
     }
+
+    .left-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .red-bar {
+        height: 10px;
+        width: 80px;
+        margin: 0 auto;
+    }
+
+    .text-section h1 {
+        font-size: 50px;
+    }
+
+    .text-section span {
+        font-size: 12px;
+    }
+
+    .right-section {
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .right-section img {
+        max-width: 250px;
+    }
+}
+
+/* ___________________________________*/
+.vh_2 {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Box container */
+.box1 {
+    background: white;
+    padding: 30px 40px;
+    border: 3px solid #efb954;
+    border-radius: 35px;
+    width: 90%; /* Adjust width dynamically */
+    max-width: 1500px;
+    height: auto; /* Allow height to adjust dynamically */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow stacking on smaller screens */
+    gap: 20px;
+}
+
+/* Introduce Section */
+.introduce {
+    flex: 1;
+    max-width: 700px;
+    text-align: left;
+}
+
+.introduce h1 {
+    font-size: clamp(40px, 6vw, 70px); /* Responsive font scaling */
+    font-weight: bold;
+    color: #80050d;
+    margin-left: 5%;
+}
+
+.introduce h2 {
+    font-size: clamp(20px, 2vw, 34px);
+    color: #333;
+    line-height: 1.5;
+    max-width: 600px;
+    padding-top: 10px;
+    margin-left: 5%;
+}
+
+/* Image Section */
+.intro_pic {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 40%;
+}
+
+.intro_pic img {
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+    margin-right: 5%;
+}
+
+/* Button Container */
+.intro_butt_container {
+    margin-top: 40px;
+    margin-left: 5%;
+}
+
+/* Button styles */
+.intro_butt {
+    background-color: #80050d;
+    border: #efb954 3px solid;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 10px;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.intro_butt a {
+    text-decoration: none;
+    color: white;
+}
+
+.intro_butt:hover {
+    background-color: white;
+    border: #80050d 3px solid;
+    transform: scale(1.05);
+}
+
+.intro_butt:hover a {
+    color: #80050d;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .box1 {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .introduce {
+        max-width: 100%;
+    }
+
+    .introduce h1,
+    .introduce h2 {
+        margin-left: 0;
+    }
+
+    .intro_pic {
+        width: 80%;
+        justify-content: center;
+        margin-right: 0;
+    }
+
+    .intro_pic img {
+        max-width: 300px;
+    }
+
+    .intro_butt_container {
+        margin-left: 0;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .box1 {
+        padding: 20px;
+        width: 100%;
+    }
+
+    .introduce h1 {
+        text-align: center;
+    }
+
+    .introduce h2 {
+        text-align: center;
+    }
+
+    .intro_pic {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .intro_pic img {
+        max-width: 250px;
+    }
+
+    .intro_butt {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .introduce h1 {
+        font-size: 35px;
+    }
+
+    .introduce h2 {
+        font-size: 20px;
+    }
+
+    .intro_pic img {
+        max-width: 200px;
+    }
+
+    .intro_butt {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
+/* _____________________________________ */
+.create_acc { 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.box2 {
+    background: white;
+    padding: 70px 80px; /* More padding for a larger feel */
+    border: 5px solid #efb954; /* Thicker border for emphasis */
+    border-radius: 40px;
+    width: 95%; /* Takes almost full width */
+    max-width: 1200px; /* Significantly increased width */
+    min-height: 600px; /* Taller box */
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+/* Image Section */
+.create_pic {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.create_pic img {
+    width: 100%;
+    max-width: 250px; /* Adjust logo size */
+    height: auto;
+}
+
+/* Heading */
+.create_acc h1 {
+    font-size: clamp(20px, 4vw, 50px); /* Responsive font size */
+    font-weight: bold;
+    color: #80050d;
+    margin: 10px 0;
+}
+
+.create_butt_container {
+    margin-top: 80px;
+}
+
+.line {
+    width: 35%; /* Controls the width of the line */
+    border: 0;
+    border-top: 3px solid rgba(110, 103, 91, 0.4);
+    margin: 20px 0; /* Adds space above and below the line */
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .box2 {
+        padding: 50px 60px; /* Adjust padding for smaller screens */
+    }
+
+    .create_acc h1 {
+        font-size: clamp(20px, 4vw, 40px); /* Smaller font size for medium screens */
+    }
+
+    .create_pic img {
+        max-width: 200px; /* Slightly smaller image */
+    }
+
+    .line {
+        width: 50%; /* Adjust line width */
+    }
+}
+
+@media (max-width: 768px) {
+    .box2 {
+        padding: 40px 50px; /* Smaller padding */
+        min-height: 500px; /* Reduce height */
+    }
+
+    .create_acc h1 {
+        font-size: clamp(18px, 5vw, 36px); /* Smaller font for smaller screens */
+    }
+
+    .create_pic img {
+        max-width: 180px; /* Smaller image */
+    }
+
+    .line {
+        width: 60%; /* Line width for smaller screens */
+    }
+
+    .create_butt_container {
+        font-size: 4px;
+        margin-top: 50px; /* Less margin */
+    }
+}
+
+@media (max-width: 480px) {
+    .box2 {
+        padding: 30px 40px; /* Much smaller padding */
+        min-height: 400px; /* Reduce height further */
+    }
+
+    .create_acc h1 {
+        font-size: clamp(16px, 6vw, 32px); /* Even smaller font for mobile */
+    }
+
+    .create_pic img {
+        max-width: 150px; /* Even smaller image */
+    }
+
+    .line {
+        width: 70%; /* Line width for very small screens */
+    }
+
+    .create_butt_container {
+        margin-top: 30px; /* Less margin */
+        font-size: 4px;
+    }
+}
+
+
+/* _____________________________________ */
+.csa_down {
+    max-width: 100px;
+    height: auto;
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+/* Responsive container */
+.container_land {
+    max-width: 1500px;
+    margin: auto;
+    padding: 5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+}
+
+/* Footer styles */
+footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: #f9f9f9;
+    padding: 2rem;
+    color: #333;
+    border-top: 3px solid var(--maroonColor);
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+}
+
+/* Footer column responsiveness */
+footer .column {
+    flex: 1;
+    min-width: 250px; /* Adjusted to avoid shrinking too much */
+    text-align: left;
+    padding: 10px;
+}
+
+/* Center first column */
+footer .column:first-child {
+    text-align: center;
+    flex: 1.5;
+}
+
+/* Social media icons */
+footer .column .socials {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    flex-wrap: wrap; /* Allows better wrapping on smaller screens */
+}
+
+footer .column .socials a {
+    color: black;
+    border: 1px solid var(--maroonColor);
+    padding: 10px;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+footer .column .socials a:hover {
+    color: #fff;
+    background-color: var(--yellowColor);
+}
+
+/* Footer column headings */
+footer .column h4 {
+    color: var(--maroonColor);
+    margin-bottom: 1rem;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 600;
+}
+
+/* Footer links */
+footer .column > a {
+    display: block;
+    color: #666;
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+}
+
+footer .column > a:hover {
+    color: var(--yellowColor);
+}
+
+/* Copyright Section */
+.copyright {
+    text-align: center;
+    font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+    color: #aaa;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .container_land {
+        padding: 3rem 1.5rem;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    footer .column {
+        min-width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .container_land {
+        padding: 2rem 1rem;
+    }
+
+    footer .column {
+        min-width: 100%;
+        padding: 10px 0;
+    }
+
+    footer .column .socials {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .container_land {
+        padding: 1.5rem 1rem;
+    }
+
+    footer {
+        padding: 1.5rem;
+    }
+
+    footer .column h4 {
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .copyright {
+        font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+    }
+}
+
+/* _____________________________________ */
+.vh_4 {
+    height: 100vh;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px; /* Prevents elements from touching screen edges */
+    box-sizing: border-box;
+}
+
+.GSO_ins {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    width: 100%; 
+    padding: 10px;
+    margin-top: 20vh; /* Adjust dynamically based on viewport height */
+    flex-wrap: wrap; /* Allows items to adjust in smaller screens */
+}
+
+.GSO_ins img {
+    max-width: 100%; /* Ensures image scales properly */
+    height: auto;
+    display: block; 
+    border: 5px solid #efb954; /* Thicker border for emphasis */
+    border-radius: 40px;
+    padding: 20px;
+    max-height: 500px; /* Prevents the image from being too large */
+}
+
+.box4 {
+    padding: 5vw; /* Makes padding responsive */
+    width: 90%; 
+    max-width: 1200px; 
+    min-height: auto; /* Allows flexibility */
+    display: flex;
+    align-items: center;
+    text-align: center;
+    flex-wrap: wrap; /* Allows items to stack if needed */
+}
+
+/* Media Queries for different screen sizes */
+@media (max-width: 1024px) {
+    .box4 {
+        padding: 40px; /* Reduce padding for smaller screens */
+    }
+    
+    .GSO_ins img {
+        max-width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+    .vh_4 {
+        height: auto; /* Allows content to dictate height */
+        padding: 10px;
+    }
+
+    .GSO_ins {
+        margin-top: 5vh; /* Reduce margin for smaller screens */
+        flex-direction: column; /* Stack items vertically */
+    }
+
+    .GSO_ins img {
+        max-width: 90%; /* Ensures better fit on small screens */
+        padding: 10px;
+    }
+
+    .box4 {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .GSO_ins img {
+        max-width: 100%;
+        padding: 5px;
+    }
+
+    .box4 {
+        padding: 15px;
+    }
+}
+
+
+
+
     </style>
 </head>
 <body>
+
+<div class="vh_1">
     <nav class="navbar">
         <div class="navdiv">
             <div class="logo">
@@ -290,7 +914,10 @@ background-color: #efb954;
                 <button class="signup"><a href="#">SIGNUP</a></button>
             </div>
         </div>
+        
     </nav>
+
+
    
     <!-- Header Section -->
     <div class="header">
@@ -305,18 +932,94 @@ background-color: #efb954;
         <img src="PNG/GSO Logo.png" alt="Logo">
     </div>
 </div>
- 
 
     <div class="main-container">
-    <!-- Footer Section -->
-    <div class="footer">
-      <img src="logo1.png" alt="Logo 1">
-      <img src="logo2.png" alt="Logo 2">
-      <img src="logo3.png" alt="Logo 3">
-      <img src="logo4.png" alt="Logo 4">
-      <img src="logo5.png" alt="Logo 5">
-    </div>
+        <!-- Footer Section -->
+        <div class="five_logo">
+        <img src="PNG/Clinic_Logo.png" alt="Logo 1">
+        <img src="PNG/College_Logo.png" alt="Logo 2">
+        <img src="PNG/GTC_Logo.png" alt="Logo 3">
+        <img src="PNG/HR_Logo.png" alt="Logo 4">
+        <img src="PNG/VPSA_Logo.png" alt="Logo 5">
+        </div>
+     </div>
+
   </div>
+
+  <div class="vh_2">
+    <div class="box1">
+        <div class="introduce">
+            <h1>Introducing Good Solution</h1>
+            <h2>An online, for CSA-Biñan employees to manage their school vehicle reservation.</h2>
+            <div class="intro_butt_container">
+                <button class="intro_butt"><a href="#">Try now</a></button>
+            </div>
+        </div>
+        <div class="intro_pic">
+            <img src="PNG/cpu.png" alt="Logo">
+        </div>
+  
+      
+    </div>
+</div>
+
+
+<div class="vh_2">
+    <div class="box2">
+        <div class="create_acc">
+            <div class="create_pic">
+                <img src="PNG/GSO logo.png" alt="Logo">
+            </div>
+            <h1>To create account</h1>
+            <div class="create_butt_container">
+                <button class="intro_butt"><a href="#">Sign up now</a></button>
+            </div>
+            <hr class="line">
+        </div>
+    </div>
+</div>
+
+<div class="vh_4">
+    <div class="box4">
+            <div class="GSO_ins">
+                <img src="PNG/GSO_ins.jpg" alt="Logo">
+            </div>
+    </div>
+</div>
+
+
+
+<footer>
+    <div class="column">
+        <img src="PNG/CSA_Logo.png" class="csa_down" alt="CSA Logo">
+        <div class="socials">
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+    </div>
+
+    <div class="column">
+        <h4>About Us</h4>
+        <a href="#">Blogs</a>
+        <a href="#">Channels</a>
+        <a href="#">Sponsors</a>
+    </div>
+
+    <div class="column">
+        <h4>Contact</h4>
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+    </div>
+
+    <div class="copyright">
+        Copyright © 2023 Maynard Matley. All Rights Reserved.
+    </div>
+</footer>
+
+
+
 
 
     <script>
