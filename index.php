@@ -1,3 +1,7 @@
+<?php
+   session_start();
+   ob_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +10,7 @@
     <!-- FontAwesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-    <title>Responsive Navigation Bar</title>
+    <title>Vehicle Monitoring and Maintenance System</title>
     <style>
         
     
@@ -40,7 +44,7 @@ body {
 
 .navbar {
     background: white;
-    padding: 15px 20px;
+    padding: 7px 20px;
     border: 2px solid #80050d;
     border-radius: 8px;
 }
@@ -223,10 +227,20 @@ body {
     max-width: 600px;
 }
 
-.text-section h1 {
-    font-size: 80px;
-    font-weight: bold;
-    margin-bottom: 10px;
+@media (max-width: 1366px) {
+    .text-section h1 {
+        font-size: 65px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width: 1367px) {
+    .text-section h1 {
+        font-size: 80px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
 }
 
 .text-section span {
@@ -251,12 +265,21 @@ body {
     align-items: center;
     background-color: #f9f9f9;
 }
-
-.right-section img {
-    max-width: 400px;
-    border-radius: 50%;
+@media (max-width: 1366px) {
+    .right-section img {
+        max-width: 300px;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
 }
 
+@media (min-width: 1367px) {
+    .right-section img {
+        max-width: 400px;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+}
 /* Five Logo Section */
 .five_logo {
     display: flex;
@@ -671,7 +694,7 @@ footer {
     flex-wrap: wrap;
     justify-content: space-between;
     background-color: #f9f9f9;
-    padding: 2rem;
+    padding: 1rem;
     color: #333;
     border-top: 3px solid var(--maroonColor);
     font-size: clamp(0.8rem, 2vw, 1.1rem);
@@ -889,6 +912,118 @@ footer .column > a:hover {
     }
 }
 
+<?php
+    if(isset($_GET["log"]) and !empty($_GET["log"]))
+    {
+        ?>
+            h1 {
+                padding-top: 2rem;
+                margin-bottom: 20px;
+                font-weight: normal;
+                text-align: center;
+            }
+            form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                padding: 0 35%;
+                padding-bottom: 5rem;
+                text-align: center;
+            }
+            label {
+                display: block;
+                text-align: left;
+                font-weight: normal;
+                margin-bottom: 5px;
+                font-size: 14px;
+                width: 150%;
+            }
+            input {
+                width: 150%;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+            .btn {
+                background-color: #7D192E;
+                color: white;
+                padding: 10px;
+                border: none;
+                width: 150%;
+                border-radius: 5px;
+                font-size: 10px;
+                cursor: pointer;
+                box-sizing: border-box;
+            }
+            .btn:hover {
+                background-color: #5a1121;
+            }
+            .forgot-password {
+                margin-top: 10px;
+                font-size: 12px;
+                color: grey;
+            }
+        <?php
+    }
+    elseif(isset($_GET["sig"]) and !empty($_GET["sig"]))
+    {
+        ?>
+            h1 {
+                padding-top: 2rem;
+                margin-bottom: 20px;
+                font-weight: normal;
+                text-align: center;
+            }
+            form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                padding: 0 30%;
+                padding-bottom: 2rem;
+                text-align: center;
+            }
+            label {
+                display: block;
+                text-align: left;
+                font-weight: normal;
+                margin-bottom: 5px;
+                font-size: 14px;
+                width: 100%;
+            }
+            input {
+                width: 100%;
+                padding: 12px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+            .btn {
+                background-color: #7D192E;
+                color: white;
+                padding: 12px;
+                border: none;
+                width: 100%;
+                border-radius: 5px;
+                font-size: 10px;
+                cursor: pointer;
+                box-sizing: border-box;
+            }
+            .btn:hover {
+                background-color: #5a1121;
+            }
+            .forgot-password {
+                margin-top: 10px;
+                font-size: 12px;
+                color: grey;
+            }
+        <?php
+    }
+?>
 
 
 
@@ -896,7 +1031,7 @@ footer .column > a:hover {
 </head>
 <body>
 
-<div class="vh_1">
+<div class="vh_1" id="vh_1">
     <nav class="navbar">
         <div class="navdiv">
             <div class="logo">
@@ -905,92 +1040,27 @@ footer .column > a:hover {
             </div>
             <span class="menu-toggle" onclick="toggleMenu()">☰</span>
             <ul class="nav-links" id="navMenu">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="#vh_2">About</a></li>
+                <li><a href="#footer">Contact</a></li>
             </ul>
             <div class="nav-actions" id="navActions">
-                <a href="#">LOGIN</a>
-                <button class="signup"><a href="#">SIGNUP</a></button>
+                <a href="index.php?log=a">LOGIN</a>
+                <button class="signup"><a href="#vh_3">SIGNUP</a></button>
             </div>
         </div>
         
     </nav>
-
-
-   
-    <!-- Header Section -->
-    <div class="header">
-    <div class="left-section">
-        <div class="red-bar"></div>
-        <div class="text-section">
-            <span>Vehicle Monitoring and Maintenance</span>
-            <h1>General Services Office</h1>
-        </div>
-    </div>
-    <div class="right-section">
-        <img src="PNG/GSO Logo.png" alt="Logo">
-    </div>
-</div>
-
-    <div class="main-container">
-        <!-- Footer Section -->
-        <div class="five_logo">
-        <img src="PNG/Clinic_Logo.png" alt="Logo 1">
-        <img src="PNG/College_Logo.png" alt="Logo 2">
-        <img src="PNG/GTC_Logo.png" alt="Logo 3">
-        <img src="PNG/HR_Logo.png" alt="Logo 4">
-        <img src="PNG/VPSA_Logo.png" alt="Logo 5">
-        </div>
-     </div>
-
-  </div>
-
-  <div class="vh_2">
-    <div class="box1">
-        <div class="introduce">
-            <h1>Introducing Good Solution</h1>
-            <h2>An online, for CSA-Biñan employees to manage their school vehicle reservation.</h2>
-            <div class="intro_butt_container">
-                <button class="intro_butt"><a href="#">Try now</a></button>
-            </div>
-        </div>
-        <div class="intro_pic">
-            <img src="PNG/cpu.png" alt="Logo">
-        </div>
-  
-      
-    </div>
-</div>
-
-
-<div class="vh_2">
-    <div class="box2">
-        <div class="create_acc">
-            <div class="create_pic">
-                <img src="PNG/GSO logo.png" alt="Logo">
-            </div>
-            <h1>To create account</h1>
-            <div class="create_butt_container">
-                <button class="intro_butt"><a href="#">Sign up now</a></button>
-            </div>
-            <hr class="line">
-        </div>
-    </div>
-</div>
-
-<div class="vh_4">
-    <div class="box4">
-            <div class="GSO_ins">
-                <img src="PNG/GSO_ins.jpg" alt="Logo">
-            </div>
-    </div>
-</div>
-
-
-
+    <?php
+        if(isset($_GET["log"]) and !empty($_GET["log"]))
+        login();
+        elseif(isset($_GET["sig"]) and !empty($_GET["sig"]))
+        signup();
+        else
+        index();
+    ?>
 <footer>
-    <div class="column">
+    <div class="column" id="footer">
         <img src="PNG/CSA_Logo.png" class="csa_down" alt="CSA Logo">
         <div class="socials">
             <a href="#"><i class="fa-brands fa-youtube"></i></a>
@@ -1032,3 +1102,117 @@ footer .column > a:hover {
     </script>
 </body>
 </html>
+<?php
+    function index() {
+        ?>
+            <!-- Header Section -->
+            <div class="header">
+                <div class="left-section">
+                    <div class="red-bar"></div>
+                    <div class="text-section">
+                        <span>Vehicle Monitoring and Maintenance</span>
+                        <h1>General Services Office</h1>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <img src="PNG/GSO Logo.png" alt="Logo">
+                </div>
+            </div>
+            
+            <div class="main-container">
+                <!-- Footer Section -->
+                <div class="five_logo">
+                <img src="PNG/Clinic_Logo.png" alt="Logo 1">
+                <img src="PNG/College_Logo.png" alt="Logo 2">
+                <img src="PNG/GTC_Logo.png" alt="Logo 3">
+                <img src="PNG/HR_Logo.png" alt="Logo 4">
+                <img src="PNG/VPSA_Logo.png" alt="Logo 5">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="vh_2" id="vh_2">
+            <div class="box1">
+                <div class="introduce">
+                    <h1>Introducing Good Solution</h1>
+                    <h2>An online, for CSA-Biñan employees to manage their school vehicle reservation.</h2>
+                    <div class="intro_butt_container">
+                        <button class="intro_butt"><a href="#">Try now</a></button>
+                    </div>
+                </div>
+                <div class="intro_pic">
+                    <img src="PNG/cpu.png" alt="Logo">
+                </div>
+        
+            
+            </div>
+        </div>
+
+
+        <div class="vh_2" id="vh_3">
+            <div class="box2">
+                <div class="create_acc">
+                    <div class="create_pic">
+                        <img src="PNG/GSO logo.png" alt="Logo">
+                    </div>
+                    <h1>To create account</h1>
+                    <div class="create_butt_container">
+                        <button class="intro_butt"><a href="index.php?sig=a">Sign up now</a></button>
+                    </div>
+                    <hr class="line">
+                </div>
+            </div>
+        </div>
+
+        <div class="vh_4" id="vh_4">
+            <div class="box4">
+                    <div class="GSO_ins">
+                        <img src="PNG/GSO_ins.jpg" alt="Logo">
+                    </div>
+            </div>
+        </div>
+
+        <?php
+    }
+    function login() {
+        ?>
+            <h1>Welcome</h1>
+            <form>
+                <label for="employee">Employee No.</label>
+                <input type="text" id="employee" name="employee" required>
+                
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                
+                <button type="submit" class="btn">LET'S START !</button>
+                <p class="forgot-password">Forgot your password?</p>
+            </form>
+            
+        <?php
+    }
+    function signup() {
+        ?>
+            <h1>Welcome</h1>
+            <form>
+                <label for="employee">Employee No.</label>
+                <input type="text" id="employee" name="employee" required>
+                
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" name="first-name" required>
+                
+                <label for="last-name">Last Name</label>
+                <input type="text" id="last-name" name="last-name" required>
+                
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                
+                <label for="retype-password">Re-type Password</label>
+                <input type="password" id="retype-password" name="retype-password" required>
+                
+                <button type="submit" class="btn">LET'S START !</button>
+                <p class="forgot-password">Forgot your password?</p>
+            </form>
+        <?php
+    }
+?>
