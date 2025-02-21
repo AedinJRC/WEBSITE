@@ -22,39 +22,39 @@
       <?php
          if(isset($_GET["papp"]) and !empty($_GET["papp"]))
          {
-            ?> #requests { background-color: white; } <?php
+            ?> #requests { background-color: white; font-weight: bold;} <?php
          }
          elseif(isset($_GET["rapp"]) and !empty($_GET["rapp"]))
          {
-            ?> #requests { background-color: white; } <?php
+            ?> #requests { background-color: white; font-weight: bold;} <?php
          }
          elseif(isset($_GET["creq"]) and !empty($_GET["creq"]))
          {
-            ?> #requests { background-color: white; } <?php
+            ?> #requests { background-color: white; font-weight: bold;} <?php
          }
          elseif(isset($_GET["vres"]) and !empty($_GET["vres"]))
          {
-            ?> #calendar { background-color: white; } <?php
+            ?> #calendar { background-color: white; font-weight: bold;} <?php
          }
          elseif(isset($_GET["vsch"]) and !empty($_GET["vsch"]))
          {
-            ?> #calendar { background-color: white; } <?php
+            ?> #calendar { background-color: white; font-weight: bold;} <?php
          }
          elseif(isset($_GET["dsch"]) and !empty($_GET["dsch"]))
          {
-            ?> #calendar { background-color: white; } <?php
+            ?> #calendar { background-color: white; font-weight: bold;} <?php
          }
          elseif(isset($_GET["mrep"]) and !empty($_GET["mrep"]))
          {
-            ?> #report { background-color: white; } <?php
+            ?> #report { background-color: white; font-weight: bold;} <?php
          }
          elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
          {
-            ?> #report { background-color: white; } <?php
+            ?> #report { background-color: white; font-weight: bold;} <?php
          }
          else
          { 
-            ?> #home div { background-color: white; } <?php
+            ?> #home div { background-color: white; font-weight: bold;} <?php
          }
       ?>
    </style>
@@ -66,15 +66,16 @@
          <img src="PNG/GSO_Logo.png" alt="">
          <span class="logo">GSO</span>
       </button>
-      <ul>
-         <li id="home">
+      <li id="home">
+         <a href="GSO.php" class="icon">
             <div>
-               <a href="GSO.php" class="icon">
-                  <img src="PNG/Home.png" alt="Home">
-                  <span class="title">Home</span>
-               </a>
+               <img src="PNG/Home.png" alt="Home">
+               <span class="title">Home</span>
             </div>
-         </li>
+         </a>
+      </li>
+      <ul>
+         <li style="height: 2.5rem;"></li>
          <li>
             <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
                <img src="PNG/Pie.png" alt="Requests">
@@ -117,6 +118,18 @@
             </ul>
          </li>
       </ul>
+      <div id="logout">
+         <img id=profile src="PNG/Maynard.png" alt="Profile">
+         <div id="profile-text">
+            <span id="name">Rodriguez Maynard</span>
+            <span id="role">Admin</span>
+         </div>
+         <a href="index.php">
+            <button>
+               <img id=logout-img src="PNG/Logout.png" alt="Logout">
+            </button>
+         </a>
+      </div>
    </nav>
    <main onclick="closeSidebar()">
       <?php

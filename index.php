@@ -134,7 +134,7 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.nav-actions button.signup a {
+.nav-actions a button.signup  {
     color: #efb954;
     font-size: 15px;
     font-weight: bold;
@@ -145,7 +145,7 @@ body {
     background-color: #efb954;
 }
 
-.nav-actions button.signup:hover a {
+.nav-actions a button.signup:hover  {
     color: #80050d;
 }
 
@@ -1054,6 +1054,7 @@ footer .column > a:hover {
 
 
     </style>
+    <script src="app.js" defer></script>
 </head>
 <body>
 
@@ -1066,27 +1067,33 @@ footer .column > a:hover {
             </div>
             <span class="menu-toggle" onclick="toggleMenu()">☰</span>
             <ul class="nav-links" id="navMenu">
-            <li><a href="
-            <?php
-                if(isset($_GET["log"]) and !empty($_GET["log"])||isset($_GET["sig"]) and !empty($_GET["sig"]))
-                echo "#\" onclick=\"scrollToSection('home', event)";
-                else
-                echo "index.php"    
-            ?>
-            ">Home</a></li>
+            <li>
+            <a href="
+                <?php
+                    if(isset($_GET["log"]) and !empty($_GET["log"]) or isset($_GET["sig"]) and !empty($_GET["sig"]))
+                    echo "index.php";
+                    else
+                    echo "#\" onclick=\"scrollToSection('home', event)";
+                ?>
+                ">Home
+            </a></li>
 <li><a href="#" onclick="scrollToSection('about', event)">About</a></li>
 <li><a href="#" onclick="scrollToSection('contact', event)">Contact</a></li>
             </ul>
             <div class="nav-actions" id="navActions">
                 <a href="index.php?log=a">LOGIN</a>
-                <button class="signup"><a href="
-                <?php
-                if(isset($_GET["log"]) and !empty($_GET["log"]))
-                echo "index.php?sig=a";
-                else
-                echo "#\" onclick=\"scrollToSection('vh_3', event)";
-                ?>
-                ">SIGNUP</a></button>
+                        <a href="
+                            <?php
+                                if(isset($_GET["log"]) and !empty($_GET["log"]))
+                                echo "index.php?sig=a";
+                                else
+                                echo "#\" onclick=\"scrollToSection('vh_3', event)";
+                            ?>
+                        ">
+                        <button class="signup">
+                            SIGNUP
+                        </button>
+                    </a>
             </div>
         </div>
         
@@ -1125,32 +1132,9 @@ footer .column > a:hover {
     </div>
 
     <div class="copyright">
-        Copyright © 2023 Maynard Matley. All Rights Reserved.
+        Copyright © 2025 Maynard Matley. All Rights Reserved.
     </div>
 </footer>
-
-
-
-
-
-    <script>
-     function toggleMenu() {
-        const menu = document.getElementById('navMenu');
-        const actions = document.getElementById('navActions');
-        menu.classList.toggle('show');
-        actions.classList.toggle('show');
-    }
-
-    function scrollToSection(sectionId, event) {
-        if (event) event.preventDefault(); // Pigilan ang default behavior ng <a href="#">
-        const section = document.getElementById(sectionId);
-        if (section) {
-            section.scrollIntoView({ behavior: "smooth" });
-        } else {
-            console.error("Section not found:", sectionId);
-        }
-    }
-    </script>
 </body>
 </html>
 <?php
@@ -1229,18 +1213,51 @@ footer .column > a:hover {
     function login() {
         ?>
              <div id="welcome">
-           
-            <form>
-            <h1>Welcome</h1>
-                <label for="employee">Employee No.</label>
-                <input type="text" id="employee" name="employee" required>
-                
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                
-                <button type="submit" class="btn">LET'S START !</button>
-                <p class="forgot-password">Forgot your password?</p>
-            </form>
+                <form method="post" action="index.php?log=a">
+                <h1>Welcome</h1>
+                    <label for="employee">Employee No.</label>
+                    <input type="text" id="employee" name="employee-number" required>
+                    
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    
+                    <button type="submit" class="btn" name="logbtn">LET'S START !</button>
+                    <p class="forgot-password">Forgot your password?</p>
+                </form>
+                <?php
+                    if(isset($_POST["logbtn"]))
+                    {
+                        include("config.php");
+                        $loginselect = "SELECT * FROM usertb WHERE employeeid = '".$_POST["employee-number"]."' AND pword = '".$_POST["password"]."'";
+                        $loginquery = mysqli_query($conn, $loginselect);
+                        $loginrow = mysqli_fetch_array($loginquery);
+                        if($loginrow)
+                        {
+                            $_SESSION["employeeid"] = $loginrow["employeeid"];
+                            $_SESSION["ppicture"] = $loginrow["ppicture"];
+                            $_SESSION["fname"] = $loginrow["fname"];
+                            $_SESSION["lname"] = $loginrow["lname"];
+                            $_SESSION["role"] = $loginrow["role"];
+                            $_SESSION["created_at"] = $loginrow["created_at"];
+                        }
+                        else
+                        {
+                            echo "<script>alert('Invalid login credentials.')</script>";
+                        }
+                        $logincount = mysqli_num_rows($loginquery);
+                        if($logincount == 1)
+                        {
+                            if($loginrow["role"]=="Admin")
+                            {
+                                header("location: gso.php");
+                            }
+                            else
+                            {
+                                header("location: user.php");
+                            }
+                        }
+                    }
+                ?>
             </div>
             
         <?php
@@ -1248,10 +1265,10 @@ footer .column > a:hover {
     function signup() {
         ?>
             <div id="welcome">
-                <form>
+                <form method="post" action="index.php?sig=a" onsubmit="return validatePasswords()">
                     <h1>Welcome</h1>
                     <label for="employee">Employee No.</label>
-                    <input type="text" id="employee" name="employee" required>
+                    <input type="text" id="employee" name="employee-number" required>
                     
                     <label for="first-name">First Name</label>
                     <input type="text" id="first-name" name="first-name" required>
@@ -1265,9 +1282,16 @@ footer .column > a:hover {
                     <label for="retype-password">Re-type Password</label>
                     <input type="password" id="retype-password" name="retype-password" required>
                     
-                    <button type="submit" class="btn">LET'S START !</button>
-                    <p class="forgot-password">Forgot your password?</p>
+                    <button type="submit" class="btn" name="sigbtn">LET'S START !</button>
                 </form>
+                <?php
+                    if(isset($_POST["sigbtn"]))
+                    {
+                        include("config.php");
+                        $signupinsert = "INSERT INTO usertb(employeeid, ppicture, fname, lname, pword, created_by) VALUES('".$_POST["employee-number"]."', '".$_POST["first-name"]."', '".$_POST["last-name"]."', '".$_POST["password"]."')";
+                        $signupquery = mysqli_query($conn, $signupinsert);
+                    }
+                ?>
             </div>
         <?php
     }
