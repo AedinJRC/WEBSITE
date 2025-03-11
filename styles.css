@@ -24,7 +24,26 @@ main
 {
    transition: 0.3s;
    width: 100%;
-   padding: 30px;
+   padding: 70px;
+   
+   input
+   {
+      font-size: 2.4vh;
+      padding: 0.6vh 1.5vh;
+      border-radius: 3vh;
+   }
+   input::placeholder 
+   {
+      font-style: italic;
+   }
+   div
+   {
+      h1
+      {
+         font-size: 3.5vw;
+         color: var(--maroon);
+      }
+   }
 }
 li
 {
@@ -209,7 +228,7 @@ li
    {
       height: 75px;
       width: 75px;
-      border-radius: 10px;
+      border-radius: 100%;
    }
    #logout button
    {
@@ -220,6 +239,7 @@ li
       background-color: transparent;
       border-radius: 10px;
       transition: 0.3s;
+      cursor: pointer;
    }
    #logout button:hover
    {

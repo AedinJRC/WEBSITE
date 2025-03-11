@@ -1068,17 +1068,38 @@ footer .column > a:hover {
             <span class="menu-toggle" onclick="toggleMenu()">☰</span>
             <ul class="nav-links" id="navMenu">
             <li>
+                <a href="
+                    <?php
+                        if(isset($_GET["log"]) and !empty($_GET["log"]) or isset($_GET["sig"]) and !empty($_GET["sig"]))
+                        echo "index.php";
+                        else
+                        echo "#\" onclick=\"scrollToSection('home', event)";
+                    ?>
+                    ">Home
+                </a>
+            </li>
+            <li>
+                <a href="
+                    <?php
+                        if(isset($_GET["log"]) and !empty($_GET["log"]) or isset($_GET["sig"]) and !empty($_GET["sig"]))
+                        echo "index.php#about";
+                        else
+                        echo "#\" onclick=\"scrollToSection('about', event)";
+                    ?>
+                    ">About
+                </a>
+            </li>
+            <li>
             <a href="
-                <?php
-                    if(isset($_GET["log"]) and !empty($_GET["log"]) or isset($_GET["sig"]) and !empty($_GET["sig"]))
-                    echo "index.php";
-                    else
-                    echo "#\" onclick=\"scrollToSection('home', event)";
-                ?>
-                ">Home
-            </a></li>
-<li><a href="#" onclick="scrollToSection('about', event)">About</a></li>
-<li><a href="#" onclick="scrollToSection('contact', event)">Contact</a></li>
+                    <?php
+                        if(isset($_GET["log"]) and !empty($_GET["log"]) or isset($_GET["sig"]) and !empty($_GET["sig"]))
+                        echo "index.php#contact";
+                        else
+                        echo "#\" onclick=\"scrollToSection('contact', event)";
+                    ?>
+                    ">Contact
+                </a>
+            </li>
             </ul>
             <div class="nav-actions" id="navActions">
                 <a href="index.php?log=a">LOGIN</a>

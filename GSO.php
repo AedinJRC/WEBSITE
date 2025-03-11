@@ -32,6 +32,18 @@
          {
             ?> #requests { background-color: white; font-weight: bold;} <?php
          }
+         elseif(isset($_GET["aveh"]) and !empty($_GET["aveh"]))
+         {
+            ?> #vehicle { background-color: white; font-weight: bold;} <?php
+         }
+         elseif(isset($_GET["dveh"]) and !empty($_GET["dveh"]))
+         {
+            ?> #vehicle { background-color: white; font-weight: bold;} <?php
+         }
+         elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
+         {
+            ?> #vehicle { background-color: white; font-weight: bold;} <?php
+         }
          elseif(isset($_GET["vres"]) and !empty($_GET["vres"]))
          {
             ?> #calendar { background-color: white; font-weight: bold;} <?php
@@ -77,20 +89,6 @@
       <ul>
          <li style="height: 2.5rem;"></li>
          <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
-               <img src="PNG/Pie.png" alt="Requests">
-               <span>Requests</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?papp=a"><span>Pending Approval</span></a></li>
-                  <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                  <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
             <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
                <img src="PNG/Calendar.png" alt="Calendar">
                <span>Calendar</span>
@@ -105,6 +103,35 @@
             </ul>
          </li>
          <li>
+            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+               <img src="PNG/Vehicle.png" alt="Vehicle">
+               <span>Vehicles</span>
+               <img src="PNG/Down.png" alt="DropDown">
+            </button>
+            <ul class="dropdown-container">
+               <div>
+                  <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                  <li><a href="GSO.php?dveh=a"><span>Delete Vehicle</span></a></li>
+                  <li><a href="GSO.php?eveh=a"><span>Edit Vehicle</span></a></li>
+                  <li><a href="GSO.php?eveh=a"><span></span></a></li>
+               </div>
+            </ul>
+         </li>
+         <li>
+            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+               <img src="PNG/Pie.png" alt="Requests">
+               <span>Requests</span>
+               <img src="PNG/Down.png" alt="DropDown">
+            </button>
+            <ul class="dropdown-container">
+               <div>
+                  <li><a href="GSO.php?papp=a"><span>Pending Approval</span></a></li>
+                  <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                  <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+               </div>
+            </ul>
+         </li>
+         <li>
             <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
                <img src="PNG/File.png" alt="Report">
                <span>Report</span>
@@ -112,7 +139,7 @@
             </button>
             <ul class="dropdown-container">
                <div>
-                  <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                  <li><a href="GSO.php?mrep=a"><span>Maintenance Checklist</span></a></li>
                   <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
                </div>
             </ul>
@@ -139,6 +166,12 @@
          reservationApproved();
          elseif(isset($_GET["creq"]) and !empty($_GET["creq"]))
          cancelledRequests();
+         elseif(isset($_GET["aveh"]) and !empty($_GET["aveh"]))
+         addVehicle();
+         elseif(isset($_GET["dveh"]) and !empty($_GET["dveh"]))
+         deleteVehicle();
+         elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
+         editVehicle();
          elseif(isset($_GET["vres"]) and !empty($_GET["vres"]))
          vehicleReservationForm();
          elseif(isset($_GET["vsch"]) and !empty($_GET["vsch"]))
@@ -146,7 +179,7 @@
          elseif(isset($_GET["dsch"]) and !empty($_GET["dsch"]))
          driverSchedules();
          elseif(isset($_GET["mrep"]) and !empty($_GET["mrep"]))
-         maintenanceReport();
+         maintenanceChecklist();
          elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
          summaryReport();
          else
@@ -159,35 +192,11 @@
    function home()
    {
       ?>
+         <input type="text" id="search" placeholder="Search">
          <div class="home">
             <h1>Welcome to GSO</h1>
             <p>Government Service Office</p>
          </div>
-      <?php
-   }
-   function pendingApproval()
-   {
-      ?>
-         <h1>Pending Approval</h1>
-         <span>New</span>
-         <table>
-            <tr>
-
-            </tr>
-            
-         </table>
-      <?php
-   }
-   function reservationApproved()
-   {
-      ?>
-         
-      <?php
-   }
-   function cancelledRequests()
-   {
-      ?>
-         
       <?php
    }
    function vehicleReservationForm()
@@ -208,7 +217,51 @@
          
       <?php
    }
-   function maintenanceReport()
+   function addVehicle()
+   {
+      ?>
+         
+      <?php
+   }
+   function deleteVehicle()
+   {
+      ?>
+         
+      <?php
+   }
+   function editVehicle()
+   {
+      ?>
+         
+      <?php
+   }
+   function pendingApproval()
+   {
+      ?>
+        <div>
+         <h1>Pending Approval</h1>
+            <span>New</span>
+            <table>
+               <tr>
+                  <img src="" alt="">
+               </tr>
+            </table>
+        </div>
+      <?php
+   }
+   function reservationApproved()
+   {
+      ?>
+         
+      <?php
+   }
+   function cancelledRequests()
+   {
+      ?>
+         
+      <?php
+   }
+   function maintenanceChecklist()
    {
       ?>
          
