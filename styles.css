@@ -25,7 +25,114 @@ main
    transition: 0.3s;
    width: 100%;
    padding: 70px;
-   
+   div.vres
+   {
+      display: flex;
+      justify-content: center;
+      form.vehicle-reservation-form
+      {
+         padding: 1.5vw;
+         width: 60vw;
+         height: 44vw;
+         border: 3px solid #555555;
+         border-radius: 20px;
+         img
+         {
+            position: fixed;
+            height: 5vw;
+            width: 5vw;
+         }
+         span.header
+         {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif;  
+            gap: 0.3vw;
+            span#csab
+            {
+               font-size: 1.3vw;
+            }
+            span#swe
+            {
+               font-size: 1vw;
+            }
+            span#vrf
+            {
+               font-size: 1.4vw;
+               font-weight: bold;
+            }
+         }
+         .vrf-details {
+            font-size: 0.9vw;
+            margin: 2vw;
+            display: flex;
+            justify-content: space-between;
+         }
+        
+         .vrf-details-column {
+            display: flex;
+            flex-direction: column;
+            width: 18vw;
+            gap: 0.5vw;
+         }
+         
+         .input-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+         }   
+         .input-container input,
+         .input-container select {
+               font-size: 0.95vw;
+               padding: 0.5vw;
+               width: 18vw;
+               border: 1px solid #555555;
+               border-radius: 0.5vw;
+               outline: none;
+               appearance: none; /* Removes default browser styles */
+               background-color: white;
+         }
+      
+         .input-container label {
+               position: absolute;
+               left: 0.5vw;
+               top: 50%;
+               transform: translateY(-50%);
+               transition: all 0.3s ease;
+               font-size: 0.95vw;
+               color: #777;
+               pointer-events: none;
+         }
+         
+         .input-container input:focus,
+         .input-container input:valid,
+         .input-container select:focus,
+         .input-container select:valid {
+               border-color: var(--maroon);
+         }
+         
+         .input-container input:focus ~ label,
+         .input-container input:valid ~ label,
+         .input-container select:focus ~ label,
+         .input-container select:valid ~ label {
+            top: 0;
+            font-size: 0.75vw;
+            color: var(--yellow);
+            background: white;
+            padding: 0 0.3vw;
+         }
+         .input-container input[type="date"]:not(:placeholder-shown) ~ label,
+         .input-container input[type="date"]:focus ~ label {
+            top: 0;
+            font-size: 0.75vw;
+            color: var(--yellow);
+            background: white;
+            padding: 0 0.3vw;
+         }
+      }
+   }
    input
    {
       font-size: 2.4vh;
@@ -36,12 +143,84 @@ main
    {
       font-style: italic;
    }
-   div
+   div.maintitle
    {
+      margin-bottom: 30px;
       h1
       {
-         font-size: 3.5vw;
+         margin: 50px 0 20px 0;
+         font-size: 3.2vw;
          color: var(--maroon);
+      }
+      p
+      {
+         font-size: 1.3vw;
+         font-weight: bold;
+         letter-spacing: 1px;
+      }
+   }
+   div.info-box
+   {
+      border-bottom: 4px solid var(--dark-gray);
+      margin-top: 0.1vw;
+      width: 100%;
+      height: 11vw;
+      div.info-heading
+      {
+         display: flex;
+         flex-direction: row;
+         span.info-heading-text
+         {
+            display: flex;
+            flex-direction: column;
+            margin-left: 2vw;
+            margin-top: 0.5vw;
+            letter-spacing: 2px;
+            font-size: 0.95vw;
+            gap: 0.15vw;
+            span.name 
+            {
+               font-weight: bold;
+            }
+            span.department
+            {
+               letter-spacing: 1px;
+            }
+            span.date 
+            {
+               letter-spacing: 2.5px;
+            }
+         }
+         img
+         {
+            width: 5vw;
+            height: 5vw;
+            border-radius: 100%;
+         }
+      }
+      span.time
+      {
+         position: fixed;
+         right: 130px;
+         font-size: 0.95vw;
+         letter-spacing: 2px;
+         font-weight: bold;
+      }
+      div.circle
+      {
+         position: fixed;
+         right: 105px;
+         height: 0.95vw;
+         width: 0.95vw;
+         border-radius: 100%;
+         background-color: var(--yellow);
+      }
+      p.info-details 
+      {
+         padding: 20px 35px 0 35px;
+         font-size: 0.95vw;
+         text-align: justify;
+         line-height: 1.2vw;
       }
    }
 }
@@ -60,6 +239,7 @@ li
 }
 .sidebar
 {
+   
    position: sticky;
    top: 0;
    align-self: start;
@@ -70,7 +250,7 @@ li
    width: 120px;
    background-color: var(--light-gray);
    transition: 0.3s;
-   border-right: 2px solid var(--dark-gray);
+   border-right: 0px solid var(--dark-gray);
 
    span{
       display: none;
@@ -264,7 +444,6 @@ li
    width: var(--sidebar-width);
    background-color: var(--light-gray);
    transition: ease-in-out 0.3s;
-   border-right: 2px solid var(--dark-gray);
     
    span, a
    {

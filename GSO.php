@@ -56,9 +56,13 @@
          {
             ?> #calendar { background-color: white; font-weight: bold;} <?php
          }
-         elseif(isset($_GET["mrep"]) and !empty($_GET["mrep"]))
+         elseif(isset($_GET["mche"]) and !empty($_GET["mche"]))
          {
-            ?> #report { background-color: white; font-weight: bold;} <?php
+            ?> #vehicle { background-color: white; font-weight: bold;} <?php
+         }
+         elseif(isset($_GET["macc"]) and !empty($_GET["macc"]))
+         {
+            ?> #account { background-color: white; font-weight: bold;} <?php
          }
          elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
          {
@@ -110,10 +114,9 @@
             </button>
             <ul class="dropdown-container">
                <div>
+                  <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
                   <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                  <li><a href="GSO.php?dveh=a"><span>Delete Vehicle</span></a></li>
-                  <li><a href="GSO.php?eveh=a"><span>Edit Vehicle</span></a></li>
-                  <li><a href="GSO.php?eveh=a"><span></span></a></li>
+                  <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
                </div>
             </ul>
          </li>
@@ -132,6 +135,18 @@
             </ul>
          </li>
          <li>
+            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+               <img src="PNG/Account.png" alt="Report">
+               <span>Accounts</span>
+               <img src="PNG/Down.png" alt="DropDown">
+            </button>
+            <ul class="dropdown-container">
+               <div>
+                  <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+               </div>
+            </ul>
+         </li>
+         <li>
             <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
                <img src="PNG/File.png" alt="Report">
                <span>Report</span>
@@ -139,7 +154,6 @@
             </button>
             <ul class="dropdown-container">
                <div>
-                  <li><a href="GSO.php?mrep=a"><span>Maintenance Checklist</span></a></li>
                   <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
                </div>
             </ul>
@@ -168,18 +182,16 @@
          cancelledRequests();
          elseif(isset($_GET["aveh"]) and !empty($_GET["aveh"]))
          addVehicle();
-         elseif(isset($_GET["dveh"]) and !empty($_GET["dveh"]))
-         deleteVehicle();
-         elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
-         editVehicle();
+         elseif(isset($_GET["mveh"]) and !empty($_GET["mveh"]))
+         manageVehicle();
+         elseif(isset($_GET["mche"]) and !empty($_GET["mche"]))
+         maintenanceChecklist();
          elseif(isset($_GET["vres"]) and !empty($_GET["vres"]))
          vehicleReservationForm();
          elseif(isset($_GET["vsch"]) and !empty($_GET["vsch"]))
          vehicleSchedules();
          elseif(isset($_GET["dsch"]) and !empty($_GET["dsch"]))
          driverSchedules();
-         elseif(isset($_GET["mrep"]) and !empty($_GET["mrep"]))
-         maintenanceChecklist();
          elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
          summaryReport();
          else
@@ -192,17 +204,77 @@
    function home()
    {
       ?>
-         <input type="text" id="search" placeholder="Search">
-         <div class="home">
-            <h1>Welcome to GSO</h1>
-            <p>Government Service Office</p>
-         </div>
+         
       <?php
    }
    function vehicleReservationForm()
    {
       ?>
-         
+         <div class="vres">
+            <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post">
+               <img src="PNG/CSA_Logo.png" alt="">
+               <span class="header">
+                  <span id="csab">Colegio San Agustin-Biñan</span>
+                  <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                  <span id="vrf">VEHICLE RESERVATION FORM</span>
+               </span>
+               <div class="vrf-details">
+                  <div class="vrf-details-column">
+                     <div class="input-container">
+                           <input type="text" id="name" required>
+                           <label for="name">NAME:</label>
+                     </div>
+                     <div class="input-container">
+                           <select id="department" required>
+                              <option value="" disabled selected></option>
+                              <option value="HR">HR</option>
+                              <option value="IT">IT</option>
+                              <option value="Finance">Finance</option>
+                              <option value="Operations">Operations</option>
+                           </select>
+                           <label for="department">DEPARTMENT:</label>
+                     </div>
+                     <div class="input-container">
+                           <input type="text" id="activity" required>
+                           <label for="activity">ACTIVITY:</label>
+                     </div>
+                     <div class="input-container">
+                           <input type="number" id="budgetNo" required>
+                           <label for="budgetNo">BUDGET No.:</label>
+                     </div>
+                  </div>
+                  <div class="vrf-details-column">
+                     <div class="input-container">
+                           <input type="date" id="dateFiled" required>
+                           <label for="dateFiled">DATE FILED:</label>
+                     </div>
+                     <div class="input-container">
+                           <input type="number" id="totalPassengers" required>
+                           <label for="totalPassengers">TOTAL PASSENGER/S:</label>
+                     </div>
+                     <div class="input-container">
+                           <select id="vehicleUsed" required>
+                              <option value="" disabled selected></option>
+                              <option value="Van">Van</option>
+                              <option value="Bus">Bus</option>
+                              <option value="Car">Car</option>
+                              <option value="Truck">Truck</option>
+                           </select>
+                           <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                     </div>
+                     <div class="input-container">
+                           <select id="driver" required>
+                              <option value="" disabled selected></option>
+                              <option value="Driver A">Driver A</option>
+                              <option value="Driver B">Driver B</option>
+                              <option value="Driver C">Driver C</option>
+                           </select>
+                           <label for="driver">DRIVER:</label>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
       <?php
    }
    function vehicleSchedules()
@@ -223,13 +295,7 @@
          
       <?php
    }
-   function deleteVehicle()
-   {
-      ?>
-         
-      <?php
-   }
-   function editVehicle()
+   function manageVehicle()
    {
       ?>
          
@@ -238,15 +304,27 @@
    function pendingApproval()
    {
       ?>
-        <div>
-         <h1>Pending Approval</h1>
-            <span>New</span>
-            <table>
-               <tr>
-                  <img src="" alt="">
-               </tr>
-            </table>
-        </div>
+         <input type="text" id="search" placeholder="Search reservation">
+         <div class="maintitle">
+            <h1>Pending Approval</h1>
+            <p>New</p>
+         </div>
+         <div class="info-box">
+            <span class="time">1 hour ago</span>
+            <div class="circle"> </div>
+            <div class="info-heading">
+               <img src="PNG/Maynard.png" alt="Profile">
+               <span class="info-heading-text">
+                  <span class="name">Maynard Rodriguez</span>
+                  <span class="department">College Department</span>
+                  <span class="date">Date: 12/04/2024</span>
+               </span>
+            </div>
+            <p class="info-details">I am writing to confirm the transportation arrangements for the upcoming activity, [ACTIVITY], organized by the [DEPARTMENT]. The trip is scheduled for departure on [DATE / TIME DEPARTURE] to [DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS)], with a total of [TOTAL NO. OF PASSENGER/S] passengers, including [NAME OF PASSENGER/S]. The vehicle assigned for this trip is [VEHICLE TO BE USED], and the designated driver is [DRIVER]. This request is under Budget Number [BUDGET NO], with the transportation cost covered accordingly. The necessary form was filled out on [DATE FILLED].</p>
+         </div>
+         <div class="info-box">
+            
+         </div>
       <?php
    }
    function reservationApproved()
@@ -264,7 +342,7 @@
    function maintenanceChecklist()
    {
       ?>
-         
+        
       <?php
    }
    function summaryReport()
