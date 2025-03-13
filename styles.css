@@ -67,6 +67,7 @@ main
          .vrf-details {
             font-size: 0.9vw;
             margin: 2vw;
+            margin-bottom: 0;
             display: flex;
             justify-content: space-between;
          }
@@ -85,8 +86,8 @@ main
          }   
          .input-container input,
          .input-container select {
-               font-size: 0.95vw;
-               padding: 0.5vw;
+               font-size: 0.90vw;
+               padding: 0.4vw;
                width: 18vw;
                border: 1px solid #555555;
                border-radius: 0.5vw;
@@ -103,6 +104,8 @@ main
                transition: all 0.3s ease;
                font-size: 0.95vw;
                color: #777;
+               letter-spacing: .15vw;
+               font-weight: bold;
                pointer-events: none;
          }
          
@@ -130,6 +133,32 @@ main
             color: var(--yellow);
             background: white;
             padding: 0 0.3vw;
+         }
+         span.address
+         {
+            display: flex;
+            flex-direction: column;
+            padding: 0.8vw;
+            span 
+            {
+               font-weight: bold;
+               font-size: 0.9vw;
+               letter-spacing: 0.15vw;
+               margin-bottom: 0.5vw;
+            }
+            input 
+            {
+               font-size: 0.9vw;
+               padding: 0.4vw;
+               width: 100%;
+               border: 1px solid #555555;
+               border-radius: 0.5vw;
+               outline: none;
+               appearance: none; /* Removes default browser styles */
+               background-color: white;
+               height: 5vw;
+               vertical-align: top;
+            }
          }
       }
    }

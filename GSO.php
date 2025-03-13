@@ -143,6 +143,7 @@
             <ul class="dropdown-container">
                <div>
                   <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                  <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
                </div>
             </ul>
          </li>
@@ -248,6 +249,10 @@
                            <input type="date" id="dateFiled" required>
                            <label for="dateFiled">DATE FILED:</label>
                      </div>
+                     <script>
+                        const today = new Date().toISOString().split('T')[0];
+                        document.getElementById("dateFiled").value = today;
+                     </script>
                      <div class="input-container">
                            <input type="number" id="totalPassengers" required>
                            <label for="totalPassengers">TOTAL PASSENGER/S:</label>
@@ -273,6 +278,10 @@
                      </div>
                   </div>
                </div>
+               <span class="address">
+                  <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
+                  <input type="text" id="destination" required>
+               </span>
             </form>
          </div>
       <?php
