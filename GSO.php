@@ -218,15 +218,16 @@
                   <span id="csab">Colegio San Agustin-Biñan</span>
                   <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                   <span id="vrf">VEHICLE RESERVATION FORM</span>
+                  <span id="fid">Form ID: 2025-031701</span>
                </span>
                <div class="vrf-details">
                   <div class="vrf-details-column">
                      <div class="input-container">
-                           <input type="text" id="name" required>
+                           <input name="vrfname" type="text" id="name" required>
                            <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
-                           <select id="department" required>
+                           <select name="vrfdepartment" id="department" required>
                               <option value="" disabled selected></option>
                               <option value="HR">HR</option>
                               <option value="IT">IT</option>
@@ -236,12 +237,17 @@
                            <label for="department">DEPARTMENT:</label>
                      </div>
                      <div class="input-container">
-                           <input type="text" id="activity" required>
+                           <input name="vrfactivity" type="text" id="activity" required>
                            <label for="activity">ACTIVITY:</label>
                      </div>
                      <div class="input-container">
-                           <input type="number" id="budgetNo" required>
-                           <label for="budgetNo">BUDGET No.:</label>
+                        <select name="vrfpurpose" id="purpose" required>
+                           <option value="" disabled selected></option>
+                           <option value="School Related">School Related</option>
+                           <option value="Official Business">Official Business</option>
+                           <option value="Personal">Personal</option>
+                        </select>
+                        <label for="purpose">PURPOSE:</label>
                      </div>
                   </div>
                   <div class="vrf-details-column">
@@ -254,8 +260,8 @@
                         document.getElementById("dateFiled").value = today;
                      </script>
                      <div class="input-container">
-                           <input type="number" id="totalPassengers" required>
-                           <label for="totalPassengers">TOTAL PASSENGER/S:</label>
+                           <input type="number" id="budgetNo" required>
+                           <label for="budgetNo">BUDGET No.:</label>
                      </div>
                      <div class="input-container">
                            <select id="vehicleUsed" required>
