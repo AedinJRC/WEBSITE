@@ -29,12 +29,16 @@ main
    {
       display: flex;
       justify-content: center;
+      align-items: center;
+      height: 100%;
+      margin-top: -1.5vw;
       form.vehicle-reservation-form
       {
          padding: 1.5vw;
+         padding-bottom: ;
          width: 60vw;
          height: 44vw;
-         border: 3px solid #555555;
+         border: 0.3vw solid #555555;
          border-radius: 20px;
          img
          {
@@ -83,30 +87,82 @@ main
             position: relative;
             display: flex;
             flex-direction: column;
+            font-family: 'Roboto', sans-serif;
+            div.passenger-container
+            {
+               margin-top: 0.5vw;
+               span
+               {
+                  font-weight: bold;
+                  letter-spacing: 0.2vw;
+                  background-color: transparent;
+               }
+               div#passengerList
+               {
+                  padding-top: 0.35vw;
+                  display: flex;
+                  flex-direction: column;
+                  gap:0.2vw;
+                  height: 11.2vw;
+                  overflow-y: auto;
+                  overflow-x: hidden;
+                  scrollbar-width: thin;
+                  input::placeholder 
+                  {
+                     font-style: normal;
+                     font-weight: bold;
+                     letter-spacing: 0.2vw;
+                  }
+                  button
+                  {
+                     background-color: transparent;
+                     border: 0;
+                     cursor: pointer;
+                     text-align: left;
+                     color:#444;
+                     font-weight: bold;
+                     font-size: 1.8vw;
+                     font-family: 'Quicksand';
+                  }
+                  button#attachmentButton
+                  {
+                     transform: translateX(1.2vw);
+                     margin-top: 0.3vw;
+                     font-family: 'Roboto', sans-serif;
+                     font-size: 0.9vw;
+                     img
+                     {
+                        height: 1vw;
+                        width: 1vw;
+                        transform: translateX(-1.2vw);
+                     }
+                  }
+               }
+            }  
          }   
          .input-container input,
          .input-container select {
-               font-size: 0.90vw;
-               padding: 0.4vw;
-               width: 18vw;
-               border: 1px solid #555555;
-               border-radius: 0.5vw;
-               outline: none;
-               appearance: none; /* Removes default browser styles */
-               background-color: white;
+            font-size: 0.9vw;
+            padding: 0.4vw;
+            width: 18vw;
+            border: 1px solid #555555;
+            border-radius: 0.5vw;
+            outline: none;
+            appearance: none; /* Removes default browser styles */
+            background-color: white;
          }
       
          .input-container label {
-               position: absolute;
-               left: 0.5vw;
-               top: 50%;
-               transform: translateY(-50%);
-               transition: all 0.3s ease;
-               font-size: 0.95vw;
-               color: #777;
-               letter-spacing: .15vw;
-               font-weight: bold;
-               pointer-events: none;
+            position: absolute;
+            left: 0.5vw;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+            font-size: 0.95vw;
+            color: #777;
+            letter-spacing: .15vw;
+            font-weight: bold;
+            pointer-events: none;
          }
          
          .input-container input:focus,
@@ -122,15 +178,19 @@ main
          .input-container select:valid ~ label {
             top: 0;
             font-size: 0.75vw;
-            color: var(--yellow);
+            color: black;
             background: white;
             padding: 0 0.3vw;
          }
          .input-container input[type="date"]:not(:placeholder-shown) ~ label,
-         .input-container input[type="date"]:focus ~ label {
+         .input-container input[type="date"]:focus ~ label,
+         .input-container input[type="file"]:not(:placeholder-shown) ~ label,
+         .input-container input[type="file"]:focus ~ label,
+         .input-container input[type="datetime-local"]:not(:placeholder-shown) ~ label,
+         .input-container input[type="datetime-local"]:focus ~ label {
             top: 0;
             font-size: 0.75vw;
-            color: var(--yellow);
+            color: black;
             background: white;
             padding: 0 0.3vw;
          }
@@ -146,9 +206,10 @@ main
                letter-spacing: 0.15vw;
                margin-bottom: 0.5vw;
             }
-            input 
+            textarea
             {
-               font-size: 0.9vw;
+               font-family: 'Roboto', sans-serif;
+               font-size: 1vw;
                padding: 0.4vw;
                width: 100%;
                border: 1px solid #555555;
@@ -157,8 +218,108 @@ main
                appearance: none; /* Removes default browser styles */
                background-color: white;
                height: 5vw;
-               vertical-align: top;
+               resize: none;
+            }  
+            #transportation-cost
+            {
+               width: 28vw;
+               height: 10vw;
             }
+         }
+      }   
+      .subbtn-container
+      {
+         transform: translateY(2vw);
+         display: flex;
+         background-color: transparent;
+         justify-content:space-between;
+         pointer-events: none;
+         input
+         {
+            pointer-events:all;
+         }
+         button
+         {
+            height: 2.5vw;
+            width: 8vw;
+            padding: 0 0.5vw;
+            font-size: 1.5vw;
+            border: 0.35vw solid transparent;
+            font-weight: bold;
+            border-radius: 1vw;
+            cursor:pointer !important;
+            transition: 0.3s;
+            pointer-events: all;
+         }
+         button.subbtn
+         {
+            background-color: var(--yellow);
+            border-color: var(--yellow);
+            color: var(--maroon);
+         }
+         button.subbtn:hover
+         {
+            background-color: var(--maroon);
+            color: var(--yellow);
+         }
+         button.appbtn
+         {
+            background-color: var(--yellow);
+            border-color: var(--yellow);
+            color: var(--maroon);
+         }
+         button.appbtn:hover
+         {
+            background-color: white;
+            color: green;
+         }
+         button.rejbtn
+         {
+            background-color: var(--maroon);
+            border-color: var(--maroon);
+            color: var(--yellow);
+         }
+         
+         button.rejbtn:hover
+         {
+            background-color: white;
+            color: red;
+         }
+         .attachment 
+         {
+            opacity: 0; /* Makes the input invisible */
+            position: absolute; /* Keeps it accessible but hidden */
+            width: 1px;
+            height: 1px;
+            
+         }
+         .attachment-label 
+         {
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            pointer-events: all;
+            cursor: pointer;
+            font-size: 0.9vw;
+            font-weight: bold;
+            letter-spacing: 0.2vw;   
+            transform: translateX(2vw);
+         }
+         .attachment-label:hover
+         {
+            font-size: 0.91vw;
+            color:var(--maroon);
+            img
+            {
+               height: 1.1vw;
+               width: 1.1vw;
+            }
+         }
+         .attachment-label img
+         {
+            height: 1vw;
+            width: 1vw;
+            transform: translateX(-1.5vw);         
          }
       }
    }

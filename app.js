@@ -42,4 +42,3 @@ function scrollToSection(sectionId, event) {
       console.error("Section not found:", sectionId);
   }
 }
-
