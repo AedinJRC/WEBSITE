@@ -218,7 +218,10 @@
                   <span id="csab">Colegio San Agustin-Biñan</span>
                   <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                   <span id="vrf">VEHICLE RESERVATION FORM</span>
-                  <span id="fid">Form ID: 2025-031701</span>
+                  <span>
+                     <span id="fid">Form ID:</span>
+                     <input type="text" value="<?php echo date('Y-md'); ?>" readonly>
+                  </span>
                </span>
                <div class="vrf-details">
                   <div class="vrf-details-column">
@@ -252,19 +255,15 @@
                   </div>
                   <div class="vrf-details-column">
                      <div class="input-container">
-                           <input type="date" id="dateFiled" required>
+                           <input name="vrfdate_filed" type="date" id="dateFiled" required>
                            <label for="dateFiled">DATE FILED:</label>
                      </div>
-                     <script>
-                        const today = new Date().toISOString().split('T')[0];
-                        document.getElementById("dateFiled").value = today;
-                     </script>
                      <div class="input-container">
-                           <input type="number" id="budgetNo" required>
+                           <input name="vrfbudget_no" type="number" id="budgetNo" required>
                            <label for="budgetNo">BUDGET No.:</label>
                      </div>
                      <div class="input-container">
-                           <select id="vehicleUsed" required>
+                           <select name="vrfvehicle" id="vehicleUsed" required>
                               <option value="" disabled selected></option>
                               <option value="Van">Van</option>
                               <option value="Bus">Bus</option>
@@ -274,7 +273,7 @@
                            <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                      </div>
                      <div class="input-container">
-                           <select id="driver" required>
+                           <select name="vrfdriver" id="driver" required>
                               <option value="" disabled selected></option>
                               <option value="Driver A">Driver A</option>
                               <option value="Driver B">Driver B</option>
@@ -286,11 +285,11 @@
                </div>
                <span class="address">
                   <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
-                  <textarea type="text" id="destination" required></textarea>
+                  <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required></textarea>
                </span>
                <div class="vrf-details" style="margin-top:1vw;">
                   <div class="input-container">
-                     <input type="datetime-local" id="departureDate" required>
+                     <input name="vrfdeparture_date" type="datetime-local" id="departureDate" required>
                      <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
                      <div class="passenger-container">
                         <span>NAME OF PASSENGER/S</span>
@@ -329,7 +328,7 @@
 
                            const input = document.createElement("input");
                            input.type = "text";
-                           input.name = `passenger${passengerCount}`;
+                           input.name = `vrfpassenger${passengerCount}`;
                            input.required = true;
 
                            // Add focus event to show placeholder
@@ -395,13 +394,13 @@
 
                            const attachmentInput = document.createElement("input");
                            attachmentInput.type = "file";
-                           attachmentInput.name = "passengerAttachment";
+                           attachmentInput.name = "vrfpassenger_attachment";
                            attachmentInput.required = true;
                            attachmentInput.style = "width:14vw;border-top-right-radius:0;border-bottom-right-radius:0;";
 
                            const numberInput = document.createElement("input");
                            numberInput.type = "number";
-                           numberInput.name = "passengerCount";
+                           numberInput.name = "vrfpassenger_count";
                            numberInput.required = true;
                            numberInput.style = "text-align:center;width:4vw;border-top-left-radius:0;border-bottom-left-radius:0";
                            
@@ -432,16 +431,120 @@
                   </div>   
                   <span class="address" style="margin-top:-1.8vw">
                      <span style="text-align:center">TRANSPORTATION COST</span>
-                     <textarea type="text" id="transportation-cost" required></textarea>
+                     <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
                      <div class="subbtn-container">
-                        <input type="file" name="attachment" class="attachment" id="fileInput">
+                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                         <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
-                        <button class="subbtn">Submit</button>
+                        <button class="subbtn" type="submit" name="vrfsubbtn">Submit</button>
                      </div>
                   </span>
                </div>
-               
             </form>
+            <?php
+               include 'config.php';
+
+               if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                  if (
+                     isset($_POST['vrfname'], $_POST['vrfdepartment'], $_POST['vrfactivity'], $_POST['vrfpurpose'], 
+                     $_POST['vrfdate_filed'], $_POST['vrfbudget_no'], $_POST['vrfvehicle'], 
+                     $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture_date'], 
+                     $_POST['vrftransportation_cost']) 
+                     && isset($_FILES["vrfletter_attachment"]) // Letter attachment is required
+                  ) {
+                     $name = htmlspecialchars($_POST['vrfname']);
+                     $department = htmlspecialchars($_POST['vrfdepartment']);
+                     $activity = htmlspecialchars($_POST['vrfactivity']);
+                     $purpose = htmlspecialchars($_POST['vrfpurpose']);
+                     $date_filed = htmlspecialchars($_POST['vrfdate_filed']);
+                     $budget_no = htmlspecialchars($_POST['vrfbudget_no']);
+                     $vehicle = htmlspecialchars($_POST['vrfvehicle']);
+                     $driver = htmlspecialchars($_POST['vrfdriver']);
+                     $destination = htmlspecialchars($_POST['vrfdestination']);
+                     $departure_date = htmlspecialchars($_POST['vrfdeparture_date']);
+                     $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
+                     $passenger_count = htmlspecialchars($_POST['vrfpassenger_count']);
+                     $createdAt = date("Y-m-d H:i:s"); // Automatically save date and time
+
+                     // File upload directory
+                     $targetDir = "uploads/";
+                     if (!is_dir($targetDir)) {
+                           mkdir($targetDir, 0777, true);
+                     }
+
+                     // Allowed file types
+                     $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+                     // Handle letter attachment (Required)
+                     $letterFileName = basename($_FILES["vrfletter_attachment"]["name"]);
+                     $letterFilePath = $targetDir . $letterFileName;
+                     $letterFileType = strtolower(pathinfo($letterFilePath, PATHINFO_EXTENSION));
+
+                     if (!in_array($letterFileType, $allowedTypes)) {
+                           echo "<script>
+                                 alert('Invalid file type for letter attachment. Only JPG, JPEG, PNG, GIF, and WEBP are allowed.');
+                                 window.history.back();
+                                 </script>";
+                           exit;
+                     }
+
+                     $letterUploaded = move_uploaded_file($_FILES["vrfletter_attachment"]["tmp_name"], $letterFilePath);
+
+                     // Handle passenger attachment (Optional)
+                     $passengerFileName = null;
+                     if (!empty($_FILES["vrfpassenger_attachment"]["name"])) {
+                           $passengerFileName = basename($_FILES["vrfpassenger_attachment"]["name"]);
+                           $passengerFilePath = $targetDir . $passengerFileName;
+                           $passengerFileType = strtolower(pathinfo($passengerFilePath, PATHINFO_EXTENSION));
+
+                           if (!in_array($passengerFileType, $allowedTypes)) {
+                              echo "<script>
+                                       alert('Invalid file type for passenger attachment. Only JPG, JPEG, PNG, GIF, and WEBP are allowed.');
+                                       window.history.back();
+                                    </script>";
+                              exit;
+                           }
+
+                           move_uploaded_file($_FILES["vrfpassenger_attachment"]["tmp_name"], $passengerFilePath);
+                     }
+
+                     if ($letterUploaded) {
+                           try {
+                              // Insert data into database
+                              $stmt = $conn->prepare("INSERT INTO vehicle_reservation 
+                                 (name, department, activity, purpose, date_filed, budget_no, vehicle, driver, destination, departure_date, transportation_cost, passenger_count, letter_attachment, passenger_attachment, created_at) 
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                              $stmt->bind_param(
+                                 "sssssssssssssss", 
+                                 $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure_date, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName, $createdAt
+                              );
+                              $stmt->execute();
+
+                              // Success message and redirection
+                              echo "<script>
+                                       alert('Reservation successfully submitted!');
+                                       window.location.href='car_add.php';
+                                    </script>";
+                              exit;
+                           } catch (Exception $e) {
+                              echo "<script>
+                                       alert('Error: " . addslashes($e->getMessage()) . "');
+                                       window.history.back();
+                                    </script>";
+                           }
+                     } else {
+                           echo "<script>
+                                 alert('Failed to upload the letter attachment.');
+                                 window.history.back();
+                                 </script>";
+                     }
+                  } else {
+                     echo "<script>
+                              alert('Please fill in all required fields.');
+                              window.history.back();
+                           </script>";
+                  }
+               }
+            ?>
          </div>
       <?php
    }

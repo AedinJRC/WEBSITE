@@ -71,6 +71,15 @@ main
             {
                font-size: 0.9vw;
             }
+            input
+            {
+               border: none; /* Remove border */
+               background: transparent; /* Remove background */
+               font-size: 0.9vw;
+               font-family: 'Times New Roman', Times, serif;
+               outline: none; /* Remove focus outline */
+               pointer-events: none; /* Prevent user interaction */
+            }
          }
          .vrf-details {
             font-size: 0.9vw;
@@ -127,6 +136,12 @@ main
                      font-weight: bold;
                      font-size: 1.8vw;
                      font-family: 'Quicksand';
+                  }
+                  button:hover
+                  {
+                     color: var(--maroon);
+                     font-weight: bold;
+                     transition: 0.3s;
                   }
                   button#attachmentButton
                   {

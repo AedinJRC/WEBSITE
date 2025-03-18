@@ -16,13 +16,39 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`vehiclemonitoringdbms` /*!40100 DEFAULT
 
 USE `vehiclemonitoringdbms`;
 
+/*Table structure for table `cars` */
+
+DROP TABLE IF EXISTS `cars`;
+
+CREATE TABLE `cars` (
+  `plate_number` varchar(20) NOT NULL,
+  `color` varchar(50) DEFAULT NULL,
+  `brand` varchar(50) DEFAULT NULL,
+  `model` varchar(50) DEFAULT NULL,
+  `year_model` int(4) DEFAULT NULL,
+  `body_type` varchar(50) DEFAULT NULL,
+  `transmission` varchar(20) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `registration_from` date DEFAULT NULL,
+  `registration_to` date DEFAULT NULL,
+  `capacity` int(11) NOT NULL,
+  `registration_schedule` date NOT NULL,
+  PRIMARY KEY (`plate_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `cars` */
+
+insert  into `cars`(`plate_number`,`color`,`brand`,`model`,`year_model`,`body_type`,`transmission`,`image`,`created_at`,`registration_from`,`registration_to`,`capacity`,`registration_schedule`) values ('A93600','violet','Toyota','Corolla',2013,'SUV','Automatic','uploads/2013_Honda_Civic_LX_Sedan.webp','2025-03-13 07:34:42',NULL,NULL,30,'2025-03-21'),('BURAT112','violet','Ford','Focus',1904,'SUV','Automatic','uploads/2013_Honda_Civic_LX_Sedan.webp','2025-03-18 02:27:44','2025-03-22','2025-05-01',8,'0000-00-00'),('DA93600','black','Nissan','Altima',2013,'SUV','Automatic','uploads/2013_Honda_Civic_LX_Sedan.webp','2025-03-13 07:18:12',NULL,NULL,5,'2025-03-21'),('EWAN21','LOL','Champs Line 200','LOL',1902,'Hatchback','Manual','uploads/2013_Honda_Civic_LX_Sedan.webp','2025-03-18 02:28:58','2025-03-15','2025-05-01',8,'0000-00-00'),('JEEPNEY','wala naa','Nokia','LOL',1902,'Sedan','Manual','uploads/2013_Honda_Civic_LX_Sedan.webp','2025-03-18 03:14:21','2025-03-22','2025-04-30',10,'0000-00-00'),('TARUB','black','Ford','Focus',2013,'Sedan','Automatic','uploads/2013_Honda_Civic_LX_Sedan.webp','2025-03-13 07:41:55','2025-03-21','2025-04-16',60,'0000-00-00'),('XYZ123','violet','Honda','Civic',2013,'SUV','Automatic','uploads/2013_Honda_Civic_LX_Sedan.webp','2025-03-13 08:29:19','2025-03-22','2025-04-29',6,'0000-00-00');
+
 /*Table structure for table `passengerstb` */
 
 DROP TABLE IF EXISTS `passengerstb`;
 
 CREATE TABLE `passengerstb` (
-  `vrfid` varchar(255) NOT NULL,
-  `passenger1` varchar(255) DEFAULT NULL,
+  `id` varchar(20) NOT NULL,
+  `vrfid` varchar(20) NOT NULL,
+  `passenger_name` varchar(255) DEFAULT NULL,
   KEY `vrfid` (`vrfid`),
   CONSTRAINT `passengerstb_ibfk_1` FOREIGN KEY (`vrfid`) REFERENCES `vrftb` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -47,7 +73,7 @@ CREATE TABLE `usertb` (
 
 /*Data for the table `usertb` */
 
-insert  into `usertb`(`employeeid`,`ppicture`,`fname`,`lname`,`pword`,`role`,`created_at`,`updated_at`) values ('admin',NULL,'AAMA','DVDRC','admin','Admin','2025-03-17 23:52:11','2025-03-17 23:52:46');
+insert  into `usertb`(`employeeid`,`ppicture`,`fname`,`lname`,`pword`,`role`,`created_at`,`updated_at`) values ('admin',NULL,'AAVA','DVDRC','admin','Admin','2025-03-18 11:19:39','2025-03-18 11:19:39');
 
 /*Table structure for table `vrftb` */
 
