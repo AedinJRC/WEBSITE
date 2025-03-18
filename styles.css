@@ -79,6 +79,9 @@ main
                font-family: 'Times New Roman', Times, serif;
                outline: none; /* Remove focus outline */
                pointer-events: none; /* Prevent user interaction */
+               border-radius: 0;
+               padding: 0;
+               width: 4.8vw;
             }
          }
          .vrf-details {

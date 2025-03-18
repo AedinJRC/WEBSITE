@@ -212,7 +212,7 @@
    {
       ?>
          <div class="vres">
-            <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post">
+            <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
                <img src="PNG/CSA_Logo.png" alt="">
                <span class="header">
                   <span id="csab">Colegio San Agustin-Biñan</span>
@@ -220,7 +220,11 @@
                   <span id="vrf">VEHICLE RESERVATION FORM</span>
                   <span>
                      <span id="fid">Form ID:</span>
-                     <input type="text" value="<?php echo date('Y-md'); ?>" readonly>
+                     <input name="vrfid" type="text" value="
+                     <?php
+                        echo date('Y-md').''; 
+                     ?>" 
+                     readonly>
                   </span>
                </span>
                <div class="vrf-details">
@@ -462,8 +466,8 @@
                      $destination = htmlspecialchars($_POST['vrfdestination']);
                      $departure_date = htmlspecialchars($_POST['vrfdeparture_date']);
                      $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
+                     
                      $passenger_count = htmlspecialchars($_POST['vrfpassenger_count']);
-                     $createdAt = date("Y-m-d H:i:s"); // Automatically save date and time
 
                      // File upload directory
                      $targetDir = "uploads/";
@@ -472,7 +476,7 @@
                      }
 
                      // Allowed file types
-                     $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                     $allowedTypes = ['docx', 'pdf'];
 
                      // Handle letter attachment (Required)
                      $letterFileName = basename($_FILES["vrfletter_attachment"]["name"]);
@@ -481,8 +485,8 @@
 
                      if (!in_array($letterFileType, $allowedTypes)) {
                            echo "<script>
-                                 alert('Invalid file type for letter attachment. Only JPG, JPEG, PNG, GIF, and WEBP are allowed.');
-                                 window.history.back();
+                                    alert('Invalid file type for letter attachment. Only Word Documents or PDFs are allowed.');
+                                    window.history.back();
                                  </script>";
                            exit;
                      }
@@ -498,9 +502,9 @@
 
                            if (!in_array($passengerFileType, $allowedTypes)) {
                               echo "<script>
-                                       alert('Invalid file type for passenger attachment. Only JPG, JPEG, PNG, GIF, and WEBP are allowed.');
-                                       window.history.back();
-                                    </script>";
+                                    alert('Invalid file type for letter attachment. Only Word Documents or PDFs are allowed.');
+                                    window.history.back();
+                                 </script>";
                               exit;
                            }
 
@@ -510,19 +514,18 @@
                      if ($letterUploaded) {
                            try {
                               // Insert data into database
-                              $stmt = $conn->prepare("INSERT INTO vehicle_reservation 
-                                 (name, department, activity, purpose, date_filed, budget_no, vehicle, driver, destination, departure_date, transportation_cost, passenger_count, letter_attachment, passenger_attachment, created_at) 
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                              $stmt = $conn->prepare("INSERT INTO vrftb 
+                                 (name, department, activity, purpose, date_filed, budget_no, vehicle, driver, destination, departure, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                               $stmt->bind_param(
-                                 "sssssssssssssss", 
-                                 $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure_date, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName, $createdAt
+                                 "ssssssssssssss", 
+                                 $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure_date, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
                               );
                               $stmt->execute();
 
                               // Success message and redirection
                               echo "<script>
                                        alert('Reservation successfully submitted!');
-                                       window.location.href='car_add.php';
                                     </script>";
                               exit;
                            } catch (Exception $e) {
