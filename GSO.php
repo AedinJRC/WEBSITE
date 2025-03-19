@@ -222,6 +222,7 @@
                      <span id="fid">Form ID:</span>
                      <input name="vrfid" type="text" value="
                      <?php
+                        //lookupfor latest id
                         echo date('Y-md').''; 
                      ?>" 
                      readonly>
@@ -298,6 +299,9 @@
                      <div class="passenger-container">
                         <span>NAME OF PASSENGER/S</span>
                         <div id="passengerList">
+                           <?php
+                              $passenger_count=0;
+                           ?>
                            <button type="button" id="attachmentButton" onclick="useAttachment()"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">USE ATTACHMENT</button>
                            <button type="button" id="addButton" onclick="addPassenger()">&plus;</button>
                         </div>
@@ -305,6 +309,7 @@
                      <script>
                         function addPassenger() 
                         {
+                           $passenger_count++;
                            const passengerList = document.getElementById("passengerList");
                            const addButton = document.getElementById("addButton");
                            const attachmentButton = document.getElementById("attachmentButton");
@@ -357,6 +362,7 @@
                            removeButton.textContent = "×";
                            removeButton.onclick = function () 
                            {
+                              $passenger_count--;
                               inputContainer.remove();
                               updateRemoveButtons();
                            };
@@ -565,15 +571,11 @@
    }
    function addVehicle()
    {
-      ?>
-         
-      <?php
+      include 'car_add.php';
    }
    function manageVehicle()
    {
-      ?>
-         
-      <?php
+      include 'car_info.php';
    }
    function pendingApproval()
    {
