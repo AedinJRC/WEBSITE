@@ -193,6 +193,10 @@
          vehicleSchedules();
          elseif(isset($_GET["dsch"]) and !empty($_GET["dsch"]))
          driverSchedules();
+         elseif(isset($_GET["macc"]) and !empty($_GET["macc"]))
+         manageAccount();
+         elseif(isset($_GET["mdep"]) and !empty($_GET["mdep"]))
+         manageDepartment();
          elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
          summaryReport();
          else
@@ -220,33 +224,48 @@
                   <span id="vrf">VEHICLE RESERVATION FORM</span>
                   <span>
                      <span id="fid">Form ID:</span>
-                     <input name="vrfid" type="text" value="
                      <?php
-                        //lookupfor latest id
-                        echo date('Y-md').''; 
-                     ?>" 
-                     readonly>
+                        include 'config.php';
+                        $selectvrfid = "SELECT * FROM vrftb ORDER BY id DESC LIMIT 1";
+                        $resultvrfid = $conn->query($selectvrfid);
+                        if ($resultvrfid->num_rows > 0) {
+                           while($rowvrfid = $resultvrfid->fetch_assoc()) {
+                              $vrfid = $rowvrfid['vrfid'];
+                           }
+                        }
+                        else
+                        {
+                           $vrfid = 0;
+                        }
+                     ?>
+                     <input name="vrfid" type="text" value="<?php echo $vrfid; ?>" readonly>
                   </span>
                </span>
                <div class="vrf-details">
                   <div class="vrf-details-column">
                      <div class="input-container">
-                           <input name="vrfname" type="text" id="name" required>
-                           <label for="name">NAME:</label>
+                        <input name="vrfname" type="text" id="name" required>
+                        <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
-                           <select name="vrfdepartment" id="department" required>
-                              <option value="" disabled selected></option>
-                              <option value="HR">HR</option>
-                              <option value="IT">IT</option>
-                              <option value="Finance">Finance</option>
-                              <option value="Operations">Operations</option>
-                           </select>
-                           <label for="department">DEPARTMENT:</label>
+                        <select name="vrfdepartment" id="department" required>
+                           <option value="" disabled selected></option>
+                           <?php
+                              include 'config.php';
+                              $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                              $resultdepartment = $conn->query($selectdepartment);
+                              if ($resultdepartment->num_rows > 0) {
+                                 while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                    echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                                 }
+                              }
+                           ?>
+                        </select>
+                        <label for="department">DEPARTMENT:</label>
                      </div>
                      <div class="input-container">
-                           <input name="vrfactivity" type="text" id="activity" required>
-                           <label for="activity">ACTIVITY:</label>
+                        <input name="vrfactivity" type="text" id="activity" required>
+                        <label for="activity">ACTIVITY:</label>
                      </div>
                      <div class="input-container">
                         <select name="vrfpurpose" id="purpose" required>
@@ -260,31 +279,31 @@
                   </div>
                   <div class="vrf-details-column">
                      <div class="input-container">
-                           <input name="vrfdate_filed" type="date" id="dateFiled" required>
-                           <label for="dateFiled">DATE FILED:</label>
+                        <input name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
+                        <label for="dateFiled">DATE FILED:</label>
                      </div>
                      <div class="input-container">
-                           <input name="vrfbudget_no" type="number" id="budgetNo" required>
-                           <label for="budgetNo">BUDGET No.:</label>
+                        <input name="vrfbudget_no" type="number" id="budgetNo" required>
+                        <label for="budgetNo">BUDGET No.:</label>
                      </div>
                      <div class="input-container">
-                           <select name="vrfvehicle" id="vehicleUsed" required>
-                              <option value="" disabled selected></option>
-                              <option value="Van">Van</option>
-                              <option value="Bus">Bus</option>
-                              <option value="Car">Car</option>
-                              <option value="Truck">Truck</option>
-                           </select>
-                           <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                        <select name="vrfvehicle" id="vehicleUsed" required>
+                           <option value="" disabled selected></option>
+                           <option value="Van">Van</option>
+                           <option value="Bus">Bus</option>
+                           <option value="Car">Car</option>
+                           <option value="Truck">Truck</option>
+                        </select>
+                        <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                      </div>
                      <div class="input-container">
-                           <select name="vrfdriver" id="driver" required>
-                              <option value="" disabled selected></option>
-                              <option value="Driver A">Driver A</option>
-                              <option value="Driver B">Driver B</option>
-                              <option value="Driver C">Driver C</option>
-                           </select>
-                           <label for="driver">DRIVER:</label>
+                        <select name="vrfdriver" id="driver" required>
+                           <option value="" disabled selected></option>
+                           <option value="Driver A">Driver A</option>
+                           <option value="Driver B">Driver B</option>
+                           <option value="Driver C">Driver C</option>
+                        </select>
+                        <label for="driver">DRIVER:</label>
                      </div>
                   </div>
                </div>
@@ -294,7 +313,16 @@
                </span>
                <div class="vrf-details" style="margin-top:1vw;">
                   <div class="input-container">
-                     <input name="vrfdeparture_date" type="datetime-local" id="departureDate" required>
+                     <?php
+                        if ($_SESSION['role'] == 'Admin') {
+                           $date=date("Y-m-d\T06:00");
+                        }
+                        else
+                        {
+                           $date=date("Y-m-d\T06:00", strtotime("+7 days"));
+                        }
+                     ?>
+                     <input name="vrfdeparture" value="<?php echo $date; ?>" type="datetime-local" id="departureDate" required min='<?php echo $date; ?>'>
                      <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
                      <div class="passenger-container">
                         <span>NAME OF PASSENGER/S</span>
@@ -457,7 +485,7 @@
                   if (
                      isset($_POST['vrfname'], $_POST['vrfdepartment'], $_POST['vrfactivity'], $_POST['vrfpurpose'], 
                      $_POST['vrfdate_filed'], $_POST['vrfbudget_no'], $_POST['vrfvehicle'], 
-                     $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture_date'], 
+                     $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture'], 
                      $_POST['vrftransportation_cost']) 
                      && isset($_FILES["vrfletter_attachment"]) // Letter attachment is required
                   ) {
@@ -470,7 +498,7 @@
                      $vehicle = htmlspecialchars($_POST['vrfvehicle']);
                      $driver = htmlspecialchars($_POST['vrfdriver']);
                      $destination = htmlspecialchars($_POST['vrfdestination']);
-                     $departure_date = htmlspecialchars($_POST['vrfdeparture_date']);
+                     $departure = htmlspecialchars($_POST['vrfdeparture']);
                      $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
                      
                      $passenger_count = htmlspecialchars($_POST['vrfpassenger_count']);
@@ -619,6 +647,16 @@
    {
       ?>
         
+      <?php
+   }
+   function manageAccount()
+   {
+         include 'manageaccount.php';
+   }
+   function manageDepartment()
+   {
+      ?>
+         
       <?php
    }
    function summaryReport()

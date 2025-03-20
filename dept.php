@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Account</title>
+    <title>Manage Department</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,7 +58,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Manage Accounts</h2>
+        <h2>Manage Department</h2>
         <div class="table-container">
             <table>
                 <thead>
