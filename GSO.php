@@ -164,7 +164,7 @@
          <img id=profile src="uploads/<?php echo $_SESSION['ppicture']; ?>" alt="<?php echo $_SESSION['ppicture']; ?>">
          <div id="profile-text">
             <span id="name"><?php echo $_SESSION['lname']."\t".$_SESSION['fname']; ?></span>
-            <span id="role">Admin</span>
+            <span id="role"><?php echo $_SESSION['role'] ?></span>
          </div>
          <a href="index.php">
             <button>
