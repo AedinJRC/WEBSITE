@@ -161,9 +161,9 @@
          </li>
       </ul>
       <div id="logout">
-         <img id=profile src="PNG/Maynard.png" alt="Profile">
+         <img id=profile src="uploads/<?php echo $_SESSION['ppicture']; ?>" alt="<?php echo $_SESSION['ppicture']; ?>">
          <div id="profile-text">
-            <span id="name">Rodriguez Maynard</span>
+            <span id="name"><?php echo $_SESSION['lname']."\t".$_SESSION['fname']; ?></span>
             <span id="role">Admin</span>
          </div>
          <a href="index.php">
@@ -230,15 +230,15 @@
                         $resultvrfid = $conn->query($selectvrfid);
                         if ($resultvrfid->num_rows > 0) {
                            while($rowvrfid = $resultvrfid->fetch_assoc()) {
-                              $vrfid = $rowvrfid['vrfid'];
+                              $vrfid = $rowvrfid['id'];
                            }
                         }
                         else
                         {
-                           $vrfid = 0;
+                           $vrfid = "01";
                         }
                      ?>
-                     <input name="vrfid" type="text" value="<?php echo $vrfid; ?>" readonly>
+                     <input name="vrfid" type="text" value="<?php echo date("Y-md").$vrfid ?>" readonly>
                   </span>
                </span>
                <div class="vrf-details">
