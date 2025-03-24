@@ -657,9 +657,7 @@
    }
    function manageDepartment()
    {
-      ?>
-         
-      <?php
+      include 'managedept.php';
    }
    function summaryReport()
    {
