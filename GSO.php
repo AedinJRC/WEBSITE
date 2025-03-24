@@ -244,7 +244,7 @@
                <div class="vrf-details">
                   <div class="vrf-details-column">
                      <div class="input-container">
-                        <input name="vrfname" type="text" id="name" required>
+                        <input name="vrfname" value="<?php if($_SESSION['role']!="Admin") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" required>
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
@@ -299,9 +299,16 @@
                      <div class="input-container">
                         <select name="vrfdriver" id="driver" required>
                            <option value="" disabled selected></option>
-                           <option value="Driver A">Driver A</option>
-                           <option value="Driver B">Driver B</option>
-                           <option value="Driver C">Driver C</option>
+                           <?php
+                              include 'config.php';
+                              $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
+                              $resultdriver = $conn->query($selectdriver);
+                              if ($resultdriver->num_rows > 0) {
+                                 while($rowdriver = $resultdriver->fetch_assoc()) {
+                                    echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
+                                 }
+                              }
+                           ?>
                         </select>
                         <label for="driver">DRIVER:</label>
                      </div>
@@ -327,9 +334,6 @@
                      <div class="passenger-container">
                         <span>NAME OF PASSENGER/S</span>
                         <div id="passengerList">
-                           <?php
-                              $passenger_count=0;
-                           ?>
                            <button type="button" id="attachmentButton" onclick="useAttachment()"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">USE ATTACHMENT</button>
                            <button type="button" id="addButton" onclick="addPassenger()">&plus;</button>
                         </div>
@@ -337,7 +341,6 @@
                      <script>
                         function addPassenger() 
                         {
-                           $passenger_count++;
                            const passengerList = document.getElementById("passengerList");
                            const addButton = document.getElementById("addButton");
                            const attachmentButton = document.getElementById("attachmentButton");
@@ -390,7 +393,6 @@
                            removeButton.textContent = "×";
                            removeButton.onclick = function () 
                            {
-                              $passenger_count--;
                               inputContainer.remove();
                               updateRemoveButtons();
                            };
@@ -480,7 +482,6 @@
             </form>
             <?php
                include 'config.php';
-
                if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   if (
                      isset($_POST['vrfname'], $_POST['vrfdepartment'], $_POST['vrfactivity'], $_POST['vrfpurpose'], 
@@ -489,6 +490,7 @@
                      $_POST['vrftransportation_cost']) 
                      && isset($_FILES["vrfletter_attachment"]) // Letter attachment is required
                   ) {
+                     $id = htmlspecialchars($_POST['vrfid']);
                      $name = htmlspecialchars($_POST['vrfname']);
                      $department = htmlspecialchars($_POST['vrfdepartment']);
                      $activity = htmlspecialchars($_POST['vrfactivity']);
@@ -500,8 +502,10 @@
                      $destination = htmlspecialchars($_POST['vrfdestination']);
                      $departure = htmlspecialchars($_POST['vrfdeparture']);
                      $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
-                     
-                     $passenger_count = htmlspecialchars($_POST['vrfpassenger_count']);
+                     if(isset($_POST['vrfpassenger_count']) and !empty($_POST['vrfpassenger_count']))
+                     {
+                        $passenger_count = htmlspecialchars($_POST['vrfpassenger_count']);
+                     }
 
                      // File upload directory
                      $targetDir = "uploads/";
@@ -549,11 +553,11 @@
                            try {
                               // Insert data into database
                               $stmt = $conn->prepare("INSERT INTO vrftb 
-                                 (name, department, activity, purpose, date_filed, budget_no, vehicle, driver, destination, departure, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                                 (id, name, department, activity, purpose, date_filed, budget_no, vehicle, driver, destination, departure, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                               $stmt->bind_param(
-                                 "ssssssssssssss", 
-                                 $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure_date, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
+                                 "sssssssssssssss", 
+                                 $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure_date, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
                               );
                               $stmt->execute();
 
