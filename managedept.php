@@ -12,6 +12,43 @@
         die("Connection failed: " . $conn->connect_error);
     }
     
+    // Initialize message variable
+    $message = '';
+    
+    // Handle Add Request
+    if (isset($_POST['add'])) {
+        $department = $_POST['department'];
+        if (!empty($department)) {
+            $insert_stmt = $conn->prepare("INSERT INTO departmentstb (department) VALUES (?)");
+            $insert_stmt->bind_param("s", $department);
+            if ($insert_stmt->execute()) {
+                $message = "Department '$department' added successfully!";
+                // Refresh the page to show the new record
+                header("Location: ".$_SERVER['PHP_SELF']);
+                exit();
+            } else {
+                $message = "Error adding department: " . $conn->error;
+            }
+            $insert_stmt->close();
+        }
+    }
+    
+    // Handle Delete Request
+    if (isset($_POST['delete'])) {
+        $id = $_POST['id'];
+        $stmt = $conn->prepare("DELETE FROM departmentstb WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        if ($stmt->execute()) {
+            $message = "Department deleted successfully!";
+            // Refresh the page after deletion
+            header("Location: ".$_SERVER['PHP_SELF']);
+            exit();
+        } else {
+            $message = "Error deleting department: " . $conn->error;
+        }
+        $stmt->close();
+    }
+    
     // Fetch records
     $result = $conn->query("SELECT * FROM departmentstb");
 ?>
@@ -64,15 +101,50 @@
             background-color: #dc3545;
             color: white;
         }
+        select {
+            padding: 5px;
+            margin-right: 10px;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .error {
+            background-color: #ffdddd;
+            color: #d8000c;
+        }
+        .success {
+            background-color: #ddffdd;
+            color: #4F8A10;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Manage Accounts</h2>
+        <h2>Manage Departments</h2>
+        
+        <?php if (!empty($message)): ?>
+            <div class="message <?php echo strpos($message, 'Error') === 0 ? 'error' : 'success'; ?>">
+                <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
+        
+        <form method="POST">
+            <label for="department">Add Department:</label>
+            <select name="department" id="department" required>
+                <option value="">Select Department</option>
+                <option value="Preschool">Preschool</option>
+                <option value="Grade School">Grade School</option>
+                <option value="Junior High School">Junior High School</option>
+                <option value="Senior High School">Senior High School</option>
+                <option value="College">College</option>
+            </select>
+            <button type="submit" name="add" class="btn add-btn">Add</button>
+        </form>
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Department</th>
                     <th>Actions</th>
                 </tr>
@@ -80,19 +152,12 @@
             <tbody>
                 <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo $row["id"]; ?></td>
+                    <td><?php echo htmlspecialchars($row["department"]); ?></td>
                     <td>
-                        <select name="department">
-                            <option <?php if ($row["department"] == "Preschool") echo "selected"; ?>>Preschool</option>
-                            <option <?php if ($row["department"] == "Grade School") echo "selected"; ?>>Grade School</option>
-                            <option <?php if ($row["department"] == "Junior High School") echo "selected"; ?>>Junior High School</option>
-                            <option <?php if ($row["department"] == "Senior High School") echo "selected"; ?>>Senior High School</option>
-                            <option <?php if ($row["department"] == "College") echo "selected"; ?>>College</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button type="button" class="btn add-btn">Add</button>
-                        <button type="button" class="btn delete-btn">Delete</button>
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['id']); ?>">
+                            <button type="submit" name="delete" class="btn delete-btn">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 <?php endwhile; ?>
