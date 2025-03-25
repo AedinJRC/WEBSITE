@@ -184,7 +184,7 @@ $result = $conn->query($selectsql);
                                 </select>
                         </td>
                         <td>
-                                <input type="date" name="created_at" value="<?php echo htmlspecialchars($row['created_at']); ?>">
+                                <?php echo htmlspecialchars($row['created_at']); ?>
                         </td>
                         <td>
                                 <button type="submit" name="update" class="btn update-btn">Update</button>
@@ -202,3 +202,5 @@ $result = $conn->query($selectsql);
     </div>
     <?php $conn->close(); ?>
 </body>
+</html>
+
