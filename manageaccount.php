@@ -1,25 +1,60 @@
 <?php
-// Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "vehiclemonitoringdbms";
 
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['employeeid'], $_POST['fname'], $_POST['lname'], $_POST['role'], $_POST['created_at'])) {
+// Initialize message variable
+$message = '';
+
+// Handle Update Request
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     $employeeid = $_POST['employeeid'];
     $fname = $_POST['fname'];
     $lname = $_POST['lname'];
     $role = $_POST['role'];
     $created_at = $_POST['created_at'];
 
-    $sql = "UPDATE usertb SET fname='$fname', lname='$lname', role='$role', created_at='$created_at' WHERE employeeid='$employeeid'";
-    mysqli_query($conn, $sql);
+    $stmt = $conn->prepare("UPDATE usertb SET fname=?, lname=?, role=?, created_at=? WHERE employeeid=?");
+    $stmt->bind_param("sssss", $fname, $lname, $role, $created_at, $employeeid);
+    
+    if ($stmt->execute()) {
+        $message = "Account updated successfully!";
+        header("Location: ".$_SERVER['PHP_SELF']);
+        exit();
+    } else {
+        $message = "Error updating account: " . $conn->error;
+    }
+    $stmt->close();
 }
 
-mysqli_close($conn);
+// Handle Delete Request
+if (isset($_POST['delete'])) {
+    $employeeid = $_POST['employeeid'];
+    $stmt = $conn->prepare("DELETE FROM usertb WHERE employeeid=?");
+    $stmt->bind_param("s", $employeeid);
+    
+    if ($stmt->execute()) {
+        $message = "Account deleted successfully!";
+        header("Location: ".$_SERVER['PHP_SELF']);
+        exit();
+    } else {
+        $message = "Error deleting account: " . $conn->error;
+    }
+    $stmt->close();
+}
+
+// Fetch records
+$selectsql = "SELECT * FROM usertb ORDER BY lname ASC";
+$result = $conn->query($selectsql);
 ?>
 
 <!DOCTYPE html>
@@ -59,18 +94,20 @@ mysqli_close($conn);
             background-color: rgb(156, 7, 7);
             color: white;
         }
-        input[type="file"], input[type="text"], input[type="date"], select {
-            border: none;
-            background: transparent;
-            outline: none;
+        input[type="text"], input[type="date"], select {
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 4px;
+            width: 90%;
         }
         .btn {
             padding: 5px 10px;
             border: none;
             cursor: pointer;
             border-radius: 4px;
+            margin: 2px;
         }
-        .edit-btn {
+        .update-btn {
             background-color: #28a745;
             color: white;
         }
@@ -78,19 +115,38 @@ mysqli_close($conn);
             background-color: #dc3545;
             color: white;
         }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .error {
+            background-color: #ffdddd;
+            color: #d8000c;
+        }
+        .success {
+            background-color: #ddffdd;
+            color: #4F8A10;
+        }
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Manage Accounts</h2>
+        
+        <?php if (!empty($message)): ?>
+            <div class="message <?php echo strpos($message, 'Error') === 0 ? 'error' : 'success'; ?>">
+                <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
+        
         <div class="table-container">
-            <?php
-                include "config.php";
-                $selectsql = "SELECT * FROM usertb ORDER BY lname ASC";
-                $resultsql = $conn->query($selectsql);
-                
-                
-            ?>
             <table>
                 <thead>
                     <tr>
@@ -103,41 +159,46 @@ mysqli_close($conn);
                     </tr>
                 </thead>
                 <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
-                        <td><img src="uploads/" alt=""></td>
-                        <td><input type="text" placeholder="First Name"></td>
-                        <td><input type="text" placeholder="Last Name"></td>
                         <td>
-                            <select>
-                                <option>Admin</option>
-                                <option>User</option>
-                                <option>Accountant</option>
-                                <option>GSO</option>
-                                <option>GSO Director</option>
-                                <option>Immediate Head</option>
-                            </select>
+                            <img src="uploads/<?php echo htmlspecialchars($row['profile_pic'] ?? 'default.jpg'); ?>" 
+                                 alt="Profile" class="profile-img">
                         </td>
-                        <td><input type="date"></td>
                         <td>
-                            <button class="btn edit-btn">Edit</button>
-                            <button class="btn delete-btn">Delete</button>
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="employeeid" value="<?php echo htmlspecialchars($row['employeeid']); ?>">
+                                <input type="text" name="fname" value="<?php echo htmlspecialchars($row['fname']); ?>">
+                        </td>
+                        <td>
+                                <input type="text" name="lname" value="<?php echo htmlspecialchars($row['lname']); ?>">
+                        </td>
+                        <td>
+                                <select name="role">
+                                    <option value="Admin" <?php echo $row['role'] == 'Admin' ? 'selected' : ''; ?>>Admin</option>
+                                    <option value="User" <?php echo $row['role'] == 'User' ? 'selected' : ''; ?>>User</option>
+                                    <option value="Accountant" <?php echo $row['role'] == 'Accountant' ? 'selected' : ''; ?>>Accountant</option>
+                                    <option value="GSO" <?php echo $row['role'] == 'GSO' ? 'selected' : ''; ?>>GSO</option>
+                                    <option value="GSO Director" <?php echo $row['role'] == 'GSO Director' ? 'selected' : ''; ?>>GSO Director</option>
+                                    <option value="Immediate Head" <?php echo $row['role'] == 'Immediate Head' ? 'selected' : ''; ?>>Immediate Head</option>
+                                </select>
+                        </td>
+                        <td>
+                                <input type="date" name="created_at" value="<?php echo htmlspecialchars($row['created_at']); ?>">
+                        </td>
+                        <td>
+                                <button type="submit" name="update" class="btn update-btn">Update</button>
+                            </form>
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="employeeid" value="<?php echo htmlspecialchars($row['employeeid']); ?>">
+                                <button type="submit" name="delete" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this account?')">Delete</button>
+                            </form>
                         </td>
                     </tr>
-                        <?php
-                        while ($row = $resultsql->fetch_assoc()) 
-                        {
-                            echo "<tr>";
-                                echo "<td><img src='uploads/' alt=''></td>";
-                                echo "<td><input type='text' value='" . $row['fname'] . "'></td>";
-                                echo "<td><input type='text' value='" . $row['lname'] . "'></td>";
-                                echo "<td><input type='text' value='" . $row['role'] . "'></td>";
-                                echo "<td><input type='text' value='" . $row['created_at'] . "'></td>";
-                            echo "</tr>";
-                        }
-                        ?>
+                    <?php endwhile; ?>
                 </tbody>
             </table>
         </div>
     </div>
+    <?php $conn->close(); ?>
 </body>
-</html>
