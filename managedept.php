@@ -12,6 +12,18 @@
         die("Connection failed: " . $conn->connect_error);
     }
     
+    // Handle Add Request
+    if (isset($_POST['add'])) {
+        $department = $_POST['department'];
+        $conn->query("INSERT INTO departmentstb (department) VALUES ('$department')");
+    }
+    
+    // Handle Delete Request
+    if (isset($_POST['delete'])) {
+        $id = $_POST['id'];
+        $conn->query("DELETE FROM departmentstb WHERE id = $id");
+    }
+    
     // Fetch records
     $result = $conn->query("SELECT * FROM departmentstb");
 ?>
@@ -68,7 +80,18 @@
 </head>
 <body>
     <div class="container">
-        <h2>Manage Accounts</h2>
+        <h2>Manage Departments</h2>
+        <form method="POST">
+            <label for="department">Add Department:</label>
+            <select name="department">
+                <option>Preschool</option>
+                <option>Grade School</option>
+                <option>Junior High School</option>
+                <option>Senior High School</option>
+                <option>College</option>
+            </select>
+            <button type="submit" name="add" class="btn add-btn">Add</button>
+        </form>
         <table>
             <thead>
                 <tr>
@@ -81,18 +104,12 @@
                 <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
                     <td><?php echo $row["id"]; ?></td>
+                    <td><?php echo $row["department"]; ?></td>
                     <td>
-                        <select name="department">
-                            <option <?php if ($row["department"] == "Preschool") echo "selected"; ?>>Preschool</option>
-                            <option <?php if ($row["department"] == "Grade School") echo "selected"; ?>>Grade School</option>
-                            <option <?php if ($row["department"] == "Junior High School") echo "selected"; ?>>Junior High School</option>
-                            <option <?php if ($row["department"] == "Senior High School") echo "selected"; ?>>Senior High School</option>
-                            <option <?php if ($row["department"] == "College") echo "selected"; ?>>College</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button type="button" class="btn add-btn">Add</button>
-                        <button type="button" class="btn delete-btn">Delete</button>
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                            <button type="submit" name="delete" class="btn delete-btn">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 <?php endwhile; ?>
