@@ -106,59 +106,69 @@
                </div>
             </ul>
          </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
-               <img src="PNG/Vehicle.png" alt="Vehicle">
-               <span>Vehicles</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
-                  <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                  <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
-               <img src="PNG/Pie.png" alt="Requests">
-               <span>Requests</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?papp=a"><span>Pending Approval</span></a></li>
-                  <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                  <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
-               <img src="PNG/Account.png" alt="Report">
-               <span>Accounts</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
-                  <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
-               <img src="PNG/File.png" alt="Report">
-               <span>Report</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-               </div>
-            </ul>
-         </li>
+         <?php
+            if ($_SESSION['role'] == 'Admin' or $_SESSION['role'] == 'Accountant') {
+               ?>
+                  <li>
+                     <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                        <img src="PNG/Pie.png" alt="Requests">
+                        <span>Requests</span>
+                        <img src="PNG/Down.png" alt="DropDown">
+                     </button>
+                     <ul class="dropdown-container">
+                        <div>
+                           <li><a href="GSO.php?papp=a"><span>Pending Approval</span></a></li>
+                           <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                           <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                        </div>
+                     </ul>
+                  </li>
+               <?php
+            }
+            if ($_SESSION['role'] == 'Admin') {
+               ?>
+                  <li>
+                     <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                        <img src="PNG/Vehicle.png" alt="Vehicle">
+                        <span>Vehicles</span>
+                        <img src="PNG/Down.png" alt="DropDown">
+                     </button>
+                     <ul class="dropdown-container">
+                        <div>
+                           <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                           <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                           <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                        </div>
+                     </ul>
+                  </li>
+                  <li>
+                     <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                        <img src="PNG/Account.png" alt="Report">
+                        <span>Accounts</span>
+                        <img src="PNG/Down.png" alt="DropDown">
+                     </button>
+                     <ul class="dropdown-container">
+                        <div>
+                           <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                           <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                        </div>
+                     </ul>
+                  </li>
+                  <li>
+                     <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                        <img src="PNG/File.png" alt="Report">
+                        <span>Report</span>
+                        <img src="PNG/Down.png" alt="DropDown">
+                     </button>
+                     <ul class="dropdown-container">
+                        <div>
+                           <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        </div>
+                     </ul>
+                  </li>
+               <?php
+            }
+         ?>
       </ul>
       <div id="logout">
          <img id=profile src="uploads/<?php echo $_SESSION['ppicture']; ?>" alt="<?php echo $_SESSION['ppicture']; ?>">
@@ -289,10 +299,14 @@
                      <div class="input-container">
                         <select name="vrfvehicle" id="vehicleUsed" required>
                            <option value="" disabled selected></option>
-                           <option value="Van">Van</option>
-                           <option value="Bus">Bus</option>
-                           <option value="Car">Car</option>
-                           <option value="Truck">Truck</option>
+                           <?php
+                              include 'config.php';
+                              $selectvehicle = "SELECT * FROM carstb ORDER BY plate_number ASC";
+                              $resultvehicle = $conn->query($selectvehicle);
+                              while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                                 echo "<option value='".$rowvehicle['plate_number']."'>".$rowvehicle['plate_number']."</option>";
+                              }
+                           ?>
                         </select>
                         <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                      </div>
