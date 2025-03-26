@@ -1,5 +1,22 @@
-<?php
+<?php 
 include 'config.php'; 
+
+// Handle Delete Request
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])) {
+    $plate_number = $_POST['delete_plate_number'];
+    $delete_query = "DELETE FROM carstb WHERE plate_number = ?";
+    
+    $stmt = $conn->prepare($delete_query);
+    $stmt->bind_param("s", $plate_number);
+    
+    if ($stmt->execute()) {
+        echo "<script>alert('Car deleted successfully!'); window.location.href='';</script>";
+    } else {
+        echo "<script>alert('Failed to delete car.');</script>";
+    }
+    
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -7,134 +24,250 @@ include 'config.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>Car List</title>
     <style>
-       body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 10px;
-        text-align: center;
-    }
+         body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
 
-    :root {
-        --maroonColor: #80050d;
-        --yellowColor: #efb954;
-    }
+        :root {
+            --maroonColor: #80050d;
+            --yellowColor: #efb954;
+            --primaryColor: #007bff;
+            --hoverColor: #0056b3;
+        }
 
-    h2 {
-        color: var(--maroonColor);
-    }
+        h2 {
+            color: var(--maroonColor);
+            margin-bottom: 15px;
+        }
 
-    .table-section {
-        background: #fff;
-        padding: 15px;
-        margin: 10px auto;
-        width: 95%;
-        max-width: 1200px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 15px;
-        overflow: hidden;
-    }
+        .table-section {
+            background: #fff;
+            padding: 20px;
+            margin: 10px auto;
+            width: 95%;
+            max-width: 1200px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
 
-    .table-container {
-        max-height: 400px;
-        overflow-x: auto;
-        overflow-y: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-        min-width: 600px;
-    }
-
-    table, th, td {
-        border: 1px solid #ccc;
-    }
-
-    th, td {
-        padding: 10px;
-        text-align: center;
-        white-space: nowrap;
-        font-size: 16px;
-    }
-
-    th {
-        background-color: var(--maroonColor);
-        color: white;
-        position: sticky;
-        top: 0;
-        z-index: 2;
-    }
-
-    td img {
-        border-radius: 5px;
-        cursor: pointer;
-        transition: transform 0.2s;
-        max-width: 80px;
-        height: auto;
-    }
-
-    td img:hover {
-        transform: scale(1.1);
-    }
-
-    /* Responsive Table */
-    @media (max-width: 768px) {
         .table-container {
+            max-height: 400px;
             overflow-x: auto;
-            max-width: 100%;
+            overflow-y: auto;
         }
 
         table {
-            min-width: 100%;
-            font-size: 14px;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            min-width: 600px;
         }
 
         th, td {
-            padding: 8px;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--maroonColor);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
 
         td img {
-            max-width: 60px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            max-width: 80px;
+            height: auto;
         }
-    }
 
-    /* Modal Styles */
+        td img:hover {
+            transform: scale(1.1);
+        }
+
+    
+
+    /* Modal Styling */
     .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 15px;
-    }
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
 
-    .modal-content {
-        width: 90%;
-        max-width: 500px;
-        max-height: 80vh;
-        border-radius: 8px;
-        overflow: hidden;
-    }
+        .modal .content {
+            background: white;
+            width: 90%;
+            max-width: 45vh;
+            padding: 2vh;
+            border-radius: 1vh;
+            box-shadow: 0 0.6vh 1.2vh rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
 
-    .close {
-        position: absolute;
-        top: 10px;
-        right: 25px;
-        color: white;
-        font-size: 30px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+        .modal {
+            position: absolute;
+            top: 1vh;
+            right: 1.5vh;
+            font-size: 2vh;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .close {
+            position: absolute;
+            top: 1vh;
+            right: 1.5vh;
+            font-size: 4vh;
+            cursor: pointer;
+            color: var(--maroonColor);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1vh;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.8vh;
+            border: 0.1vh solid #ccc;
+            border-radius: 0.5vh;
+            font-size: 1.4vh;
+        }
+
+        input {
+            padding: 0.8vh;
+            border: 0.1vh solid #ccc;
+            border-radius: 0.5vh;
+            font-size: 1.4vh;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 1.3vh;
+            margin-bottom: 0.3vh;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 2vh;
+        }
+
+        .row div {
+            flex: 1;
+        }
+
+        .column {
+            width: 48%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5vh;
+        }
+        
+        .save-btn {
+            margin-top: 1.5vh;
+            background: var(--maroonColor);
+            color: white;
+            padding: 1.2vh;
+            font-size: 1.6vh;
+            border: solid 0.2vh var(--maroonColor);
+            border-radius: 0.5vh;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background: white;
+            color: var(--maroonColor);
+            border: solid 0.2vh var(--maroonColor);
+            border-radius: 1.5vh;
+            font-weight: bold;
+        }
+
+        /* Image Modal */
+        .modal-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .modal-content-wrapper {
+            position: relative;
+            max-width: 70%;
+            max-height: 70%;
+            margin: auto;
+            z-index: 1001;
+        }
+
+        .modal-content {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .action-buttons {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center;
+    gap: 5px; /* Spacing between buttons */
+}
+
+.edit-btn, .delete-btn {
+    cursor: pointer;
+    border: none;
+    padding: 8px 12px;
+    font-size: 17px;
+    border-radius: 5px;
+    transition: transform 0.2s ease-in-out;
+    background: none;  /* Ensure no background color */
+}
+
+.edit-btn {
+    color: var(--yellowColor);
+}
+
+.delete-btn {
+    color: var(--maroonColor);
+}
+
+/* Slightly increase the size when hovered */
+.edit-btn:hover, .delete-btn:hover {
+    transform: scale(1.7);
+}
     </style>
 </head>
 <body>
@@ -150,54 +283,193 @@ include 'config.php';
                     <th>Model</th>
                     <th>Capacity</th>
                     <th>Body Type</th>
-                    <th>Transmission Type</th>
+                    <th>Transmission</th>
                     <th>Registration</th>
+                    <th>Action</th>
                 </tr>
-                <?php
-                $result = $conn->query("SELECT * FROM cars");
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td><img src='" . htmlspecialchars($row['image']) . "' onclick='openModal(this.src)'></td>";
-                        echo "<td>" . htmlspecialchars($row['plate_number']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['color']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['brand']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['model']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['capacity']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['body_type']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['transmission']) . "</td>";
-                        echo "<td>" . date("F j, Y", strtotime($row['registration_from'])) . " to " . date("F j, Y", strtotime($row['registration_to'])) . "</td>";
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='9'>No cars available.</td></tr>";
-                }
-                ?>
+                <?php 
+if ($conn) { // Check if connection is successful
+    $result = $conn->query("SELECT * FROM carstb");
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td><img src='" . htmlspecialchars($row['image']) . "' alt='Car Image' onclick='openImageModal(this.src)'></td>";
+            echo "<td>" . htmlspecialchars($row['plate_number']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['color']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['brand']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['model']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['capacity']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['body_type']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['transmission']) . "</td>";
+            echo "<td>" . date("F j, Y", strtotime($row['registration_from'])) . " to " . date("F j, Y", strtotime($row['registration_to'])) . "</td>";
+            
+            echo "<td class='action-buttons'>
+    <span class='edit-btn' onclick='openEditModal(" . json_encode($row) . ")'>&#9998;</span>
+    <form method='POST' action='' onsubmit='return confirmDelete()'>
+        <input type='hidden' name='delete_plate_number' value='" . htmlspecialchars($row['plate_number']) . "'>
+        <button type='submit' class='delete-btn'><i class='fas fa-trash'></i></button>
+    </form>
+</td>";
+                            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='10'>No cars available.</td></tr>";
+    }
+} else {
+    echo "<tr><td colspan='10'>Database connection failed.</td></tr>";
+}
+?>
             </table>
         </div>
     </section>
 
-    <div id="imageModal" class="modal" onclick="closeModal()">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImg">
+ <!-- Edit Modal -->
+ <div id="editModal" class="modal">  
+        <div class="content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h3>Edit Car Information</h3>
+            <form action="car_info_update.php" method="POST">
+                <input type="hidden" id="plate_number" name="plate_number">
+
+                <div class="form-group">
+            <label>Car Image:</label>
+            <img id="editCarImage" src="" alt="Car Image" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 5px;">
+        </div>
+                
+                <div class="row">
+        <!-- Left Column -->
+        <div class="column">
+            <div class="form-group">
+                <label for="color">Color:</label>
+                <input type="text" id="color" name="color" placeholder="Enter color">
+            </div>
+
+            <div class="form-group">
+                <label for="brand">Brand:</label>
+                <input type="text" id="brand" name="brand" placeholder="Enter brand">
+            </div>
+
+            <div class="form-group">
+                <label for="model">Model:</label>
+                <input type="text" id="model" name="model" placeholder="Enter model">
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="column">
+            <div class="form-group">
+                <label for="capacity">Capacity:</label>
+                <input type="text" id="capacity" name="capacity" placeholder="Enter capacity">
+            </div>
+
+            <div class="form-group">
+                <label for="body_type">Body Type:</label>
+                <select id="body_type" name="body_type">
+                    <option value="Sedan">Sedan</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Truck">Truck</option>
+                    <option value="Van">Van</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="transmission">Transmission:</label>
+                <select id="transmission" name="transmission">
+                    <option value="Automatic">Automatic</option>
+                    <option value="Manual">Manual</option>
+                </select>
+            </div>
+        </div>
     </div>
 
+    <div class="form-group">
+        <label for="registration_from">Registration From:</label>
+        <input type="date" id="registration_from" name="registration_from">
+    </div>
+
+    <div class="form-group">
+        <label for="registration_to">Registration To:</label>
+        <input type="date" id="registration_to" name="registration_to">
+    </div>
+
+    <button type="submit" class="save-btn">Save Changes</button>
+</form>
+        </div>
+    </div>
+
+ <!-- Image Modal -->
+<div id="imageModal" class="modal">
+    <div class="modal-container" onclick="closeImageModal()"> 
+        <div class="modal-content-wrapper" onclick="event.stopPropagation();">
+            <span class="close" onclick="closeImageModal()">&times;</span>
+            <img id="modalImage" class="modal-content">
+        </div>
+    </div>
+</div>
+
     <script>
-        window.onload = function() {
-            document.getElementById("imageModal").style.display = "none";
-        };
+function openImageModal(imgSrc) {
+    let modal = document.getElementById("imageModal");
+    let modalImg = document.getElementById("modalImage");
 
-        function openModal(src) {
-            let modal = document.getElementById("imageModal");
-            let modalImg = document.getElementById("modalImg");
+    modalImg.src = imgSrc;
+    modal.style.display = "flex";
+}
 
-            modalImg.src = src;
-            modal.style.display = "flex";
-        }
+// Function to close the image modal
+function closeImageModal() {
+    document.getElementById("imageModal").style.display = "none";
+}
 
-        function closeModal() {
-            document.getElementById("imageModal").style.display = "none";
+// Function to open the edit modal
+function openEditModal(data) {
+    let modal = document.getElementById("editModal");
+
+    document.getElementById("plate_number").value = data.plate_number || "";
+    document.getElementById("color").value = data.color || "";
+    document.getElementById("brand").value = data.brand || "";
+    document.getElementById("model").value = data.model || "";
+    document.getElementById("capacity").value = data.capacity || "";
+
+    // Set selected value for Body Type
+    document.getElementById("body_type").value = data.body_type || "Sedan";
+
+    // Set selected value for Transmission
+    document.getElementById("transmission").value = data.transmission || "Automatic";
+     // Populate the registration dates
+     document.getElementById("registration_from").value = data.registration_from || "";
+    document.getElementById("registration_to").value = data.registration_to || "";
+
+    document.getElementById("editCarImage").src = data.image || "";
+
+    modal.style.display = "flex";
+}
+
+// Function to close modals when clicking outside
+window.onclick = function(event) {
+    let imageModal = document.getElementById("imageModal");
+    let editModal = document.getElementById("editModal");
+
+    if (event.target === imageModal) {
+        closeImageModal();
+    }
+    
+    if (event.target === editModal) {
+        closeEditModal();
+    }
+};
+
+// Function to close the edit modal
+function closeEditModal() {
+    let modal = document.getElementById("editModal");
+    modal.style.display = "none";
+    document.querySelector("#editModal form").reset();
+}
+
+function confirmDelete() {
+            return confirm("Are you sure you want to delete this car?");
         }
     </script>
+
 </body>
 </html>
