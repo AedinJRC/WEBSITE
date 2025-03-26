@@ -661,7 +661,7 @@
    function pendingApproval()
    {
       ?>
-         <input type="text" id="search" placeholder="Search reservation">
+         <input class="search" type="text" id="search" placeholder="Search reservation">
          <div class="maintitle">
             <h1>Pending Approval</h1>
             <p>New</p>
@@ -670,18 +670,71 @@
             <span class="time">1 hour ago</span>
             <div class="circle"> </div>
             <div class="info-heading">
-               <img src="PNG/Maynard.png" alt="Profile">
+               <img src="uploads/Maynard.png" alt="Profile">
                <span class="info-heading-text">
                   <span class="name">Maynard Rodriguez</span>
                   <span class="department">College Department</span>
                   <span class="date">Date: 12/04/2024</span>
                </span>
             </div>
-            <p class="info-details">I am writing to confirm the transportation arrangements for the upcoming activity, [ACTIVITY], organized by the [DEPARTMENT]. The trip is scheduled for departure on [DATE / TIME DEPARTURE] to [DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS)], with a total of [TOTAL NO. OF PASSENGER/S] passengers, including [NAME OF PASSENGER/S]. The vehicle assigned for this trip is [VEHICLE TO BE USED], and the designated driver is [DRIVER]. This request is under Budget Number [BUDGET NO], with the transportation cost covered accordingly. The necessary form was filled out on [DATE FILLED].</p>
+            <div class="info-details">
+               <div>
+                  <div><div class="title">Activity:</div><div class="dikoalam">College Recollection</div></div>
+                  <div><div class="title">Purpose:</div><div class="dikoalam">School Related</div></div>
+                  <div><div class="title">Budget No.:</div><div class="dikoalam">05102</div></div>
+               </div>
+               <div>
+                  <div><div class="title">Departure Date:</div><div class="dikoalam">January 11, 2023</div></div>
+                  <div><div class="title">Departure Time:</div><div class="dikoalam">8:00AM</div></div>
+                  <div><div class="title">Destination:</div><div class="dikoalam">Tagaytay</div></div>
+               </div>
+               <div>
+                  <div><div class="title">Driver:</div><div class="dikoalam">Sir Tani</div></div>
+                  <div><div class="title">Vehicle to be used:</div><div class="dikoalam">Van</div></div>
+                  <div><div class="title">Passenger count:</div><div class="dikoalam">80</div></div>
+               </div>
+            </div>
          </div>
-         <div class="info-box">
-            
-         </div>
+         <?php
+            include 'config.php';
+            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Pending' ORDER BY id DESC";
+            $resultvrf = $conn->query($selectvrf);
+            if ($resultvrf->num_rows > 0) {
+               while($rowvrf = $resultvrf->fetch_assoc()) {
+                  ?>
+                     <div class="info-box">
+                        <span class="time">1 hour ago</span>
+                        <div class="circle"> </div>
+                        <div class="info-heading">
+                           <img src="uploads/Maynard.php alt="Profile">
+                           <span class="info-heading-text">
+                              <span class="name">Maynard Rodriguez</span>
+                              <span class="department">College Department</span>
+                              <span class="date">Date: 12/04/2024</span>
+                           </span>
+                        </div>
+                        <div class="info-details">
+                           <div>
+                              <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
+                              <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
+                              <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
+                           </div>
+                           <div>
+                              <div><div class="title">Departure Date:</div><div class="dikoalam"><?php  ?></div></div>
+                              <div><div class="title">Departure Time:</div><div class="dikoalam">8:00AM</div></div>
+                              <div><div class="title">Destination:</div><div class="dikoalam">Tagaytay</div></div>
+                           </div>
+                           <div>
+                              <div><div class="title">Driver:</div><div class="dikoalam">Sir Tani</div></div>
+                              <div><div class="title">Vehicle to be used:</div><div class="dikoalam">Van</div></div>
+                              <div><div class="title">Passenger count:</div><div class="dikoalam">80</div></div>
+                           </div>
+                        </div>
+                     </div>
+                  <?php
+               }
+            }
+         ?>
       <?php
    }
    function reservationApproved()
@@ -704,15 +757,11 @@
    }
    function manageAccount()
    {
-      ?>
-         
-      <?php
+      include 'manageaccount.php';
    }
    function manageDepartment()
    {
-      ?>
-         
-      <?php
+      include 'managedept.php';
    }
    function summaryReport()
    {
