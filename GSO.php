@@ -107,7 +107,7 @@
             </ul>
          </li>
          <?php
-            if ($_SESSION['role'] == 'Admin' or $_SESSION['role'] == 'Accountant') {
+            if ($_SESSION['role'] != 'User') {
                ?>
                   <li>
                      <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
@@ -239,8 +239,17 @@
                         $selectvrfid = "SELECT * FROM vrftb ORDER BY id DESC LIMIT 1";
                         $resultvrfid = $conn->query($selectvrfid);
                         if ($resultvrfid->num_rows > 0) {
-                           while($rowvrfid = $resultvrfid->fetch_assoc()) {
-                              $vrfid = $rowvrfid['id'];
+                           $rowvrfid = $resultvrfid->fetch_assoc();
+                           if(substr($rowvrfid['id'], 0, 9) == date("Y-md"))
+                           {
+                              if (strlen((string) (substr($rowvrfid['id'], -2) + 1)) == 1)
+                                 $vrfid =  '0'.substr($rowvrfid['id'], -2)+1;
+                              else
+                                 $vrfid =  substr($rowvrfid['id'], -2)+1;
+                           }
+                           else
+                           {
+                              $vrfid = "01";
                            }
                         }
                         else
@@ -382,7 +391,7 @@
 
                            const input = document.createElement("input");
                            input.type = "text";
-                           input.name = `vrfpassenger${passengerCount}`;
+                           input.name = "vrfpassenger_name[]";
                            input.required = true;
 
                            // Add focus event to show placeholder
@@ -503,7 +512,8 @@
                      $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture'], 
                      $_POST['vrftransportation_cost']) 
                      && isset($_FILES["vrfletter_attachment"]) // Letter attachment is required
-                  ) {
+                     )   
+                  {
                      $id = htmlspecialchars($_POST['vrfid']);
                      $name = htmlspecialchars($_POST['vrfname']);
                      $department = htmlspecialchars($_POST['vrfdepartment']);
@@ -571,8 +581,31 @@
                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                               $stmt->bind_param(
                                  "sssssssssssssss", 
-                                 $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure_date, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
+                                 $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
                               );
+                              $stmt->execute();
+                              // Insert Passengers in passengertb
+                              if (!empty($_POST['vrfpassenger_name']) && !empty($_POST['vrfid'])) {
+                                 $stmt = $conn->prepare("INSERT INTO passengerstb (vrfid, passenger_name) VALUES (?, ?)");
+                                 foreach ($_POST['vrfpassenger_name'] as $passenger_name) {
+                                    $stmt->bind_param("ss", $_POST['vrfid'], $passenger_name); // Fix both bindings
+                                    $stmt->execute();
+                                 }
+                              }
+                              // Select the count of passengers for the given vrfid
+                              $countpassenger = "SELECT COUNT(*) AS passenger_count FROM passengerstb WHERE vrfid = ?";
+                              $stmt = $conn->prepare($countpassenger);
+                              $stmt->bind_param("s", $id);
+                              $stmt->execute();
+                              $resultcountpassenger = $stmt->get_result();
+                              $rowcountpassenger = $resultcountpassenger->fetch_assoc();
+
+                              // Store passenger count
+                              $passenger_count = $rowcountpassenger['passenger_count'];
+
+                              // Update the vrftb table with the passenger count
+                              $stmt = $conn->prepare("UPDATE vrftb SET passenger_count = ? WHERE id = ?");
+                              $stmt->bind_param("is", $passenger_count, $id);
                               $stmt->execute();
 
                               // Success message and redirection
@@ -592,7 +625,9 @@
                                  window.history.back();
                                  </script>";
                      }
-                  } else {
+                  } 
+                  else 
+                  {
                      echo "<script>
                               alert('Please fill in all required fields.');
                               window.history.back();
