@@ -18,6 +18,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>GSO</title>
    <link rel="stylesheet" href="styles.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
    <style>
       <?php
          if(isset($_GET["papp"]) and !empty($_GET["papp"]))
@@ -36,9 +37,25 @@
          {
             ?> #vehicle { background-color: white; font-weight: bold;} <?php
          }
-         elseif(isset($_GET["dveh"]) and !empty($_GET["dveh"]))
+         elseif(isset($_GET["mveh"]) and !empty($_GET["mveh"]))
          {
-            ?> #vehicle { background-color: white; font-weight: bold;} <?php
+            ?> 
+               #vehicle 
+               { 
+                  background-color: white; font-weight: bold;
+               } 
+               .delete-btnplt 
+               {
+                  i 
+                  {
+                     color: #80050d;
+                  }
+               }
+               label 
+               {
+                  color: #333333;
+               }
+            <?php
          }
          elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
          {
@@ -656,7 +673,13 @@
    }
    function manageVehicle()
    {
-      include 'car_info.php';
+      ?>
+         <div class="gawanimatley" style="all:unset;">
+            <?php
+               include 'car_info.php';
+            ?>
+         </div>
+      <?php
    }
    function pendingApproval()
    {
@@ -677,7 +700,7 @@
                   <span class="date">Date: 12/04/2024</span>
                </span>
             </div>
-            <p class="info-details">I am writing to confirm the transportation arrangements for the upcoming activity, [ACTIVITY], organized by the [DEPARTMENT]. The trip is scheduled for departure on [DATE / TIME DEPARTURE] to [DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS)], with a total of [TOTAL NO. OF PASSENGER/S] passengers, including [NAME OF PASSENGER/S]. The vehicle assigned for this trip is [VEHICLE TO BE USED], and the designated driver is [DRIVER]. This request is under Budget Number [BUDGET NO], with the transportation cost covered accordingly. The necessary form was filled out on [DATE FILLED].</p>
+            <p class="info-details"></p>
          </div>
          <div class="info-box">
             

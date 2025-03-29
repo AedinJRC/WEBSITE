@@ -27,11 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>Car List</title>
     <style>
-         body {
+      body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             text-align: center;
         }
 
@@ -44,22 +44,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
 
         h2 {
             color: var(--maroonColor);
-            margin-bottom: 15px;
+            margin-bottom: 2vh;
+            font-size: 3.5vh;
         }
 
         .table-section {
             background: #fff;
-            padding: 20px;
-            margin: 10px auto;
-            width: 95%;
-            max-width: 1200px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
+            padding: 2.5vh;
+            margin: 1.5vh auto;
+            width: 96%;
+            max-width: 140vh;
+            box-shadow: 0 0.8vh 1.8vh rgba(0, 0, 0, 0.1);
+            border-radius: 2vh;
             overflow: hidden;
         }
 
         .table-container {
-            max-height: 400px;
+            max-height: 55vh;
             overflow-x: auto;
             overflow-y: auto;
         }
@@ -67,15 +68,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            min-width: 600px;
+            margin-top: 1.2vh;
+            min-width: 90vh;
         }
 
         th, td {
-            padding: 12px;
+            padding: 2vh;
             text-align: center;
-            font-size: 16px;
-            border-bottom: 1px solid #ddd;
+            font-size: 2.5vh;
+            border-bottom: 0.25vh solid #ddd;
         }
 
         th {
@@ -91,10 +92,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
         }
 
         td img {
-            border-radius: 5px;
+            border-radius: 0.8vh;
             cursor: pointer;
             transition: transform 0.2s ease-in-out;
-            max-width: 80px;
+            max-width: 12vh;
             height: auto;
         }
 
@@ -102,10 +103,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
             transform: scale(1.1);
         }
 
+        .action {
+            font-size: 2.5vh;
+            padding: 2vh;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            align-items: center;
+            gap: 0.8vh; /* Spacing between buttons */
+        }
+
+        .edit-btn, .delete-btnplt {
+            cursor: pointer;
+            border: none;
+            padding: 1.8vh 2.5vh;
+            font-size: 2.5vh;
+            border-radius: 0.8vh;
+            transition: transform 0.2s ease-in-out;
+            background: none;  /* Ensure no background color */
+        }
+
+        .edit-btn {
+            color: var(--yellowColor);
+        }
+
+        .delete-btnplt {
+            color: var(--maroonColor);
+        }
+
+        /* Slightly increase the size when hovered */
+        .edit-btn:hover, .delete-btnplt:hover {
+            transform: scale(1.15);
+        }
     
+        .sidebar-expanded .table-section {
+    width: 85%; /* Reduce table width */
+    transition: width 0.3s ease-in-out;
+}
 
     /* Modal Styling */
-    .modal {
+      .modal {
             display: none;
             position: fixed;
             z-index: 10;
@@ -120,29 +159,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
 
         .modal .content {
             background: white;
-            width: 90%;
-            max-width: 45vh;
-            padding: 2vh;
-            border-radius: 1vh;
-            box-shadow: 0 0.6vh 1.2vh rgba(0, 0, 0, 0.2);
+            width: 95%;
+            max-width: 50vh;
+            padding: 2.5vh;
+            border-radius: 1.2vh;
+            box-shadow: 0 0.8vh 1.5vh rgba(0, 0, 0, 0.2);
             position: relative;
             animation: fadeIn 0.3s ease-in-out;
         }
 
         .modal {
             position: absolute;
-            top: 1vh;
-            right: 1.5vh;
-            font-size: 2vh;
+            top: 1.2vh;
+            right: 2vh;
+            font-size: 2.2vh;
             cursor: pointer;
             color: #555;
         }
 
         .close {
             position: absolute;
-            top: 1vh;
-            right: 1.5vh;
-            font-size: 4vh;
+            top: 1.2vh;
+            right: 2vh;
+            font-size: 4.5vh;
             cursor: pointer;
             color: var(--maroonColor);
         }
@@ -150,7 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
         form {
             display: flex;
             flex-direction: column;
-            gap: 1vh;
+            gap: 1.5vh;
         }
 
         .form-group {
@@ -160,29 +199,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
 
         select {
             width: 100%;
-            padding: 0.8vh;
-            border: 0.1vh solid #ccc;
-            border-radius: 0.5vh;
-            font-size: 1.4vh;
+            padding: 1vh;
+            border: 0.12vh solid #ccc;
+            border-radius: 0.6vh;
+            font-size: 1.6vh;
         }
 
         input {
-            padding: 0.8vh;
-            border: 0.1vh solid #ccc;
-            border-radius: 0.5vh;
-            font-size: 1.4vh;
+            padding: 1vh;
+            border: 0.12vh solid #ccc;
+            border-radius: 0.6vh;
+            font-size: 1.6vh;
         }
 
         label {
             font-weight: bold;
-            font-size: 1.3vh;
-            margin-bottom: 0.3vh;
+            font-size: 1.5vh;
+            margin-bottom: 0.4vh;
         }
 
         .row {
             display: flex;
             justify-content: space-between;
-            gap: 2vh;
+            gap: 2.2vh;
         }
 
         .row div {
@@ -190,20 +229,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
         }
 
         .column {
-            width: 48%;
+            width: 40%;
             display: flex;
             flex-direction: column;
-            gap: 1.5vh;
+            gap: 1.8vh;
         }
         
         .save-btn {
-            margin-top: 1.5vh;
+            margin-top: 1.8vh;
             background: var(--maroonColor);
             color: white;
-            padding: 1.2vh;
-            font-size: 1.6vh;
-            border: solid 0.2vh var(--maroonColor);
-            border-radius: 0.5vh;
+            padding: 1.5vh;
+            font-size: 1.8vh;
+            border: solid 0.25vh var(--maroonColor);
+            border-radius: 0.6vh;
             cursor: pointer;
             transition: background 0.3s ease;
         }
@@ -211,8 +250,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
         .save-btn:hover {
             background: white;
             color: var(--maroonColor);
-            border: solid 0.2vh var(--maroonColor);
-            border-radius: 1.5vh;
+            border: solid 0.25vh var(--maroonColor);
+            border-radius: 1.8vh;
             font-weight: bold;
         }
 
@@ -239,35 +278,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
             border-radius: 10px;
         }
 
-        .action-buttons {
-    display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    align-items: center;
-    gap: 5px; /* Spacing between buttons */
-}
-
-.edit-btn, .delete-btn {
-    cursor: pointer;
-    border: none;
-    padding: 8px 12px;
-    font-size: 17px;
-    border-radius: 5px;
-    transition: transform 0.2s ease-in-out;
-    background: none;  /* Ensure no background color */
-}
-
-.edit-btn {
-    color: var(--yellowColor);
-}
-
-.delete-btn {
-    color: var(--maroonColor);
-}
-
-/* Slightly increase the size when hovered */
-.edit-btn:hover, .delete-btn:hover {
-    transform: scale(1.7);
-}
+    
     </style>
 </head>
 <body>
@@ -307,7 +318,7 @@ if ($conn) { // Check if connection is successful
     <span class='edit-btn' onclick='openEditModal(" . json_encode($row) . ")'>&#9998;</span>
     <form method='POST' action='' onsubmit='return confirmDelete()'>
         <input type='hidden' name='delete_plate_number' value='" . htmlspecialchars($row['plate_number']) . "'>
-        <button type='submit' class='delete-btn'><i class='fas fa-trash'></i></button>
+        <button type='submit' class='delete-btnplt'><i style'color:#80050d;' class='fas fa-trash'></i></button>
     </form>
 </td>";
                             echo "</tr>";
@@ -469,6 +480,22 @@ function closeEditModal() {
 function confirmDelete() {
             return confirm("Are you sure you want to delete this car?");
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    let sidebar = document.getElementById("sidebar"); // Sidebar element
+    let tableSection = document.querySelector(".table-section");
+
+    document.getElementById("sidebarToggle").addEventListener("click", function () {
+        sidebar.classList.toggle("sidebar-expanded"); // Toggle sidebar class
+
+        if (sidebar.classList.contains("sidebar-expanded")) {
+            tableSection.style.width = "85%"; // Reduce table width
+        } else {
+            tableSection.style.width = "96%"; // Reset table width
+        }
+    });
+});
+
     </script>
 
 </body>

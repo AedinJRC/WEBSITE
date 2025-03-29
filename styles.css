@@ -15,6 +15,7 @@
 }
 body
 {
+   padding: 0;
    font-family: 'Roboto', sans-serif;
    background-color: white;
    display: flex;
@@ -35,7 +36,6 @@ main
       form.vehicle-reservation-form
       {
          padding: 1.5vw;
-         padding-bottom: ;
          width: 60vw;
          height: 44vw;
          border: 0.3vw solid #555555;
@@ -135,7 +135,6 @@ main
                      border: 0;
                      cursor: pointer;
                      text-align: left;
-                     color:#444;
                      font-weight: bold;
                      font-size: 1.8vw;
                      font-family: 'Quicksand';
@@ -345,13 +344,13 @@ main
          }
       }
    }
-   input
+   input.search
    {
       font-size: 2.4vh;
       padding: 0.6vh 1.5vh;
       border-radius: 3vh;
    }
-   input::placeholder 
+   input.search::placeholder 
    {
       font-style: italic;
    }
