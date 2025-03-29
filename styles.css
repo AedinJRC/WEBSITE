@@ -411,7 +411,7 @@ main
       }
       span.time
       {
-         position: fixed;
+         position: absolute;
          right: 130px;
          font-size: 0.95vw;
          letter-spacing: 2px;
@@ -419,19 +419,36 @@ main
       }
       div.circle
       {
-         position: fixed;
+         position: absolute;
          right: 105px;
          height: 0.95vw;
          width: 0.95vw;
          border-radius: 100%;
          background-color: var(--yellow);
       }
-      p.info-details 
+      div.info-details 
       {
-         padding: 20px 35px 0 35px;
+         padding: 1vw 3.5vw 0 3.5vw;
          font-size: 0.95vw;
-         text-align: justify;
          line-height: 1.2vw;
+         display: flex;
+         flex-direction: row;
+         div 
+         {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            div 
+            {
+               display: flex;
+               flex-direction: row;
+               width: auto;
+               div.title
+               {
+                  font-weight: bold;
+               }
+            }
+         }
       }
    }
 }
