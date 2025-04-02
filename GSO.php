@@ -696,33 +696,6 @@
          </div>
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
-         <div class="info-box">
-            <div class="info-heading">
-               <img src="uploads/Maynard.png" alt="Profile">
-               <span class="info-heading-text">
-                  <span class="name">Maynard Rodriguez</span>
-                  <span class="department">n Department</span>
-                  <span class="date">Date: 12/04/2024</span>
-               </span>
-            </div>
-            <div class="info-details">
-               <div>
-                  <div><div class="title">Activity:</div><div class="dikoalam">College Recollection</div></div>
-                  <div><div class="title">Purpose:</div><div class="dikoalam">School Related</div></div>
-                  <div><div class="title">Budget No.:</div><div class="dikoalam">05102</div></div>
-               </div>
-               <div>
-                  <div><div class="title">Departure Date:</div><div class="dikoalam">January 11, 2023</div></div>
-                  <div><div class="title">Departure Time:</div><div class="dikoalam">8:00AM</div></div>
-                  <div><div class="title">Destination:</div><div class="dikoalam">Tagaytay</div></div>
-               </div>
-               <div>
-                  <div><div class="title">Driver:</div><div class="dikoalam">Sir Tani</div></div>
-                  <div><div class="title">Vehicle to be used:</div><div class="dikoalam">Van</div></div>
-                  <div><div class="title">Passenger count:</div><div class="dikoalam">80</div></div>
-               </div>
-            </div>
-         </div>
          <?php
             include 'config.php';
             $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status!='Approved' ORDER BY date_filed DESC, id DESC";
@@ -730,15 +703,25 @@
             if ($resultvrf->num_rows > 0) {
                while($rowvrf = $resultvrf->fetch_assoc()) {
                   ?>
-                     <div class="info-box">
+                     <a href="GSO.php?vres=a&vrfid=<?php echo $rowvrf['id']; ?>" class="link" style="text-decoration:none;">
+                  <?php
+                  if($rowvrf['gsoassistant_status'] != "Clicked")
+                  { 
+                     ?> <div class="info-box"> <?php 
+                  }
+                  else
+                  { 
+                     ?> <div class="info-box" style="background-color:#eeeeee;"> <?php 
+                  }
+                     ?>
                         <div class="pending">
-                           <span class="time">1 hour ago</span>
                            <?php
                               if($rowvrf['gsoassistant_status'] == "Pending")
                               {
                                  echo '<div class="circle"></div>';
                               }
                            ?>
+                           <span class="time">1 hour ago</span>
                         </div>
                         <div class="info-heading">
                            <img src="uploads/Maynard.png" alt="Profile">
@@ -766,6 +749,7 @@
                            </div>
                         </div>
                      </div>
+                     </a>
                   <?php
                }
             }
