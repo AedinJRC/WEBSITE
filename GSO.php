@@ -18,11 +18,17 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>GSO</title>
    <link rel="stylesheet" href="styles.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
    <style>
       <?php
          if(isset($_GET["papp"]) and !empty($_GET["papp"]))
          {
-            ?> #requests { background-color: white; font-weight: bold;} <?php
+            ?> 
+               #requests 
+               { 
+                  background-color: white; font-weight: bold;
+               }
+            <?php
          }
          elseif(isset($_GET["rapp"]) and !empty($_GET["rapp"]))
          {
@@ -36,9 +42,25 @@
          {
             ?> #vehicle { background-color: white; font-weight: bold;} <?php
          }
-         elseif(isset($_GET["dveh"]) and !empty($_GET["dveh"]))
+         elseif(isset($_GET["mveh"]) and !empty($_GET["mveh"]))
          {
-            ?> #vehicle { background-color: white; font-weight: bold;} <?php
+            ?> 
+               #vehicle 
+               { 
+                  background-color: white; font-weight: bold;
+               } 
+               .delete-btnplt 
+               {
+                  i 
+                  {
+                     color: #80050d;
+                  }
+               }
+               label 
+               {
+                  color: #333333;
+               }
+            <?php
          }
          elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
          {
@@ -107,7 +129,7 @@
             </ul>
          </li>
          <?php
-            if ($_SESSION['role'] == 'Admin' or $_SESSION['role'] == 'Accountant') {
+            if ($_SESSION['role'] != 'User') {
                ?>
                   <li>
                      <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
@@ -239,8 +261,17 @@
                         $selectvrfid = "SELECT * FROM vrftb ORDER BY id DESC LIMIT 1";
                         $resultvrfid = $conn->query($selectvrfid);
                         if ($resultvrfid->num_rows > 0) {
-                           while($rowvrfid = $resultvrfid->fetch_assoc()) {
-                              $vrfid = $rowvrfid['id'];
+                           $rowvrfid = $resultvrfid->fetch_assoc();
+                           if(substr($rowvrfid['id'], 0, 9) == date("Y-md"))
+                           {
+                              if (strlen((string) (substr($rowvrfid['id'], -2) + 1)) == 1)
+                                 $vrfid =  '0'.substr($rowvrfid['id'], -2)+1;
+                              else
+                                 $vrfid =  substr($rowvrfid['id'], -2)+1;
+                           }
+                           else
+                           {
+                              $vrfid = "01";
                            }
                         }
                         else
@@ -382,7 +413,7 @@
 
                            const input = document.createElement("input");
                            input.type = "text";
-                           input.name = `vrfpassenger${passengerCount}`;
+                           input.name = "vrfpassenger_name[]";
                            input.required = true;
 
                            // Add focus event to show placeholder
@@ -503,7 +534,8 @@
                      $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture'], 
                      $_POST['vrftransportation_cost']) 
                      && isset($_FILES["vrfletter_attachment"]) // Letter attachment is required
-                  ) {
+                     )   
+                  {
                      $id = htmlspecialchars($_POST['vrfid']);
                      $name = htmlspecialchars($_POST['vrfname']);
                      $department = htmlspecialchars($_POST['vrfdepartment']);
@@ -571,8 +603,31 @@
                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                               $stmt->bind_param(
                                  "sssssssssssssss", 
-                                 $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure_date, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
+                                 $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
                               );
+                              $stmt->execute();
+                              // Insert Passengers in passengertb
+                              if (!empty($_POST['vrfpassenger_name']) && !empty($_POST['vrfid'])) {
+                                 $stmt = $conn->prepare("INSERT INTO passengerstb (vrfid, passenger_name) VALUES (?, ?)");
+                                 foreach ($_POST['vrfpassenger_name'] as $passenger_name) {
+                                    $stmt->bind_param("ss", $_POST['vrfid'], $passenger_name); // Fix both bindings
+                                    $stmt->execute();
+                                 }
+                              }
+                              // Select the count of passengers for the given vrfid
+                              $countpassenger = "SELECT COUNT(*) AS passenger_count FROM passengerstb WHERE vrfid = ?";
+                              $stmt = $conn->prepare($countpassenger);
+                              $stmt->bind_param("s", $id);
+                              $stmt->execute();
+                              $resultcountpassenger = $stmt->get_result();
+                              $rowcountpassenger = $resultcountpassenger->fetch_assoc();
+
+                              // Store passenger count
+                              $passenger_count = $rowcountpassenger['passenger_count'];
+
+                              // Update the vrftb table with the passenger count
+                              $stmt = $conn->prepare("UPDATE vrftb SET passenger_count = ? WHERE id = ?");
+                              $stmt->bind_param("is", $passenger_count, $id);
                               $stmt->execute();
 
                               // Success message and redirection
@@ -592,7 +647,9 @@
                                  window.history.back();
                                  </script>";
                      }
-                  } else {
+                  } 
+                  else 
+                  {
                      echo "<script>
                               alert('Please fill in all required fields.');
                               window.history.back();
@@ -621,32 +678,82 @@
    }
    function manageVehicle()
    {
-      include 'car_info.php';
+      ?>
+         <div class="gawanimatley" style="all:unset;">
+            <?php
+               include 'car_info.php';
+            ?>
+         </div>
+      <?php
    }
    function pendingApproval()
    {
       ?>
-         <input type="text" id="search" placeholder="Search reservation">
+         <input class="search" type="text" id="search" placeholder="Search reservation">
          <div class="maintitle">
             <h1>Pending Approval</h1>
             <p>New</p>
          </div>
-         <div class="info-box">
-            <span class="time">1 hour ago</span>
-            <div class="circle"> </div>
-            <div class="info-heading">
-               <img src="PNG/Maynard.png" alt="Profile">
-               <span class="info-heading-text">
-                  <span class="name">Maynard Rodriguez</span>
-                  <span class="department">College Department</span>
-                  <span class="date">Date: 12/04/2024</span>
-               </span>
-            </div>
-            <p class="info-details">I am writing to confirm the transportation arrangements for the upcoming activity, [ACTIVITY], organized by the [DEPARTMENT]. The trip is scheduled for departure on [DATE / TIME DEPARTURE] to [DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS)], with a total of [TOTAL NO. OF PASSENGER/S] passengers, including [NAME OF PASSENGER/S]. The vehicle assigned for this trip is [VEHICLE TO BE USED], and the designated driver is [DRIVER]. This request is under Budget Number [BUDGET NO], with the transportation cost covered accordingly. The necessary form was filled out on [DATE FILLED].</p>
-         </div>
-         <div class="info-box">
-            
-         </div>
+         <div class="whitespace"></div>
+         <div class="whitespace2"></div>
+         <?php
+            include 'config.php';
+            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status!='Approved' ORDER BY date_filed DESC, id DESC";
+            $resultvrf = $conn->query($selectvrf);
+            if ($resultvrf->num_rows > 0) {
+               while($rowvrf = $resultvrf->fetch_assoc()) {
+                  ?>
+                     <a href="GSO.php?vres=a&vrfid=<?php echo $rowvrf['id']; ?>" class="link" style="text-decoration:none;">
+                  <?php
+                  if($rowvrf['gsoassistant_status'] != "Clicked")
+                  { 
+                     ?> <div class="info-box"> <?php 
+                  }
+                  else
+                  { 
+                     ?> <div class="info-box" style="background-color:#eeeeee;"> <?php 
+                  }
+                     ?>
+                        <div class="pending">
+                           <?php
+                              if($rowvrf['gsoassistant_status'] == "Pending")
+                              {
+                                 echo '<div class="circle"></div>';
+                              }
+                           ?>
+                           <span class="time">1 hour ago</span>
+                        </div>
+                        <div class="info-heading">
+                           <img src="uploads/Maynard.png" alt="Profile">
+                           <span class="info-heading-text">
+                              <span class="name"><?php echo $rowvrf['name'] ?></span>
+                              <span class="department"><?php echo $rowvrf['department'] ?></span>
+                              <span class="date"><?php echo "Date: ".date("m/d/Y", strtotime($rowvrf['date_filed']));?></span>
+                           </span>
+                        </div>
+                        <div class="info-details">
+                           <div>
+                              <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
+                              <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
+                              <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
+                           </div>
+                           <div>
+                              <div><div class="title">Departure Date:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("F j, Y"); ?></div></div>
+                              <div><div class="title">Departure Time:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("g:iA"); ?></div></div>
+                              <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                           </div>
+                           <div>
+                              <div><div class="title">Driver:</div><div class="dikoalam"><?php echo $rowvrf['driver']; ?></div></div>
+                              <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
+                              <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
+                           </div>
+                        </div>
+                     </div>
+                     </a>
+                  <?php
+               }
+            }
+         ?>
       <?php
    }
    function reservationApproved()
@@ -670,10 +777,12 @@
    function manageAccount()
    {
          include 'manageaccount.php';
+      include 'manageaccount.php';
    }
    function manageDepartment()
    {
          include 'managedept.php';
+      include 'managedept.php';
    }
    function summaryReport()
    {

@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (move_uploaded_file($_FILES["car-image"]["tmp_name"], $targetFilePath)) {
                 try {
                     // Insert data into database
-                    $stmt = $conn->prepare("INSERT INTO cars (plate_number, color, brand, model, year_model, body_type, transmission, registration_from, registration_to, capacity, image, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt = $conn->prepare("INSERT INTO carstb (plate_number, color, brand, model, year_model, body_type, transmission, registration_from, registration_to, capacity, image, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     $stmt->bind_param("ssssssssssss", $plateNumber, $color, $brand, $model, $yearModel, $bodyType, $transmission, $registrationFrom, $registrationTo, $capacity, $targetFilePath, $createdAt);
                     
                     if ($stmt->execute()) {
