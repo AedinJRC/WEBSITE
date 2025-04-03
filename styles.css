@@ -42,7 +42,7 @@ main
          border-radius: 20px;
          img
          {
-            position: fixed;
+            position: absolute;
             height: 5vw;
             width: 5vw;
          }
@@ -343,6 +343,26 @@ main
             transform: translateX(-1.5vw);         
          }
       }
+   }
+   div#vrespopup
+   {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+   }
+   div.vres
+   {
+      form
+      {
+         background: rgb(253, 253, 253);
+      }
+   }
+   div#vrespopup:target
+   {
+      display: block;
+      z-index: 1000;
    }
    input.search
    {

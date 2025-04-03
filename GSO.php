@@ -13,91 +13,91 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>GSO</title>
-   <link rel="stylesheet" href="styles.css">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-   <style>
-      <?php
-         if(isset($_GET["papp"]) and !empty($_GET["papp"]))
-         {
-            ?> 
-               #requests 
-               { 
-                  background-color: white; font-weight: bold;
-               }
-            <?php
-         }
-         elseif(isset($_GET["rapp"]) and !empty($_GET["rapp"]))
-         {
-            ?> #requests { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["creq"]) and !empty($_GET["creq"]))
-         {
-            ?> #requests { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["aveh"]) and !empty($_GET["aveh"]))
-         {
-            ?> #vehicle { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["mveh"]) and !empty($_GET["mveh"]))
-         {
-            ?> 
-               #vehicle 
-               { 
-                  background-color: white; font-weight: bold;
-               } 
-               .delete-btnplt 
-               {
-                  i 
-                  {
-                     color: #80050d;
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>GSO</title>
+      <link rel="stylesheet" href="styles.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+      <style>
+         <?php
+            if(isset($_GET["papp"]) and !empty($_GET["papp"]))
+            {
+               ?> 
+                  #requests 
+                  { 
+                     background-color: white; font-weight: bold;
                   }
-               }
-               label 
-               {
-                  color: #333333;
-               }
-            <?php
-         }
-         elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
-         {
-            ?> #vehicle { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["vres"]) and !empty($_GET["vres"]))
-         {
-            ?> #calendar { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["vsch"]) and !empty($_GET["vsch"]))
-         {
-            ?> #calendar { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["dsch"]) and !empty($_GET["dsch"]))
-         {
-            ?> #calendar { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["mche"]) and !empty($_GET["mche"]))
-         {
-            ?> #vehicle { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["macc"]) and !empty($_GET["macc"]))
-         {
-            ?> #account { background-color: white; font-weight: bold;} <?php
-         }
-         elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
-         {
-            ?> #report { background-color: white; font-weight: bold;} <?php
-         }
-         else
-         { 
-            ?> #home div { background-color: white; font-weight: bold;} <?php
-         }
-      ?>
-   </style>
-   <script type="text/javascript" src="app.js" defer></script>
-</head>
+               <?php
+            }
+            elseif(isset($_GET["rapp"]) and !empty($_GET["rapp"]))
+            {
+               ?> #requests { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["creq"]) and !empty($_GET["creq"]))
+            {
+               ?> #requests { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["aveh"]) and !empty($_GET["aveh"]))
+            {
+               ?> #vehicle { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["mveh"]) and !empty($_GET["mveh"]))
+            {
+               ?> 
+                  #vehicle 
+                  { 
+                     background-color: white; font-weight: bold;
+                  } 
+                  .delete-btnplt 
+                  {
+                     i 
+                     {
+                        color: #80050d;
+                     }
+                  }
+                  label 
+                  {
+                     color: #333333;
+                  }
+               <?php
+            }
+            elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
+            {
+               ?> #vehicle { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["vres"]) and !empty($_GET["vres"]))
+            {
+               ?> #calendar { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["vsch"]) and !empty($_GET["vsch"]))
+            {
+               ?> #calendar { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["dsch"]) and !empty($_GET["dsch"]))
+            {
+               ?> #calendar { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["mche"]) and !empty($_GET["mche"]))
+            {
+               ?> #vehicle { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["macc"]) and !empty($_GET["macc"]))
+            {
+               ?> #account { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
+            {
+               ?> #report { background-color: white; font-weight: bold;} <?php
+            }
+            else
+            { 
+               ?> #home div { background-color: white; font-weight: bold;} <?php
+            }
+         ?>
+      </style>
+      <script type="text/javascript" src="app.js" defer></script>
+   </head>
 <body>
    <nav class="sidebar active" onclick="openSidebar()">
       <button onclick="toggleSidebar()" id="logo">
@@ -205,7 +205,20 @@
          </a>
       </div>
    </nav>
-   <main onclick="closeSidebar()">
+   <?php
+      if(isset($_GET["papp"]) and !empty($_GET["papp"]))
+      {
+         ?>
+            <main>
+         <?php
+      }
+      else
+      {
+         ?>
+            <main onclick="closeSidebar()">
+         <?php
+      }
+   ?>
       <?php
          if(isset($_GET["papp"]) and !empty($_GET["papp"]))
          pendingApproval();
@@ -703,53 +716,313 @@
             if ($resultvrf->num_rows > 0) {
                while($rowvrf = $resultvrf->fetch_assoc()) {
                   ?>
-                     <a href="GSO.php?vres=a&vrfid=<?php echo $rowvrf['id']; ?>" class="link" style="text-decoration:none;">
+                     <a href="GSO.php?papp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                  if($rowvrf['gsoassistant_status'] != "Clicked")
-                  { 
-                     ?> <div class="info-box"> <?php 
-                  }
-                  else
-                  { 
-                     ?> <div class="info-box" style="background-color:#eeeeee;"> <?php 
-                  }
-                     ?>
-                        <div class="pending">
-                           <?php
-                              if($rowvrf['gsoassistant_status'] == "Pending")
-                              {
-                                 echo '<div class="circle"></div>';
-                              }
-                           ?>
-                           <span class="time">1 hour ago</span>
+                     if (isset($_GET['vrfid'])) {
+                        include 'config.php';
+                        $updatevrf = "UPDATE vrftb SET gsoassistant_status='Clicked' WHERE id = ?";
+                        $stmt = $conn->prepare($updatevrf);
+                        if ($stmt) {
+                           $stmt->bind_param("s", $_GET['vrfid']);
+                           $stmt->execute();
+                           $stmt->close();
+                        }
+                     }
+                     if($rowvrf['gsoassistant_status'] != "Clicked")
+                     { 
+                        ?> <div class="info-box"> <?php 
+                     }
+                     else
+                     { 
+                        ?> <div class="info-box" style="background-color:#eeeeee;"> <?php 
+                     }
+                        ?>
+                           <div class="pending">
+                              <?php
+                                 if($rowvrf['gsoassistant_status'] == "Pending")
+                                 {
+                                    echo '<div class="circle"></div>';
+                                 }
+                              ?>
+                              <span class="time">1 hour ago</span>
+                           </div>
+                           <div class="info-heading">
+                              <img src="uploads/Maynard.png" alt="Profile">
+                              <span class="info-heading-text">
+                                 <span class="name"><?php echo $rowvrf['name'] ?></span>
+                                 <span class="department"><?php echo $rowvrf['department'] ?></span>
+                                 <span class="date"><?php echo "Date: ".date("m/d/Y", strtotime($rowvrf['date_filed']));?></span>
+                              </span>
+                           </div>
+                           <div class="info-details">
+                              <div>
+                                 <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
+                                 <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
+                                 <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
+                              </div>
+                              <div>
+                                 <div><div class="title">Departure Date:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("F j, Y"); ?></div></div>
+                                 <div><div class="title">Departure Time:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("g:iA"); ?></div></div>
+                                 <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                              </div>
+                              <div>
+                                 <div><div class="title">Driver:</div><div class="dikoalam"><?php echo $rowvrf['driver']; ?></div></div>
+                                 <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
+                                 <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
+                              </div>
+                           </div>
                         </div>
-                        <div class="info-heading">
-                           <img src="uploads/Maynard.png" alt="Profile">
-                           <span class="info-heading-text">
-                              <span class="name"><?php echo $rowvrf['name'] ?></span>
-                              <span class="department"><?php echo $rowvrf['department'] ?></span>
-                              <span class="date"><?php echo "Date: ".date("m/d/Y", strtotime($rowvrf['date_filed']));?></span>
-                           </span>
-                        </div>
-                        <div class="info-details">
-                           <div>
-                              <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
-                              <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
-                              <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
-                           </div>
-                           <div>
-                              <div><div class="title">Departure Date:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("F j, Y"); ?></div></div>
-                              <div><div class="title">Departure Time:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("g:iA"); ?></div></div>
-                              <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
-                           </div>
-                           <div>
-                              <div><div class="title">Driver:</div><div class="dikoalam"><?php echo $rowvrf['driver']; ?></div></div>
-                              <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
-                              <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
-                           </div>
+                     </a>
+                     <div id="vrespopup">
+                        <div class="vres">
+                           <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
+                              <img src="PNG/CSA_Logo.png" alt="">
+                              <span class="header">
+                                 <span id="csab">Colegio San Agustin-Biñan</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                                 <span id="vrf">VEHICLE RESERVATION FORM</span>
+                                 <span>
+                                    <span id="fid">Form ID:</span>
+                                    <?php
+                                       include 'config.php';
+                                       $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
+                                       $resultvrfid = $conn->query($selectvrfid);
+                                       $resultvrfid->num_rows > 0;
+                                       $rowvrfid = $resultvrfid->fetch_assoc();
+                                       echo $rowvrfid['id'];
+                                    ?>
+                                 </span>
+                              </span>
+                              <div class="vrf-details">
+                                 <div class="vrf-details-column">
+                                    <div class="input-container">
+                                       <input name="vrfname" value="<?php echo $rowvrfid['name'] ?>" type="text" id="name" required>
+                                       <label for="name">NAME:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfdepartment" value="<?php echo $rowvrfid['department'] ?>" type="text"  id="department" required>
+                                       <label for="department">DEPARTMENT:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required>
+                                       <label for="activity">ACTIVITY:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <select name="vrfpurpose" id="purpose" required>
+                                          <option value="<?php echo $rowvrfid['purpose'] ?>"><?php echo $rowvrfid['purpose'] ?></option>
+                                       </select>
+                                       <label for="purpose">PURPOSE:</label>
+                                    </div>
+                                 </div>
+                                 <div class="vrf-details-column">
+                                    <div class="input-container">
+                                       <input name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
+                                       <label for="dateFiled">DATE FILED:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfbudget_no" type="number" id="budgetNo" required>
+                                       <label for="budgetNo">BUDGET No.:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <select name="vrfvehicle" id="vehicleUsed" required>
+                                          <option value="" disabled selected></option>
+                                          <?php
+                                             include 'config.php';
+                                             $selectvehicle = "SELECT * FROM carstb ORDER BY plate_number ASC";
+                                             $resultvehicle = $conn->query($selectvehicle);
+                                             while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                                                echo "<option value='".$rowvehicle['plate_number']."'>".$rowvehicle['plate_number']."</option>";
+                                             }
+                                          ?>
+                                       </select>
+                                       <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <select name="vrfdriver" id="driver" required>
+                                          <option value="" disabled selected></option>
+                                          <?php
+                                             include 'config.php';
+                                             $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
+                                             $resultdriver = $conn->query($selectdriver);
+                                             if ($resultdriver->num_rows > 0) {
+                                                while($rowdriver = $resultdriver->fetch_assoc()) {
+                                                   echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
+                                                }
+                                             }
+                                          ?>
+                                       </select>
+                                       <label for="driver">DRIVER:</label>
+                                    </div>
+                                 </div>
+                              </div>
+                              <span class="address">
+                                 <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
+                                 <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required></textarea>
+                              </span>
+                              <div class="vrf-details" style="margin-top:1vw;">
+                                 <div class="input-container">
+                                    <?php
+                                       if ($_SESSION['role'] == 'Admin') {
+                                          $date=date("Y-m-d\T06:00");
+                                       }
+                                       else
+                                       {
+                                          $date=date("Y-m-d\T06:00", strtotime("+7 days"));
+                                       }
+                                    ?>
+                                    <input name="vrfdeparture" value="<?php echo $date; ?>" type="datetime-local" id="departureDate" required min='<?php echo $date; ?>'>
+                                    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                                    <div class="passenger-container">
+                                       <span>NAME OF PASSENGER/S</span>
+                                       <div id="passengerList">
+                                          <button type="button" id="attachmentButton" onclick="useAttachment()"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">USE ATTACHMENT</button>
+                                          <button type="button" id="addButton" onclick="addPassenger()">&plus;</button>
+                                       </div>
+                                    </div>
+                                    <script>
+                                       function addPassenger() 
+                                       {
+                                          const passengerList = document.getElementById("passengerList");
+                                          const addButton = document.getElementById("addButton");
+                                          const attachmentButton = document.getElementById("attachmentButton");
+
+                                          // Hide "USE ATTACHMENT" button when "+" button is clicked
+                                          attachmentButton.style.display = "none";
+
+                                          // Get all current input containers
+                                          const inputContainers = passengerList.querySelectorAll(".input-container");
+                                          
+                                          // Hide the remove button of the previous last passenger (if exists)
+                                          if (inputContainers.length > 0) 
+                                          {
+                                             const lastContainer = inputContainers[inputContainers.length - 1];
+                                             const lastRemoveButton = lastContainer.querySelector("button");
+                                             if (lastRemoveButton) lastRemoveButton.style.display = "none";
+                                          }
+
+                                          // Determine new passenger number
+                                          const passengerCount = inputContainers.length + 1;
+
+                                          const inputContainer = document.createElement("div");
+                                          inputContainer.classList.add("input-container");
+                                          inputContainer.style.position = "relative";
+
+                                          const input = document.createElement("input");
+                                          input.type = "text";
+                                          input.name = "vrfpassenger_name[]";
+                                          input.required = true;
+
+                                          // Add focus event to show placeholder
+                                          input.addEventListener("focus", function () 
+                                          {
+                                             input.placeholder = "LNAME, Fname MI.";
+                                          });
+
+                                          // Add blur event to remove placeholder when unfocused
+                                          input.addEventListener("blur", function () 
+                                          {
+                                             input.placeholder = "";
+                                          });
+
+                                          const label = document.createElement("label");
+                                          label.textContent = `PASSENGER#${passengerCount}`;
+
+                                          const removeButton = document.createElement("button");
+                                          removeButton.classList.add("remove-passenger");
+                                          removeButton.style = "position:absolute; transform:translateX(16.8vw)";
+                                          removeButton.type = "button";
+                                          removeButton.textContent = "×";
+                                          removeButton.onclick = function () 
+                                          {
+                                             inputContainer.remove();
+                                             updateRemoveButtons();
+                                          };
+
+                                          inputContainer.appendChild(input);
+                                          inputContainer.appendChild(label);
+                                          inputContainer.appendChild(removeButton);
+
+                                          // Insert before the add button
+                                          passengerList.insertBefore(inputContainer, addButton);
+
+                                          updateRemoveButtons();
+                                       }
+                                       function updateRemoveButtons() 
+                                       {
+                                          const inputContainers = document.querySelectorAll(".input-container");
+
+                                          // Show the remove button only for the last input container
+                                          inputContainers.forEach((container, index) => 
+                                             {
+                                                const removeButton = container.querySelector("button");
+                                                if (removeButton) removeButton.style.display = (index === inputContainers.length - 1) ? "inline-block" : "none";
+                                             }
+                                          );
+                                       }
+                                       function useAttachment() {
+                                          const passengerList = document.getElementById("passengerList");
+                                          const addButton = document.getElementById("addButton");
+                                          const attachmentButton = document.getElementById("attachmentButton");
+
+                                          // Hide buttons
+                                          addButton.style.display = "none";
+                                          attachmentButton.style.display = "none";
+
+                                          // Create a container for attachment input
+                                          const inputContainer = document.createElement("div");
+                                          inputContainer.classList.add("input-container");
+                                          inputContainer.style= "transform: translateY(0.5vw);display:flex; flex-direction:row;";
+
+                                          const attachmentInput = document.createElement("input");
+                                          attachmentInput.type = "file";
+                                          attachmentInput.name = "vrfpassenger_attachment";
+                                          attachmentInput.required = true;
+                                          attachmentInput.style = "width:14vw;border-top-right-radius:0;border-bottom-right-radius:0;";
+
+                                          const numberInput = document.createElement("input");
+                                          numberInput.type = "number";
+                                          numberInput.name = "vrfpassenger_count";
+                                          numberInput.required = true;
+                                          numberInput.style = "text-align:center;width:4vw;border-top-left-radius:0;border-bottom-left-radius:0";
+                                          
+                                          const label = document.createElement("label");
+                                          label.textContent = `PASSENGER COUNT`;
+
+                                          // Create a remove button
+                                          const removeButton = document.createElement("button");
+                                          removeButton.textContent = "×";
+                                          removeButton.style = "position:absolute;transform:translateY(2.1vw)";
+                                          
+                                          removeButton.onclick = function () {
+                                             passengerList.removeChild(inputContainer);
+                                             // Show buttons again
+                                             addButton.style.display = "inline-block";
+                                             attachmentButton.style.display = "inline-block";
+                                          };
+
+                                          // Append elements
+                                          inputContainer.appendChild(attachmentInput);
+                                          inputContainer.appendChild(numberInput);
+                                          inputContainer.appendChild(label);
+                                          inputContainer.appendChild(removeButton);
+                                          passengerList.appendChild(inputContainer);
+                                       }
+
+                                    </script>
+                                 </div>   
+                                 <span class="address" style="margin-top:-1.8vw">
+                                    <span style="text-align:center">TRANSPORTATION COST</span>
+                                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                                    <div class="subbtn-container">
+                                       <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
+                                       <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
+                                       <button class="subbtn" type="submit" name="vrfsubbtn">Submit</button>
+                                    </div>
+                                 </span>
+                              </div>
+                           </form>
                         </div>
                      </div>
-                     </a>
                   <?php
                }
             }
