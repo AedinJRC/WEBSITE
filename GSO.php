@@ -99,7 +99,7 @@
       <script type="text/javascript" src="app.js" defer></script>
    </head>
 <body>
-   <nav class="sidebar active" onclick="openSidebar()">
+   <nav class="sidebar active">
       <button onclick="toggleSidebar()" id="logo">
          <img src="PNG/GSO_Logo.png" alt="">
          <span class="logo">GSO</span>
@@ -112,7 +112,7 @@
             </div>
          </a>
       </li>
-      <ul>
+      <ul class="nav-list">
          <li style="height: 2.5rem;"></li>
          <li>
             <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
@@ -529,7 +529,7 @@
                   </div>   
                   <span class="address" style="margin-top:-1.8vw">
                      <span style="text-align:center">TRANSPORTATION COST</span>
-                     <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                     <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
                      <div class="subbtn-container">
                         <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                         <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
@@ -796,87 +796,80 @@
                               <div class="vrf-details">
                                  <div class="vrf-details-column">
                                     <div class="input-container">
-                                       <input name="vrfname" value="<?php echo $rowvrfid['name'] ?>" type="text" id="name" required>
+                                       <input name="vrfname" value="<?php echo $rowvrfid['name'] ?>" type="text" id="name" required readonly>
                                        <label for="name">NAME:</label>
                                     </div>
                                     <div class="input-container">
-                                       <input name="vrfdepartment" value="<?php echo $rowvrfid['department'] ?>" type="text"  id="department" required>
+                                       <input name="vrfdepartment" value="<?php echo $rowvrfid['department'] ?>" type="text"  id="department" required readonly>
                                        <label for="department">DEPARTMENT:</label>
                                     </div>
                                     <div class="input-container">
-                                       <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required>
+                                       <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required readonly>
                                        <label for="activity">ACTIVITY:</label>
                                     </div>
                                     <div class="input-container">
-                                       <select name="vrfpurpose" id="purpose" required>
-                                          <option value="<?php echo $rowvrfid['purpose'] ?>"><?php echo $rowvrfid['purpose'] ?></option>
-                                       </select>
+                                       <input type="text" name="vrfpurpose" value="<?php echo $rowvrfid['purpose'] ?>" id="purpose" required readonly>
                                        <label for="purpose">PURPOSE:</label>
                                     </div>
                                  </div>
                                  <div class="vrf-details-column">
                                     <div class="input-container">
-                                       <input name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
+                                       <input name="vrfdate_filed" type="date" value="<?php echo $rowvrfid['date_filed']; ?>" id="dateFiled" required readonly>
                                        <label for="dateFiled">DATE FILED:</label>
                                     </div>
                                     <div class="input-container">
-                                       <input name="vrfbudget_no" type="number" id="budgetNo" required>
+                                       <input name="vrfbudget_no" type="number" id="budgetNo" required readonly value="<?php echo $rowvrfid['budget_no']; ?>">
                                        <label for="budgetNo">BUDGET No.:</label>
                                     </div>
                                     <div class="input-container">
-                                       <select name="vrfvehicle" id="vehicleUsed" required>
-                                          <option value="" disabled selected></option>
-                                          <?php
-                                             include 'config.php';
-                                             $selectvehicle = "SELECT * FROM carstb ORDER BY plate_number ASC";
-                                             $resultvehicle = $conn->query($selectvehicle);
-                                             while($rowvehicle = $resultvehicle->fetch_assoc()) {
-                                                echo "<option value='".$rowvehicle['plate_number']."'>".$rowvehicle['plate_number']."</option>";
-                                             }
-                                          ?>
-                                       </select>
+                                       <input type="text" name="vrfvehicle" value="<?php echo $rowvrfid['vehicle'] ?>" id="vehicleUsed" required readonly>
                                        <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                                     </div>
                                     <div class="input-container">
-                                       <select name="vrfdriver" id="driver" required>
-                                          <option value="" disabled selected></option>
-                                          <?php
-                                             include 'config.php';
-                                             $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
-                                             $resultdriver = $conn->query($selectdriver);
-                                             if ($resultdriver->num_rows > 0) {
-                                                while($rowdriver = $resultdriver->fetch_assoc()) {
-                                                   echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
-                                                }
-                                             }
-                                          ?>
-                                       </select>
+                                       <input type="text" name="vrfdriver" value="<?php echo $rowvrfid['driver'] ?>" id="driver" required readonly>
                                        <label for="driver">DRIVER:</label>
                                     </div>
                                  </div>
                               </div>
                               <span class="address">
                                  <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
-                                 <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required></textarea>
+                                 <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
                               </span>
                               <div class="vrf-details" style="margin-top:1vw;">
                                  <div class="input-container">
-                                    <?php
-                                       if ($_SESSION['role'] == 'Admin') {
-                                          $date=date("Y-m-d\T06:00");
-                                       }
-                                       else
-                                       {
-                                          $date=date("Y-m-d\T06:00", strtotime("+7 days"));
-                                       }
-                                    ?>
-                                    <input name="vrfdeparture" value="<?php echo $date; ?>" type="datetime-local" id="departureDate" required min='<?php echo $date; ?>'>
+                                    <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
                                     <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
                                     <div class="passenger-container">
                                        <span>NAME OF PASSENGER/S</span>
                                        <div id="passengerList">
-                                          <button type="button" id="attachmentButton" onclick="useAttachment()"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">USE ATTACHMENT</button>
-                                          <button type="button" id="addButton" onclick="addPassenger()">&plus;</button>
+                                          <?php
+                                             if ($rowvrfid['passenger_attachment'] == null) {
+                                                $selectpassenger = "SELECT * FROM passengerstb WHERE vrfid = '".$_GET['vrfid']."'";
+                                                $resultpassenger = $conn->query($selectpassenger);
+                                                if ($resultpassenger->num_rows > 0) {
+                                                   $passenger_number = 1;
+                                                   while($rowpassenger = $resultpassenger->fetch_assoc()) {
+                                                      ?>
+                                                         <div class="input-container" style="position:relative;">
+                                                            <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
+                                                            <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                         </div>
+                                                      <?php
+                                                      $passenger_number++;
+                                                   }
+                                                }
+                                             } else {
+                                                ?>
+                                                   <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
+                                                      <input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                                                      <input type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style="border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <label for="passengerCount">PASSENGER COUNT</label>
+                                                   </div>
+
+                                                <?php
+                                             }
+                                          ?>
                                        </div>
                                     </div>
                                     <script>
@@ -1016,7 +1009,8 @@
                                     <div class="subbtn-container">
                                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                                        <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
-                                       <button class="subbtn" type="submit" name="vrfsubbtn">Submit</button>
+                                       <button class="rejbtn" type="submit" name="vrfsubbtn">Reject</button>
+                                       <button class="appbtn" type="submit" name="vrfsubbtn">Approve</button>
                                     </div>
                                  </span>
                               </div>

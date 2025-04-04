@@ -250,11 +250,12 @@ main
       }   
       .subbtn-container
       {
-         transform: translateY(2vw);
+         transform: translate(-6vw,2vw);
          display: flex;
          background-color: transparent;
          justify-content:space-between;
          pointer-events: none;
+         width: 125%;
          input
          {
             pointer-events:all;
@@ -351,12 +352,24 @@ main
       inset: 0;
       background: rgba(0, 0, 0, 0.3);
       z-index: 1000;
-   }
-   div.vres
-   {
-      form
+      div.vres
       {
-         background: rgb(253, 253, 253);
+         form
+         {
+           background: white;
+            input
+            {
+               border-color: var(--maroon);
+            }
+            label
+            {
+                  top: 0;
+                  font-size: 0.75vw;
+                  color: black;
+                  background: white;
+                  padding: 0 0.3vw;
+            }
+         }
       }
    }
    div#vrespopup:target
@@ -527,7 +540,10 @@ li
    background-color: var(--light-gray);
    transition: 0.3s;
    border-right: 0px solid var(--dark-gray);
-
+   button
+   {
+      pointer-events: all;
+   }
    span{
       display: none;
    }
