@@ -161,7 +161,7 @@
         }
 
         th {
-            background-color: var(--primary-color);
+            background-color: rgb(142, 5, 5);
             color: white;
             font-weight: 500;
             text-transform: uppercase;
@@ -170,7 +170,7 @@
         }
 
         tr:hover {
-            background-color: #f5f7fa;
+            background-color:rgb(235, 236, 240);
         }
 
         .btn {
@@ -196,18 +196,18 @@
         }
 
         .add-btn:hover {
-            background-color: #219653;
+            background-color:rgb(60, 177, 111);
             transform: translateY(-2px);
         }
 
         .delete-btn {
-            background-color: var(--danger-color);
+            background-color: rgb(171, 28, 12);
             color: white;
             padding: 8px 15px;
         }
 
         .delete-btn:hover {
-            background-color: #c0392b;
+            background-color:rgb(181, 21, 3);
         }
 
         .message {
@@ -322,7 +322,7 @@
             </table>
         <?php else: ?>
             <div class="empty-state">
-                <i class="fas fa-building"></i>
+                <i class=></i>
                 <h3>No Departments Found</h3>
                 <p>Add your first department using the form above</p>
             </div>
