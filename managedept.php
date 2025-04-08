@@ -1,3 +1,21 @@
+<?php
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "vehiclemonitoringdbms";
+    
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    
+    // Fetch records
+    $result = $conn->query("SELECT * FROM departmentstb");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,15 +78,16 @@
                 </tr>
             </thead>
             <tbody>
+                <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td>1</td>
+                    <td><?php echo $row["id"]; ?></td>
                     <td>
                         <select name="department">
-                            <option>Preschool</option>
-                            <option>Grade School</option>
-                            <option>Junior High School</option>
-                            <option>Senior High School</option>
-                            <option>College</option>
+                            <option <?php if ($row["department"] == "Preschool") echo "selected"; ?>>Preschool</option>
+                            <option <?php if ($row["department"] == "Grade School") echo "selected"; ?>>Grade School</option>
+                            <option <?php if ($row["department"] == "Junior High School") echo "selected"; ?>>Junior High School</option>
+                            <option <?php if ($row["department"] == "Senior High School") echo "selected"; ?>>Senior High School</option>
+                            <option <?php if ($row["department"] == "College") echo "selected"; ?>>College</option>
                         </select>
                     </td>
                     <td>
@@ -76,8 +95,10 @@
                         <button type="button" class="btn delete-btn">Delete</button>
                     </td>
                 </tr>
+                <?php endwhile; ?>
             </tbody>
         </table>
     </div>
+    <?php $conn->close(); ?>
 </body>
 </html>

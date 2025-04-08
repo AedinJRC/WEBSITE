@@ -655,9 +655,7 @@
    }
    function manageAccount()
    {
-      ?>
-         
-      <?php
+      include 'manageaccount.php';
    }
    function manageDepartment()
    {
