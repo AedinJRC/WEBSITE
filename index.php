@@ -1262,16 +1262,7 @@ footer .column > a:hover {
                             $_SESSION["created_at"] = $loginrow["created_at"];
                             $logincount = mysqli_num_rows($loginquery);
                             if($logincount == 1)
-                            {
-                                if($_SESSION["role"]=="Admin")
-                                {
-                                    header("location: gso.php");
-                                }
-                                else
-                                {
-                                    header("location: user.php");
-                                }
-                            }
+                                header("location: gso.php");
                         }
                         else
                         {

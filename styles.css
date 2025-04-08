@@ -15,6 +15,7 @@
 }
 body
 {
+   padding: 0;
    font-family: 'Roboto', sans-serif;
    background-color: white;
    display: flex;
@@ -24,7 +25,7 @@ main
 {
    transition: 0.3s;
    width: 100%;
-   padding: 70px;
+   padding: 7vw;
    div.vres
    {
       display: flex;
@@ -35,14 +36,13 @@ main
       form.vehicle-reservation-form
       {
          padding: 1.5vw;
-         padding-bottom: ;
          width: 60vw;
          height: 44vw;
          border: 0.3vw solid #555555;
          border-radius: 20px;
          img
          {
-            position: fixed;
+            position: absolute;
             height: 5vw;
             width: 5vw;
          }
@@ -135,7 +135,6 @@ main
                      border: 0;
                      cursor: pointer;
                      text-align: left;
-                     color:#444;
                      font-weight: bold;
                      font-size: 1.8vw;
                      font-family: 'Quicksand';
@@ -251,11 +250,12 @@ main
       }   
       .subbtn-container
       {
-         transform: translateY(2vw);
+         transform: translate(-6vw,2vw);
          display: flex;
          background-color: transparent;
          justify-content:space-between;
          pointer-events: none;
+         width: 125%;
          input
          {
             pointer-events:all;
@@ -345,18 +345,55 @@ main
          }
       }
    }
-   input
+   div#vrespopup
+   {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      div.vres
+      {
+         form
+         {
+           background: white;
+            input
+            {
+               border-color: var(--maroon);
+            }
+            label
+            {
+                  top: 0;
+                  font-size: 0.75vw;
+                  color: black;
+                  background: white;
+                  padding: 0 0.3vw;
+            }
+         }
+      }
+   }
+   div#vrespopup:target
+   {
+      display: block;
+      z-index: 1000;
+   }
+   input.search
    {
       font-size: 2.4vh;
       padding: 0.6vh 1.5vh;
       border-radius: 3vh;
+      position: fixed;
+      z-index: 15;
    }
-   input::placeholder 
+   input.search::placeholder 
    {
       font-style: italic;
    }
    div.maintitle
    {
+      position: fixed;
+      z-index: 10;
+      background-color: white;
       margin-bottom: 30px;
       h1
       {
@@ -371,12 +408,29 @@ main
          letter-spacing: 1px;
       }
    }
+   div.whitespace
+   {
+      width: 100%;
+      z-index: 5;
+      position: fixed;
+      height: calc(15.2vw + 50px);
+      background-color: white;
+      transform: translate(-7vw,-7vw);
+   }div.whitespace2
+   {
+      width: 100%;
+      height: calc(8.2vw + 50px);
+      background-color: white;
+      
+   }
    div.info-box
    {
+      z-index: 50;
       border-bottom: 4px solid var(--dark-gray);
       margin-top: 0.1vw;
       width: 100%;
       height: 11vw;
+      background-color: white;
       div.info-heading
       {
          display: flex;
@@ -386,7 +440,7 @@ main
             display: flex;
             flex-direction: column;
             margin-left: 2vw;
-            margin-top: 0.5vw;
+            margin-top: 1vw;
             letter-spacing: 2px;
             font-size: 0.95vw;
             gap: 0.15vw;
@@ -405,34 +459,57 @@ main
          }
          img
          {
+            margin-top: 0.5vw;
             width: 5vw;
             height: 5vw;
             border-radius: 100%;
          }
       }
+      div.pending
+      {
+         display: flex;
+         flex-direction: row;
+         position: absolute;
+         gap: 0.5vw;
+         right: 7vw;
+         margin-top: 0.5vw;
+      }
       span.time
       {
-         position: fixed;
-         right: 130px;
          font-size: 0.95vw;
          letter-spacing: 2px;
          font-weight: bold;
       }
       div.circle
       {
-         position: fixed;
-         right: 105px;
          height: 0.95vw;
          width: 0.95vw;
          border-radius: 100%;
          background-color: var(--yellow);
       }
-      p.info-details 
+      div.info-details 
       {
-         padding: 20px 35px 0 35px;
+         padding: 1vw 3.5vw 0 3.5vw;
          font-size: 0.95vw;
-         text-align: justify;
          line-height: 1.2vw;
+         display: flex;
+         flex-direction: row;
+         div 
+         {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            div 
+            {
+               display: flex;
+               flex-direction: row;
+               width: auto;
+               div.title
+               {
+                  font-weight: bold;
+               }
+            }
+         }
       }
    }
 }
@@ -463,7 +540,10 @@ li
    background-color: var(--light-gray);
    transition: 0.3s;
    border-right: 0px solid var(--dark-gray);
-
+   button
+   {
+      pointer-events: all;
+   }
    span{
       display: none;
    }
