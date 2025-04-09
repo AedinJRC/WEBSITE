@@ -1037,9 +1037,7 @@
    }
    function maintenanceChecklist()
    {
-      ?>
-        
-      <?php
+      include 'checklist.php';
    }
    function manageAccount()
    {
