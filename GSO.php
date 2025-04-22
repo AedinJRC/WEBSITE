@@ -60,6 +60,16 @@
                   {
                      color: #333333;
                   }
+                  .icon
+                  {
+                     div
+                     {
+                        span.title
+                        {
+                           transform: translateX(-2.1vw);
+                        }
+                     }
+                  }
                <?php
             }
             elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
@@ -113,7 +123,7 @@
          </a>
       </li>
       <ul class="nav-list">
-         <li style="height: 2.5rem;"></li>
+         <li style="height: 2.5vw;"></li>
          <li>
             <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
                <img src="PNG/Calendar.png" alt="Calendar">
