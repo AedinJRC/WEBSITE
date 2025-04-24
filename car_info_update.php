@@ -13,30 +13,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $registration_from = $_POST['registration_from'];
     $registration_to = $_POST['registration_to'];
 
-    // Update query
-    $sql = "UPDATE carstb SET 
-                color = ?, 
-                brand = ?, 
-                model = ?, 
-                year_model = ?, 
-                capacity = ?, 
-                body_type = ?, 
-                transmission = ?, 
-                registration_from = ?, 
-                registration_to = ? 
-            WHERE plate_number = ?";
+    $sql = "UPDATE carstb SET color=?, brand=?, model=?, year_model=?, capacity=?, body_type=?, transmission=?, registration_from=?, registration_to=? WHERE plate_number=?";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssss", 
-        $color, $brand, $model, $year_model, $capacity, 
-        $body_type, $transmission, 
-        $registration_from, $registration_to, $plate_number
-    );
+    $stmt->bind_param("ssssssssss", $color, $brand, $model, $year_model, $capacity, $body_type, $transmission, $registration_from, $registration_to, $plate_number);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Car information updated successfully!'); window.location.href='car_info.php';</script>";
+        echo "<script>alert('Successfully changed'); window.location.href='GSO.php?mveh=a';</script>";
     } else {
-        echo "<script>alert('Error updating car information.'); window.history.back();</script>";
+        echo "<script>alert('Update failed: " . $stmt->error . "');</script>";
     }
 
     $stmt->close();
