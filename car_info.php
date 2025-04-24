@@ -17,6 +17,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
     
     $stmt->close();
 }
+
+$result = $conn->query("SELECT * FROM carstb");
+$total_cars = $result->num_rows;
+
 ?>
 
 <!DOCTYPE html>
@@ -27,258 +31,349 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>Car List</title>
     <style>
-      body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-
-        :root {
-            --maroonColor: #80050d;
-            --yellowColor: #efb954;
-            --primaryColor: #007bff;
-            --hoverColor: #0056b3;
-        }
-
-        h2 {
-            color: var(--maroonColor);
-            margin-bottom: 2vh;
-            font-size: 3.5vh;
-        }
-
-        .table-section {
-            background: #fff;
-            padding: 2.5vh;
-            margin: 1.5vh auto;
-            width: 96%;
-            max-width: 140vh;
-            box-shadow: 0 0.8vh 1.8vh rgba(0, 0, 0, 0.1);
-            border-radius: 2vh;
-            overflow: hidden;
-        }
-
-        .table-container {
-            max-height: 55vh;
-            overflow-x: auto;
-            overflow-y: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.2vh;
-            min-width: 90vh;
-        }
-
-        th, td {
-            padding: 2vh;
-            text-align: center;
-            font-size: 2.5vh;
-            border-bottom: 0.25vh solid #ddd;
-        }
-
-        th {
-            background-color: var(--maroonColor);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        td img {
-            border-radius: 0.8vh;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out;
-            max-width: 12vh;
-            height: auto;
-        }
-
-        td img:hover {
-            transform: scale(1.1);
-        }
-
-        .action {
-            font-size: 2.5vh;
-            padding: 2vh;
-        }
-
-        .action-buttons {
-            display: flex;
-            flex-direction: column; /* Stack buttons vertically */
-            align-items: center;
-            gap: 0.8vh; /* Spacing between buttons */
-        }
-
-        .edit-btn, .delete-btnplt {
-            cursor: pointer;
-            border: none;
-            padding: 1.8vh 2.5vh;
-            font-size: 2.5vh;
-            border-radius: 0.8vh;
-            transition: transform 0.2s ease-in-out;
-            background: none;  /* Ensure no background color */
-        }
-
-        .edit-btn {
-            color: var(--yellowColor);
-        }
-
-        .delete-btnplt {
-            color: var(--maroonColor);
-        }
-
-        /* Slightly increase the size when hovered */
-        .edit-btn:hover, .delete-btnplt:hover {
-            transform: scale(1.15);
-        }
-    
-        .sidebar-expanded .table-section {
-    width: 85%; /* Reduce table width */
-    transition: width 0.3s ease-in-out;
+ body { 
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
 
-    /* Modal Styling */
-      .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
+:root {
+    --maroonColor: #80050d;
+    --yellowColor: #efb954;
+    --primaryColor: #007bff;
+    --hoverColor: #0056b3;
+}
 
-        .modal .content {
-            background: white;
-            width: 95%;
-            max-width: 50vh;
-            padding: 2.5vh;
-            border-radius: 1.2vh;
-            box-shadow: 0 0.8vh 1.5vh rgba(0, 0, 0, 0.2);
-            position: relative;
-            animation: fadeIn 0.3s ease-in-out;
-        }
+h2 {
+    color: var(--maroonColor);
+    margin-bottom: 1.5vh;
+    font-size: 2.5vh;
+}
 
-        .modal {
-            position: absolute;
-            top: 1.2vh;
-            right: 2vh;
-            font-size: 2.2vh;
-            cursor: pointer;
-            color: #555;
-        }
+.table-section {
+    background: #fff;
+    padding: 2vh;
+    margin: 1vh auto;
+    width: 92%;
+    max-width: 125vh;
+    box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+    border-radius: 1.5vh;
+}
 
-        .close {
-            position: absolute;
-            top: 1.2vh;
-            right: 2vh;
-            font-size: 4.5vh;
-            cursor: pointer;
-            color: var(--maroonColor);
-        }
+.table-container {
+    max-height: 70vh;
+    overflow: auto;
+}
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5vh;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1vh;
+    min-width: 75vh;
+}
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+th, td {
+    padding: 1.5vh;
+    text-align: center;
+    font-size: 2vh;
+    border-bottom: 0.2vh solid #ddd;
+}
 
-        select {
-            width: 100%;
-            padding: 1vh;
-            border: 0.12vh solid #ccc;
-            border-radius: 0.6vh;
-            font-size: 1.6vh;
-        }
+th {
+    background: var(--maroonColor);
+    color: white;
+    position: sticky;
+    top: 0;
+}
 
-        input {
-            padding: 1vh;
-            border: 0.12vh solid #ccc;
-            border-radius: 0.6vh;
-            font-size: 1.6vh;
-        }
+tr:nth-child(even) {
+    background: #f9f9f9;
+}
 
-        label {
-            font-weight: bold;
-            font-size: 1.5vh;
-            margin-bottom: 0.4vh;
-        }
+td img {
+    border-radius: 0.5vh;
+    cursor: pointer;
+    transition: transform 0.2s;
+    max-width: 8vh;
+}
 
-        .row {
-            display: flex;
-            justify-content: space-between;
-            gap: 2.2vh;
-        }
+td img:hover {
+    transform: scale(1.1);
+}
 
-        .row div {
-            flex: 1;
-        }
+.action {
+    font-size: 2vh;
+    padding: 1.5vh;
+}
 
-        .column {
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-            gap: 1.8vh;
-        }
-        
-        .save-btn {
-            margin-top: 1.8vh;
-            background: var(--maroonColor);
-            color: white;
-            padding: 1.5vh;
-            font-size: 1.8vh;
-            border: solid 0.25vh var(--maroonColor);
-            border-radius: 0.6vh;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5vh;
+}
 
-        .save-btn:hover {
-            background: white;
-            color: var(--maroonColor);
-            border: solid 0.25vh var(--maroonColor);
-            border-radius: 1.8vh;
-            font-weight: bold;
-        }
+.edit-btn, .delete-btnplt {
+    cursor: pointer;
+    border: none;
+    padding: 1.2vh 2vh;
+    font-size: 2vh;
+    border-radius: 0.5vh;
+    transition: transform 0.2s;
+    background: none;
+}
 
-        /* Image Modal */
-        .modal-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100vh;
-        }
+.edit-btn {
+    color: var(--yellowColor);
+}
 
-        .modal-content-wrapper {
-            position: relative;
-            max-width: 70%;
-            max-height: 70%;
-            margin: auto;
-            z-index: 1001;
-        }
+.delete-btnplt {
+    color: var(--maroonColor);
+}
 
-        .modal-content {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
+.edit-btn:hover, .delete-btnplt:hover {
+    transform: scale(1.1);
+}
 
-    
+.sidebar-expanded .table-section {
+    width: 80%;
+    transition: width 0.3s;
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 97.7%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    color: #555;
+}
+
+.modal .content {
+    background: white;
+    width: 95%;
+    max-width: 50vh;
+    padding: 2.5vh;
+    border-radius: 1.2vh;
+    box-shadow: 0 0.8vh 1.5vh rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.close {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    font-size: 3vh;
+    cursor: pointer;
+    color: var(--maroonColor);
+}
+
+.close_img {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    font-size: 3vh;
+    cursor: pointer;
+    color: white;
+    z-index: 1002;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+select, input {
+    width: 100%;
+    padding: 1vh;
+    border: 0.12vh solid #ccc;
+    border-radius: 0.6vh;
+    font-size: 1.6vh;
+}
+
+label {
+    font-weight: bold;
+    font-size: 1.5vh;
+    margin-bottom: 0.4vh;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    gap: 2.2vh;
+    flex-wrap: wrap;
+}
+
+.row div {
+    flex: 1;
+    min-width: 45%;
+}
+
+.column {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8vh;
+}
+
+.save-btn {
+    margin-top: 1.8vh;
+    background: var(--maroonColor);
+    color: white;
+    padding: 1.5vh;
+    font-size: 1.8vh;
+    border: solid 0.25vh var(--maroonColor);
+    border-radius: 0.6vh;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.save-btn:hover {
+    background: white;
+    color: var(--maroonColor);
+    border: solid 0.25vh var(--maroonColor);
+    border-radius: 1.8vh;
+    font-weight: bold;
+}
+
+/* Image Modal */
+.modal-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+}
+
+.modal-content-wrapper {
+    position: relative;
+    width: 90vw;
+    max-width: 500px;
+    max-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+#editCarImage {
+    width: 100%;
+    max-height: 30vh;
+    object-fit: contain;
+    border-radius: 0.8vh;
+}
+
+.total-cars-box {
+    margin: 2vh 0;
+    padding: 1.5vh;
+    background-color: #f5f5f5;
+    border-radius: 1vh;
+    text-align: center;
+    font-size: 2vh;
+}
+
+.total-cars-box strong {
+    color: var(--maroonColor);
+    font-size: 2.2vh;
+}
+
+@media (max-width: 768px) {
+    .total-cars-box {
+        font-size: 1.8vh;
+    }
+
+    .total-cars-box strong {
+        font-size: 2vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .total-cars-box {
+        font-size: 1.6vh;
+        padding: 1vh;
+    }
+
+    .total-cars-box strong {
+        font-size: 1.8vh;
+    }
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    h2 {
+        font-size: 2.2vh;
+    }
+
+    th, td {
+        font-size: 1.8vh;
+        padding: 1vh;
+    }
+
+    .table-section {
+        width: 95%;
+    }
+
+    .row {
+        flex-direction: column;
+        gap: 1.5vh;
+    }
+
+    .modal .content {
+        max-width: 90vw;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 2vh;
+    }
+
+    th, td {
+        font-size: 1.6vh;
+    }
+
+    .edit-btn, .delete-btnplt {
+        font-size: 1.6vh;
+        padding: 1vh 1.5vh;
+    }
+
+    .save-btn {
+        font-size: 1.6vh;
+    }
+
+    .modal .content {
+        padding: 2vh;
+    }
+
+    .modal-content-wrapper {
+        width: 85vw;
+        max-height: 50vh;
+    }
+}
+ 
     </style>
 </head>
 <body>
@@ -292,6 +387,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_plate_number'])
                     <th>Color</th>
                     <th>Brand</th>
                     <th>Model</th>
+                    <th>Year</th>
                     <th>Capacity</th>
                     <th>Body Type</th>
                     <th>Transmission</th>
@@ -309,6 +405,7 @@ if ($conn) { // Check if connection is successful
             echo "<td>" . htmlspecialchars($row['color']) . "</td>";
             echo "<td>" . htmlspecialchars($row['brand']) . "</td>";
             echo "<td>" . htmlspecialchars($row['model']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['year_model']) . "</td>";
             echo "<td>" . htmlspecialchars($row['capacity']) . "</td>";
             echo "<td>" . htmlspecialchars($row['body_type']) . "</td>";
             echo "<td>" . htmlspecialchars($row['transmission']) . "</td>";
@@ -331,20 +428,28 @@ if ($conn) { // Check if connection is successful
 }
 ?>
             </table>
+            
         </div>
+        <div class="total-cars-box">
+    <p>Total Cars Added: 
+        <strong><?php echo $total_cars; ?></strong>
+    </p>
+</div>
+<div class="table-container">
+
     </section>
 
  <!-- Edit Modal -->
  <div id="editModal" class="modal">  
         <div class="content">
             <span class="close" onclick="closeEditModal()">&times;</span>
-            <h3>Edit Car Information</h3>
+            <h3></h3>
             <form action="car_info_update.php" method="POST">
                 <input type="hidden" id="plate_number" name="plate_number">
 
                 <div class="form-group">
-            <label>Car Image:</label>
-            <img id="editCarImage" src="" alt="Car Image" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 5px;">
+           
+            <img id="editCarImage" src="" alt="Car Image" >
         </div>
                 
                 <div class="row">
@@ -364,10 +469,24 @@ if ($conn) { // Check if connection is successful
                 <label for="model">Model:</label>
                 <input type="text" id="model" name="model" placeholder="Enter model">
             </div>
+
+            <div class="form-group">
+            <label for="year_model">Year:</label>
+            <input type="text" id="year_model" name="year_model" placeholder="Enter year">
+            </div>
         </div>
 
         <!-- Right Column -->
         <div class="column">
+
+        <div class="form-group">
+    <label for="plate_display">Plate Number:</label>
+    <input type="text" id="plate_display" name="plate_display" placeholder="Plate Number" readonly>
+</div>
+
+<!-- Hidden Plate Number (for form submission) -->
+<input type="hidden" id="plate_number" name="plate_number">
+
             <div class="form-group">
                 <label for="capacity">Capacity:</label>
                 <input type="text" id="capacity" name="capacity" placeholder="Enter capacity">
@@ -412,7 +531,7 @@ if ($conn) { // Check if connection is successful
 <div id="imageModal" class="modal">
     <div class="modal-container" onclick="closeImageModal()"> 
         <div class="modal-content-wrapper" onclick="event.stopPropagation();">
-            <span class="close" onclick="closeImageModal()">&times;</span>
+            <span class="close_img" onclick="closeImageModal()">&times;</span>
             <img id="modalImage" class="modal-content">
         </div>
     </div>
@@ -436,9 +555,11 @@ function closeImageModal() {
 function openEditModal(data) {
     let modal = document.getElementById("editModal");
 
+    document.getElementById("plate_display").value = data.plate_number || "";
     document.getElementById("plate_number").value = data.plate_number || "";
     document.getElementById("color").value = data.color || "";
     document.getElementById("brand").value = data.brand || "";
+    document.getElementById("year_model").value = data.year_model || "";
     document.getElementById("model").value = data.model || "";
     document.getElementById("capacity").value = data.capacity || "";
 

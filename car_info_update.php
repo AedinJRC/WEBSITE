@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $color = $_POST['color'];
     $brand = $_POST['brand'];
     $model = $_POST['model'];
+    $year_model = $_POST['year_model'];
     $capacity = $_POST['capacity'];
     $body_type = $_POST['body_type'];
     $transmission = $_POST['transmission'];
@@ -17,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 color = ?, 
                 brand = ?, 
                 model = ?, 
+                year_model = ?, 
                 capacity = ?, 
                 body_type = ?, 
                 transmission = ?, 
@@ -25,8 +27,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             WHERE plate_number = ?";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssss", 
-        $color, $brand, $model, $capacity, 
+    $stmt->bind_param("ssssssssss", 
+        $color, $brand, $model, $year_model, $capacity, 
         $body_type, $transmission, 
         $registration_from, $registration_to, $plate_number
     );
