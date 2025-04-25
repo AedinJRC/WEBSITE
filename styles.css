@@ -356,7 +356,27 @@ main
       {
          form
          {
-           background: white;
+            a.closepopup
+            {
+               position: absolute;
+               z-index: 9999;
+               background-color: transparent;
+               box-sizing: border-box;
+               margin-left: 54.2vw;
+               font-size: 1.6vw;
+               text-align: center;
+               height: 2vw;
+               width: 2vw;
+               border-radius: 100%;
+               transition: 0.2s;
+               transform: translate(1vw,-0.8vw);
+            }  
+            a.closepopup:hover
+            {
+               background-color: var(--maroon);
+               color: white;
+            }
+            background: white;
             input
             {
                border-color: var(--maroon);
@@ -526,6 +546,7 @@ li
    overflow-x: hidden;
 }
 .sidebar {
+   transition: 0.2s;
    position: sticky;
    top: 0;
    align-self: start;
@@ -564,6 +585,7 @@ li
    .dropdown-container a:hover {
       background-color: white;
       border-left: 0.23vw solid #555555;
+
    }
    .dropdown-btn img:first-child, .icon img {
       width: 1.58vw;

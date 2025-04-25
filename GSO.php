@@ -786,6 +786,7 @@
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
+                              <a href="GSO.php?papp=a" class="closepopup">×</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
                                  <span id="csab">Colegio San Agustin-Biñan</span>
@@ -882,143 +883,27 @@
                                           ?>
                                        </div>
                                     </div>
-                                    <script>
-                                       function addPassenger() 
-                                       {
-                                          const passengerList = document.getElementById("passengerList");
-                                          const addButton = document.getElementById("addButton");
-                                          const attachmentButton = document.getElementById("attachmentButton");
-
-                                          // Hide "USE ATTACHMENT" button when "+" button is clicked
-                                          attachmentButton.style.display = "none";
-
-                                          // Get all current input containers
-                                          const inputContainers = passengerList.querySelectorAll(".input-container");
-                                          
-                                          // Hide the remove button of the previous last passenger (if exists)
-                                          if (inputContainers.length > 0) 
-                                          {
-                                             const lastContainer = inputContainers[inputContainers.length - 1];
-                                             const lastRemoveButton = lastContainer.querySelector("button");
-                                             if (lastRemoveButton) lastRemoveButton.style.display = "none";
-                                          }
-
-                                          // Determine new passenger number
-                                          const passengerCount = inputContainers.length + 1;
-
-                                          const inputContainer = document.createElement("div");
-                                          inputContainer.classList.add("input-container");
-                                          inputContainer.style.position = "relative";
-
-                                          const input = document.createElement("input");
-                                          input.type = "text";
-                                          input.name = "vrfpassenger_name[]";
-                                          input.required = true;
-
-                                          // Add focus event to show placeholder
-                                          input.addEventListener("focus", function () 
-                                          {
-                                             input.placeholder = "LNAME, Fname MI.";
-                                          });
-
-                                          // Add blur event to remove placeholder when unfocused
-                                          input.addEventListener("blur", function () 
-                                          {
-                                             input.placeholder = "";
-                                          });
-
-                                          const label = document.createElement("label");
-                                          label.textContent = `PASSENGER#${passengerCount}`;
-
-                                          const removeButton = document.createElement("button");
-                                          removeButton.classList.add("remove-passenger");
-                                          removeButton.style = "position:absolute; transform:translateX(16.8vw)";
-                                          removeButton.type = "button";
-                                          removeButton.textContent = "×";
-                                          removeButton.onclick = function () 
-                                          {
-                                             inputContainer.remove();
-                                             updateRemoveButtons();
-                                          };
-
-                                          inputContainer.appendChild(input);
-                                          inputContainer.appendChild(label);
-                                          inputContainer.appendChild(removeButton);
-
-                                          // Insert before the add button
-                                          passengerList.insertBefore(inputContainer, addButton);
-
-                                          updateRemoveButtons();
-                                       }
-                                       function updateRemoveButtons() 
-                                       {
-                                          const inputContainers = document.querySelectorAll(".input-container");
-
-                                          // Show the remove button only for the last input container
-                                          inputContainers.forEach((container, index) => 
-                                             {
-                                                const removeButton = container.querySelector("button");
-                                                if (removeButton) removeButton.style.display = (index === inputContainers.length - 1) ? "inline-block" : "none";
-                                             }
-                                          );
-                                       }
-                                       function useAttachment() {
-                                          const passengerList = document.getElementById("passengerList");
-                                          const addButton = document.getElementById("addButton");
-                                          const attachmentButton = document.getElementById("attachmentButton");
-
-                                          // Hide buttons
-                                          addButton.style.display = "none";
-                                          attachmentButton.style.display = "none";
-
-                                          // Create a container for attachment input
-                                          const inputContainer = document.createElement("div");
-                                          inputContainer.classList.add("input-container");
-                                          inputContainer.style= "transform: translateY(0.5vw);display:flex; flex-direction:row;";
-
-                                          const attachmentInput = document.createElement("input");
-                                          attachmentInput.type = "file";
-                                          attachmentInput.name = "vrfpassenger_attachment";
-                                          attachmentInput.required = true;
-                                          attachmentInput.style = "width:14vw;border-top-right-radius:0;border-bottom-right-radius:0;";
-
-                                          const numberInput = document.createElement("input");
-                                          numberInput.type = "number";
-                                          numberInput.name = "vrfpassenger_count";
-                                          numberInput.required = true;
-                                          numberInput.style = "text-align:center;width:4vw;border-top-left-radius:0;border-bottom-left-radius:0";
-                                          
-                                          const label = document.createElement("label");
-                                          label.textContent = `PASSENGER COUNT`;
-
-                                          // Create a remove button
-                                          const removeButton = document.createElement("button");
-                                          removeButton.textContent = "×";
-                                          removeButton.style = "position:absolute;transform:translateY(2.1vw)";
-                                          
-                                          removeButton.onclick = function () {
-                                             passengerList.removeChild(inputContainer);
-                                             // Show buttons again
-                                             addButton.style.display = "inline-block";
-                                             attachmentButton.style.display = "inline-block";
-                                          };
-
-                                          // Append elements
-                                          inputContainer.appendChild(attachmentInput);
-                                          inputContainer.appendChild(numberInput);
-                                          inputContainer.appendChild(label);
-                                          inputContainer.appendChild(removeButton);
-                                          passengerList.appendChild(inputContainer);
-                                       }
-
-                                    </script>
+                                    
                                  </div>   
                                  <span class="address" style="margin-top:-1.8vw">
                                     <span style="text-align:center">TRANSPORTATION COST</span>
-                                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                                    <?php
+                                       if($_SESSION['role'] == "Accountant")
+                                       {
+                                          ?>
+                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                                          <?php
+                                       }
+                                       else
+                                       {
+                                          ?>
+                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                                          <?php
+                                       }
+                                    ?>
                                     <div class="subbtn-container">
                                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
-                                       <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
+                                       <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
                                        <button class="rejbtn" type="submit" name="vrfsubbtn">Reject</button>
                                        <button class="appbtn" type="submit" name="vrfsubbtn">Approve</button>
                                     </div>
