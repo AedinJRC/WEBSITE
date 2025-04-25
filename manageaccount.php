@@ -72,6 +72,7 @@
             color: white;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            text-align: center;
         }
         
         td {
@@ -155,7 +156,8 @@
         
         .btn-group {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            
         }
         
         @media (max-width: 1024px) {
@@ -297,7 +299,7 @@
                     <?php while ($row = $result->fetch_assoc()): ?>
                     <tr id="row-<?php echo htmlspecialchars($row['employeeid']); ?>">
                         <td>
-                            <img src="uploads/<?php echo htmlspecialchars($row['profile_pic'] ?? 'default.jpg'); ?>" 
+                            <img src="uploads/<?php echo htmlspecialchars($row['ppicture']); ?>" 
                                  alt="Profile" class="profile-img">
                         </td>
                         <td>
@@ -322,7 +324,7 @@
                             <?php echo htmlspecialchars($row['created_at']); ?>
                         </td>
                         <td>
-                            <div class="btn-group">
+                            <div class="btn-group" >
                                 <button onclick="updateAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
                                         class="btn btn-update">
                                     Update

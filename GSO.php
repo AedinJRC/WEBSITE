@@ -873,9 +873,9 @@
                                              } else {
                                                 ?>
                                                    <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
-                                                      <input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;">
-                                                      <input type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style="border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
-                                                      <label for="passengerCount">PASSENGER COUNT</label>
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <label for="passengerCount">PASSENGER NAMES</label>
                                                    </div>
 
                                                 <?php
