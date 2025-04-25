@@ -306,54 +306,49 @@ echo "</div>";
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const eventLinks = document.querySelectorAll(".event");
+    const modal = document.getElementById("eventModal");
 
     eventLinks.forEach(link => {
         link.addEventListener("click", function (e) {
             e.preventDefault();
             const eventId = this.getAttribute("data-id");
 
-            fetch(`get_event.php?event_id=${eventId}`)
+            fetch(`?event_id=${eventId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        alert("Event not found.");
-                    } else {
-                        document.getElementById("activity").textContent = data.activity || "";
-                        document.getElementById("department").textContent = data.department || "";
-                        document.getElementById("purpose").textContent = data.purpose || "";
-                        document.getElementById("date_filed").textContent = data.date_filed || "";
-                        document.getElementById("budget_no").textContent = data.budget_no || "";
-                        document.getElementById("driver").textContent = data.driver || "";
-                        document.getElementById("vehicle").textContent = data.vehicle || "";
-                        document.getElementById("driver_destination").textContent = data.driver_destination || "";
-                        document.getElementById("departure").textContent = data.departure || "";
-                        document.getElementById("passenger_count").textContent = data.passenger_count || "";
-                        document.getElementById("passenger_attachment").textContent = data.passenger_attachment || "";
-                        document.getElementById("letter_attachment").textContent = data.letter_attachment || "";
-
-                        document.getElementById("eventModal").classList.add("active");
+                        alert("Event not found");
+                        return;
                     }
+
+                    document.getElementById("activity").textContent = data.activity || '';
+                    document.getElementById("department").textContent = data.department || '';
+                    document.getElementById("purpose").textContent = data.purpose || '';
+                    document.getElementById("date_filed").textContent = data.date_filed || '';
+                    document.getElementById("budget_no").textContent = data.budget_no || '';
+                    document.getElementById("driver").textContent = data.driver || '';
+                    document.getElementById("vehicle").textContent = data.vehicle || '';
+                    document.getElementById("driver_destination").textContent = data.driver_destination || '';
+                    document.getElementById("departure").textContent = data.departure || '';
+                    document.getElementById("passenger_count").textContent = data.passenger_count || '';
+                    document.getElementById("passenger_attachment").textContent = data.passenger_attachment || '';
+                    document.getElementById("letter_attachment").textContent = data.letter_attachment || '';
+
+                    modal.classList.add("active");
                 })
-                .catch(error => {
-                    console.error("Error fetching event:", error);
-                    alert("Something went wrong.");
+                .catch(err => {
+                    console.error("Error fetching event details:", err);
                 });
         });
     });
 });
 
 function closeModal() {
-    document.getElementById("eventModal").classList.remove("active");
-}
-
-// Close modal when clicking outside of it
-window.addEventListener("click", function (e) {
     const modal = document.getElementById("eventModal");
-    if (e.target === modal) {
-        modal.classList.remove("active");
-    }
-});
+    modal.classList.remove("active");
+}
 </script>
+
 
 </body>
 </html>
