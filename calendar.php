@@ -115,14 +115,16 @@ function generateRandomColor() {
 
         /* Calendar Day */
         .calendar-day {
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
-            min-height: 80px;
-        }
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    min-height: 80px;
+    max-height: 120px; /* Optional: control height */
+    overflow-y: auto;   /* This allows scroll if content exceeds */
+}
 
         .calendar-day:hover {
             background-color: #f1f1f1;
@@ -132,11 +134,11 @@ function generateRandomColor() {
     display: block;
     background-color: #3498db;
     color: white;
-    padding: 2px 4px; /* smaller padding */
+    padding: 2px 4px;
     margin-top: 3px;
     border-radius: 3px;
     text-decoration: none;
-    font-size: 0.7rem; /* smaller font size */
+    font-size: 0.65rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -199,6 +201,61 @@ function generateRandomColor() {
         #eventModal.active {
             display: flex;
         }
+
+        @media screen and (max-width: 768px) {
+    .nav-buttons {
+        flex-direction: row; /* ginawang row para magkatabi ang buttons */
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* maliit na gap lang */
+        flex-wrap: wrap; /* para mag-break line kung sobrang sikip */
+    }
+
+    .nav-buttons button {
+        padding: 8px 12px;
+        font-size: 0.95rem;
+        flex-shrink: 1;
+    }
+
+    .nav-buttons span {
+        font-size: 1.1rem;
+        margin: 0 10px;
+        order: -1; /* para mapunta sa gitna ang month name */
+        width: 100%;
+        text-align: center;
+    }
+
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        overflow-x: auto;
+        font-size: 0.8rem;
+    }
+
+    .calendar-day {
+        min-height: 60px;
+        max-height: 100px;
+    }
+
+    .event {
+        font-size: 0.6rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .calendar-container {
+        padding: 10px;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .modal p {
+        font-size: 0.9rem;
+    }
+}
     </style>
 </head>
 <body>
@@ -275,6 +332,136 @@ function generateRandomColor() {
             echo "</div>";
         }
         ?>
+    </div>
+</div>
+
+<div id="vrespopup">
+    <div class="vres">
+        <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
+            <a href="GSO.php?papp=a" class="closepopup">×</a>
+            <img src="PNG/CSA_Logo.png" alt="">
+            <span class="header">
+                <span id="csab">Colegio San Agustin-Biñan</span>
+                <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                <span id="vrf">VEHICLE RESERVATION FORM</span>
+                <span>
+                <span id="fid">Form ID:</span>
+                <?php
+                    include 'config.php';
+                    $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
+                    $resultvrfid = $conn->query($selectvrfid);
+                    $resultvrfid->num_rows > 0;
+                    $rowvrfid = $resultvrfid->fetch_assoc();
+                    echo $rowvrfid['id'];
+                ?>
+                </span>
+            </span>
+            <div class="vrf-details">
+                <div class="vrf-details-column">
+                <div class="input-container">
+                    <input name="vrfname" value="<?php echo $rowvrfid['name'] ?>" type="text" id="name" required readonly>
+                    <label for="name">NAME:</label>
+                </div>
+                <div class="input-container">
+                    <input name="vrfdepartment" value="<?php echo $rowvrfid['department'] ?>" type="text"  id="department" required readonly>
+                    <label for="department">DEPARTMENT:</label>
+                </div>
+                <div class="input-container">
+                    <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required readonly>
+                    <label for="activity">ACTIVITY:</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" name="vrfpurpose" value="<?php echo $rowvrfid['purpose'] ?>" id="purpose" required readonly>
+                    <label for="purpose">PURPOSE:</label>
+                </div>
+                </div>
+                <div class="vrf-details-column">
+                <div class="input-container">
+                    <input name="vrfdate_filed" type="date" value="<?php echo $rowvrfid['date_filed']; ?>" id="dateFiled" required readonly>
+                    <label for="dateFiled">DATE FILED:</label>
+                </div>
+                <div class="input-container">
+                    <input name="vrfbudget_no" type="number" id="budgetNo" required readonly value="<?php echo $rowvrfid['budget_no']; ?>">
+                    <label for="budgetNo">BUDGET No.:</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" name="vrfvehicle" value="<?php echo $rowvrfid['vehicle'] ?>" id="vehicleUsed" required readonly>
+                    <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" name="vrfdriver" value="<?php echo $rowvrfid['driver'] ?>" id="driver" required readonly>
+                    <label for="driver">DRIVER:</label>
+                </div>
+                </div>
+            </div>
+            <span class="address">
+                <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
+                <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
+            </span>
+            <div class="vrf-details" style="margin-top:1vw;">
+                <div class="input-container">
+                <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
+                <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                <div class="passenger-container">
+                    <span>NAME OF PASSENGER/S</span>
+                    <div id="passengerList">
+                        <?php
+                            if ($rowvrfid['passenger_attachment'] == null) {
+                            $selectpassenger = "SELECT * FROM passengerstb WHERE vrfid = '".$_GET['vrfid']."'";
+                            $resultpassenger = $conn->query($selectpassenger);
+                            if ($resultpassenger->num_rows > 0) {
+                                $passenger_number = 1;
+                                while($rowpassenger = $resultpassenger->fetch_assoc()) {
+                                    ?>
+                                        <div class="input-container" style="position:relative;">
+                                        <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
+                                        <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
+                                        <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                        </div>
+                                    <?php
+                                    $passenger_number++;
+                                }
+                            }
+                            } else {
+                            ?>
+                                <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
+                                    <input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                                    <input type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style="border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                    <label for="passengerCount">PASSENGER COUNT</label>
+                                </div>
+
+                            <?php
+                            }
+                        ?>
+                    </div>
+                </div>
+                
+                </div>   
+                <span class="address" style="margin-top:-1.8vw">
+                <span style="text-align:center">TRANSPORTATION COST</span>
+                <?php
+                    if($_SESSION['role'] == "Accountant")
+                    {
+                        ?>
+                            <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                            <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                        <?php
+                    }
+                ?>
+                <div class="subbtn-container">
+                    <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
+                    <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                    <button class="rejbtn" type="submit" name="vrfsubbtn">Reject</button>
+                    <button class="appbtn" type="submit" name="vrfsubbtn">Approve</button>
+                </div>
+                </span>
+            </div>
+        </form>
     </div>
 </div>
 
