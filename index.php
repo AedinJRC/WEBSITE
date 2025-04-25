@@ -1274,7 +1274,8 @@ footer .column > a:hover {
             
         <?php
     }
-    function signup() {
+    function signup() 
+    {
         ?>
             <div id="welcome">
                 <form method="post" action="index.php?sig=a" onsubmit="return validatePasswords()">

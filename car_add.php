@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if ($stmt->execute()) {
                         echo "<script>
                                 alert('Car added successfully!');
-                                window.location.href='car_add.php';
+                                window.location.href='GSO.php?aveh=a';
                               </script>";
                     }
 
@@ -50,12 +50,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if ($e->getCode() == 1062) { // Duplicate entry error code
                         echo "<script>
                                 alert('Error: Plate number already exists!');
-                                window.location.href='car_add.php';
+                                window.location.href='GSO.php?aveh=a';
                               </script>";
                     } else {
                         echo "<script>
                                 alert('Database error: " . addslashes($e->getMessage()) . "');
-                                window.location.href='car_add.php';
+                                window.location.href='GSO.php?aveh=a';
                               </script>";
                     }
                 }

@@ -1,888 +1,531 @@
-<?php 
-session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
-    header("Location: login.php");
-    exit;
+<?php
+// Include config file for database connection
+include('config.php');
+
+// Check if a month and year were passed in the URL, otherwise use the current month/year
+if (isset($_GET['month']) && isset($_GET['year'])) {
+    $currentMonth = $_GET['month'];
+    $currentYear = $_GET['year'];
+} else {
+    $currentMonth = date('m');
+    $currentYear = date('Y');
 }
 
-include 'config.php';
+// Query the database for events in the selected month and year based on the departure date
+$sql = "SELECT * FROM vrftb WHERE YEAR(departure) = ? AND MONTH(departure) = ? ORDER BY departure";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ii", $currentYear, $currentMonth); // Use parameterized query for security
+$stmt->execute();
+$result = $stmt->get_result();
 
-// Handle deletion of an event
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_event_id'])) {
-    $delete_event_id = $conn->real_escape_string($_POST['delete_event_id']);
-    $delete_sql = "DELETE FROM events WHERE id = '$delete_event_id'";
-    if ($conn->query($delete_sql) === TRUE) {
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-    } else {
-        echo "<script>alert('Error deleting event: " . $conn->error . "');</script>";
-    }
-}
-
-// Insert event into the database
-if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_event_id'])) {
-    $title = $conn->real_escape_string($_POST['title']);
-    $description = $conn->real_escape_string($_POST['description']);
-    $start = $conn->real_escape_string($_POST['start']);
-    $end = $conn->real_escape_string($_POST['end']);
-
-    // Format the start and end datetime to ensure correct format
-    $start = date('Y-m-d H:i:s', strtotime($start));
-    $end = date('Y-m-d H:i:s', strtotime($end));
-
-    // Generate a random color
-    $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-
-    $sql = "INSERT INTO events (title, description, start_datetime, end_datetime, color) 
-            VALUES ('$title', '$description', '$start', '$end', '$color')";
-
-    if ($conn->query($sql) === TRUE) {
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-    } else {
-        echo "<script>alert('Error: " . $conn->error . "');</script>";
-    }
-}
-
-// Fetch events from the database
 $events = [];
-$result = $conn->query("SELECT * FROM events");
 if ($result->num_rows > 0) {
+    // Fetch the data and store it in an array
     while ($row = $result->fetch_assoc()) {
-        $events[] = [
-            "id" => $row['id'],
-            "title" => $row['title'],
-            "description" => $row['description'],
-            "start" => $row['start_datetime'],
-            "end" => $row['end_datetime'],
-            "color" => $row['color']
-        ];
+        $events[] = $row;
     }
 }
 
-$conn->close();
+// Function to generate random colors
+function generateRandomColor() {
+    $hex = '#';
+    $characters = '0123456789ABCDEF';
+    for ($i = 0; $i < 6; $i++) {
+        $hex .= $characters[mt_rand(0, 15)];
+    }
+    return $hex;
+}
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Calendar</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar with Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
 
-.header-orange {
-  color: #81182c;
+        :root {
+            --maroonColor: #80050d;
+            --yellowColor: #efb954;
+        }
+
+        /* Calendar Container */
+        .calendar-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Header - Month Navigation */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-buttons button {
+            background-color: var(--maroonColor);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        .nav-buttons span {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .nav-buttons button:hover {
+            background-color: var(--yellowColor);
+        }
+
+        /* Calendar Grid */
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-gap: 10px;
+            text-align: center;
+        }
+
+        /* Calendar Days Header */
+        .calendar-header {
+            font-weight: bold;
+            background-color: var(--maroonColor);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* Calendar Day */
+        .calendar-day {
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    min-height: 80px;
+    max-height: 120px; /* Optional: control height */
+    overflow-y: auto;   /* This allows scroll if content exceeds */
 }
 
-#calendar-event-wrapper {
-  display: flex; /* Flexbox layout */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  gap: 20px; /* Space between the two divs */
-  height: 100vh; /* Full viewport height */
-  margin: 0 auto; /* Center horizontally */
-  padding: 20px;
-  background-color: #E4E9F7; /* Optional: background for the entire section */
-  box-sizing: border-box;
-}
+        .calendar-day:hover {
+            background-color: #f1f1f1;
+        }
 
-#calendar-container, #event-info {
-  flex: 1; /* Allow flexible resizing */
-  max-width: 600px; /* Limit max width of each panel */
-}
-
-#calendar-container {
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  width: 850px;
-  max-width: 100%;
-  transition: transform 0.3s ease-in-out;
-}
-
-#calendar-container:hover {
-  transform: translateY(-5px);
-}
-
-#calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-#month-year {
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #81182c;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-button {
-  background: #ffc53d;
-  border: 2px solid #81182c;
-  border-radius: 30px;
-  font-weight: bold;
-  font-size: 1.3rem;
-  color: #81182c;
-  cursor: pointer;
-  transition: transform 0.2s ease, color 0.3s;
-}
-
-button:hover {
-  background: white;
-  color: #ffc53d;
-  border: 2px solid #ffc53d;
-  font-weight: bold;
-  transform: scale(1.1);
-}
-
-#calendar {
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-  font-size: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
-#calendar th,
-#calendar td {
-  text-align: center;
-  padding: 15px;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.2s ease, transform 0.3s ease;
-}
-
-#calendar td:hover {
-  background-color: #f0f0f0;
-  transform: scale(1.05);
-}
-
-#calendar{
-  cursor: pointer;
-}
-
-
-
-
-#calendar .event:hover {
-  background-color: #ff7f7f;
-  transform: scale(1.1);
-}
-
-/* Basic styles for modal */
-    #event-modal {
-      display: none;
-      position: fixed;
-      color: #81182c;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #fff;
-      border: 2px solid #81182c;
-      border-radius: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      padding: 20px;
-      width: 300px;
-    }
-
-    #event-modal-content h3 {
-      margin: 0 0 10px;
-    }
-
-    #event-modal-content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    #event-modal-content input,
-    #event-modal-content textarea,
-    #event-modal-content button {
-      margin-bottom: 10px;
-      width: 95%;
-      padding: 8px;
-    }
-
-    #event-modal-content button {
-      cursor: pointer;
-    }
-
-    #close-modal {
-      background: #81182c;
-      color: #ffc53d;
-      border: none;
-    }
-
-/* Button to open modal */
-#add-event-btn {
-  background: #81182c;
-  color: #ffc53d;
-  font-weight: bold;
-  padding: 10px 15px;
-  border: none;
-  cursor: pointer;
-  font-size: 26px;
-  margin: 10px 0;
-  border-radius: 10px; /* Makes the border round */
-}
-
-
-/* Hover effect */
-#add-event-btn:hover {
-  border: 2px solid #81182c;
-  color: #81182c;
-  background: white;
-  border-radius: 25px; /* Ensure border remains round on hover */
-}
-
-    /* Overlay */
-    #modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-    }
-
-    #event-description {
-  height: 100px; /* Default height */
-  max-height: 300px; /* Maximum height it can expand to */
-  resize: vertical; /* Allows resizing only in height */
-}
-
-#event-title,
-#event-description,
-#event-start,
-#event-end {
-  width: 100%;
-  margin: 10px 0;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-#event-title:focus,
-#event-description:focus,
-#event-start:focus,
-#event-end:focus {
-  border-color: #ff5722;
-  outline: none;
-}
-
-#save-event {
-  padding: 12px 20px;
-  margin: 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-#save-event {
-  background-color: #4caf50;
-  color: white;
-}
-
-#save-event:hover {
-  background-color: #43a047;
-  transform: scale(1.05);
-}
-
-
-
-
-
-/* Event Info Panel */
-#event-info {
-  float: left;
-  width: 30%;
-  height: 600px;
-  margin-left: 4%;
-  border: 1px solid #ccc;
-  padding: 15px;
-  box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-#event-info h4 {
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 1.3rem;
-}
-
-#event-details p {
-  margin: 5px 0;
-  color: #555;
-}
-
-.event-highlight {
-  border-radius: 4px;
-  padding: 5px;
-  font-size: 1rem;
-}
-
-#event-info .event-details-title {
-  font-weight: bold;
-  color: #d48c09;
-}
-
-#event-info .event-details-value {
-  font-style: italic;
-  color: #666;
-}
-
-#calendar td.event {
-  background-color: #ffb3b3;
-  color: #81182c;
-  font-weight: bold;
-  border-radius: 6px;
-  padding: 3px 5px;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-#calendar td.event:hover {
-  background-color: #ff7f7f;
-  transform: scale(1.1);
-}
-
-#calendar td .event {
+        .event {
     display: block;
-    margin: 2px 0;
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+    background-color: #3498db;
+    color: white;
+    padding: 2px 4px;
+    margin-top: 3px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 0.65rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: white;
-    font-weight: bold;  
-}
-.event-title {
-color: white; 
-font-weight: bold;           /* Prevents text from wrapping */
 }
 
-.delete-btn {
-  background-color: #81182c;
-  color: #ffc53d;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-size: 15px;
-  cursor: pointer;
-}
-.delete-btn:hover {
-    color: #81182c;
-}
 
-.icon-button {
-  background-color: #ffc53d; /* Blue background */
-  color: #81182c; /* White icon color */
-  border: none; /* Remove default border */
-  padding: 10px 15px; /* Padding around the icon */
-  font-size: 14px; /* Icon size */
-  border-radius: 50%; /* Rounded buttons */
-  cursor: pointer; /* Pointer on hover */
-  transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover effects */
-}
+        .event:hover {
+            background-color: #2980b9;
+        }
 
-.icon-button:hover {
-  background-color: white; /* Darker blue on hover */
-  border: 2px solid #81182c;
-  transform: scale(1.1); /* Slightly enlarge on hover */
-}
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
 
-.icon-button:focus {
-  outline: none; /* Remove focus outline */
-}
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 80%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
 
-@media screen and (max-width: 768px) {
-  #calendar-event-wrapper {
-    flex-direction: column; /* Stack elements vertically */
-    align-items: center;
-    height: auto;
-    padding: 10px;
-  }
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            float: right;
+        }
 
-  #calendar-container, #event-info {
-    width: 100%;
-    max-width: 100%;
-  }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
 
-  #calendar-container {
-    padding: 10px;
-  }
+        .modal h4 {
+            margin-top: 0;
+        }
 
-  #calendar th, #calendar td {
-    padding: 8px; /* Smaller padding */
-    font-size: 0.9rem; /* Reduce text size */
-    height: 40px;
-    width: 40px;
-  }
+        .modal p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+        }
 
-  #calendar-header {
-    flex-direction: column;
-    text-align: center;
-  }
+        #eventModal {
+            display: none;
+        }
+        #eventModal.active {
+            display: flex;
+        }
 
-  #month-year {
-    font-size: 1.3rem; /* Adjust month title size */
-  }
+        @media screen and (max-width: 768px) {
+    .nav-buttons {
+        flex-direction: row; /* ginawang row para magkatabi ang buttons */
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* maliit na gap lang */
+        flex-wrap: wrap; /* para mag-break line kung sobrang sikip */
+    }
 
-  button {
-    font-size: 1rem;
-    padding: 7px 10px;
-  }
+    .nav-buttons button {
+        padding: 8px 12px;
+        font-size: 0.95rem;
+        flex-shrink: 1;
+    }
 
-  #add-event-btn {
-    font-size: 1rem;
-    padding: 8px;
-  }
+    .nav-buttons span {
+        font-size: 1.1rem;
+        margin: 0 10px;
+        order: -1; /* para mapunta sa gitna ang month name */
+        width: 100%;
+        text-align: center;
+    }
 
-  #event-info {
-    height: auto;
-    width: 100%;
-    margin-top: 10px;
-    padding: 10px;
-  }
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        overflow-x: auto;
+        font-size: 0.8rem;
+    }
 
-  #event-modal {
-    width: 90%;
-    padding: 15px;
-  }
+    .calendar-day {
+        min-height: 60px;
+        max-height: 100px;
+    }
 
-  input, textarea {
-    font-size: 0.9rem;
-    padding: 6px;
-  }
+    .event {
+        font-size: 0.6rem;
+    }
 }
 
 @media screen and (max-width: 480px) {
-  #calendar-container {
-    padding: 5px;
-  }
+    .calendar-container {
+        padding: 10px;
+    }
 
-  #calendar th, #calendar td {
-    padding: 5px;
-    font-size: 0.8rem;
-    height: 35px;
-    width: 35px;
-  }
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
 
-  #month-year {
-    font-size: 1.1rem;
-  }
-
-  button {
-    font-size: 0.9rem;
-    padding: 5px 8px;
-  }
-
-  #add-event-btn {
-    font-size: 1rem;
-    padding: 6px 8px;
-  }
-
-  #event-modal {
-    width: 85%;
-    padding: 10px;
-  }
-
-  input, textarea {
-    font-size: 0.8rem;
-    padding: 5px;
-  }
+    .modal p {
+        font-size: 0.9rem;
+    }
 }
-
-@media screen and (max-width: 360px) {
-  #calendar-container {
-    padding: 3px;
-  }
-
-  #calendar th, #calendar td {
-    padding: 3px;
-    font-size: 0.7rem; /* Further reduce font */
-    height: 30px;
-    width: 30px;
-  }
-
-  #month-year {
-    font-size: 1rem;
-  }
-
-  button {
-    font-size: 0.8rem;
-    padding: 4px 6px;
-  }
-
-  #add-event-btn {
-    font-size: 0.9rem;
-    padding: 5px 6px;
-  }
-
-  #event-modal {
-    width: 80%;
-    padding: 8px;
-  }
-
-  input, textarea {
-    font-size: 0.7rem;
-    padding: 4px;
-  }
-}
-
-
-
-
-  </style>
+    </style>
 </head>
 <body>
-<!--  <?php include '../side_nav_t/side_nav.php'; ?>   -->
 
+<div class="calendar-container">
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <a href="?month=<?php echo ($currentMonth - 1 == 0) ? 12 : $currentMonth - 1; ?>&year=<?php echo ($currentMonth == 1) ? $currentYear - 1 : $currentYear; ?>">
+            <button>&lt;</button>
+        </a>
+        <span><?php echo date('F', strtotime("{$currentYear}-{$currentMonth}-01")) . " " . $currentYear; ?></span>
+        <a href="?month=<?php echo ($currentMonth + 1 == 13) ? 1 : $currentMonth + 1; ?>&year=<?php echo ($currentMonth == 12) ? $currentYear + 1 : $currentYear; ?>">
+            <button>&gt;</button>
+        </a>
+    </div>
 
+    <!-- Calendar -->
+    <div class="calendar">
+        <div class="calendar-header">S</div>
+        <div class="calendar-header">M</div>
+        <div class="calendar-header">T</div>
+        <div class="calendar-header">W</div>
+        <div class="calendar-header">T</div>
+        <div class="calendar-header">F</div>
+        <div class="calendar-header">S</div>
 
+        <?php
+        // Get the first day of the month and the number of days in the month
+        $firstDayOfMonth = mktime(0, 0, 0, $currentMonth, 1, $currentYear);
+        $daysInMonth = date('t', $firstDayOfMonth); // Get the number of days in the month
+        $dayOfWeek = date('w', $firstDayOfMonth); // Get the day of the week the month starts on
 
-<div id="calendar-event-wrapper">
-<div id="calendar-container">
-  <!-- Add Event Button -->
-  <button id="add-event-btn"> <i class="fa fa-plus"></i></button>
-  
-  <div id="calendar-header">
+        // Loop to create empty cells for the first part of the calendar (before the 1st day)
+        for ($i = 0; $i < $dayOfWeek; $i++) {
+            echo "<div class='calendar-day'></div>";
+        }
 
-  <button id="prev-month" class="icon-button">
-  <i class="fas fa-arrow-left"></i>
-</button>
-<h2 id="month-year">December 2024</h2>
-<button id="next-month" class="icon-button">
-  <i class="fas fa-arrow-right"></i>
-</button>
+        // Loop through all days of the month
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            echo "<div class='calendar-day'>";
+            echo $day;
 
-</div>
-  <table id="calendar">
-    <thead>
-      <tr>
-        <th>Sun</th>
-        <th>Mon</th>
-        <th>Tue</th>
-        <th>Wed</th>
-        <th>Thu</th>
-        <th>Fri</th>
-        <th>Sat</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
+            // Check if there are events for this day based on departure date
+            $eventsOnDay = array_filter($events, function($event) use ($day, $currentMonth, $currentYear) {
+                return date('j', strtotime($event['departure'])) == $day &&
+                       date('n', strtotime($event['departure'])) == $currentMonth &&
+                       date('Y', strtotime($event['departure'])) == $currentYear;
+            });
 
-<!-- Event Info Panel -->
-<div id="event-info">
-<h3 class="header-orange">Event Details</h3>
+            foreach ($eventsOnDay as $event) {
+                $color = generateRandomColor();
+                echo "<a href='#' 
+                          class='event'
+         title='{$event['activity']}'
 
-<div id="event-details">
-  <?php if (!empty($events)) : ?>
-    <?php foreach ($events as $event) : ?>
-      <div class="event-highlight">
-        <p class="event-details-title">Title: <span class="event-details-value"><?= $event['title'] ?></span></p>
-        <p class="event-details-title">Description: <span class="event-details-value"><?= $event['description'] ?></span></p>
-        <p class="event-details-title">Start: <span class="event-details-value"><?= $event['start'] ?></span></p>
-        <p class="event-details-title">End: <span class="event-details-value"><?= $event['end'] ?></span></p>
-        <!-- Delete Button -->
-        <hr>
-      </div>
-    <?php endforeach; ?>
-  <?php else : ?>
-    <p>No events found.</p>
-  <?php endif; ?>
-</div>
-
-
-</div>
-</div>
-
-<!-- Event Modal -->
-<div id="modal-overlay"></div>
-<div id="event-modal">
-  <div id="event-modal-content">
-    <h3>ADD EVENT</h3>
-    <form id="event-form" method="POST" action="">
-      <input type="text" name="title" id="event-title" placeholder="Event Title" required />
-      <textarea name="description" id="event-description" placeholder="Event Description"></textarea>
-      <label>Start Date and Time:</label>
-      <input type="datetime-local" name="start" id="event-start" required />
-      <label>End Date and Time:</label>
-      <input type="datetime-local" name="end" id="event-end" required />
-      <button type="submit">Save Event</button>
-    </form>
-    <button id="close-modal">Close</button>
-  </div>
+                         data-name='{$event['name']}'
+                         data-id='{$event['id']}'
+                         data-activity='{$event['activity']}'
+                         data-department='{$event['department']}'
+                         data-purpose='{$event['purpose']}'
+                         data-date_filed='{$event['date_filed']}'
+                         data-budget_no='{$event['budget_no']}'
+                         data-driver='{$event['driver']}'
+                         data-vehicle='{$event['vehicle']}'
+                         data-destination='{$event['destination']}'
+                         data-departure='{$event['departure']}'
+                         data-passenger_count='{$event['passenger_count']}'
+                         data-passenger_attachment='{$event['passenger_attachment']}'
+                         data-letter_attachment='{$event['letter_attachment']}'
+                          style='background-color: $color'>
+         {$event['activity']}
+                     </a>";
+            }
+            echo "</div>";
+        }
+        ?>
+    </div>
 </div>
 
-<script>  
+<div id="vrespopup">
+    <div class="vres">
+        <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
+            <a href="GSO.php?papp=a" class="closepopup">×</a>
+            <img src="PNG/CSA_Logo.png" alt="">
+            <span class="header">
+                <span id="csab">Colegio San Agustin-Biñan</span>
+                <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                <span id="vrf">VEHICLE RESERVATION FORM</span>
+                <span>
+                <span id="fid">Form ID:</span>
+                <?php
+                    include 'config.php';
+                    $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
+                    $resultvrfid = $conn->query($selectvrfid);
+                    $resultvrfid->num_rows > 0;
+                    $rowvrfid = $resultvrfid->fetch_assoc();
+                    echo $rowvrfid['id'];
+                ?>
+                </span>
+            </span>
+            <div class="vrf-details">
+                <div class="vrf-details-column">
+                <div class="input-container">
+                    <input name="vrfname" value="<?php echo $rowvrfid['name'] ?>" type="text" id="name" required readonly>
+                    <label for="name">NAME:</label>
+                </div>
+                <div class="input-container">
+                    <input name="vrfdepartment" value="<?php echo $rowvrfid['department'] ?>" type="text"  id="department" required readonly>
+                    <label for="department">DEPARTMENT:</label>
+                </div>
+                <div class="input-container">
+                    <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required readonly>
+                    <label for="activity">ACTIVITY:</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" name="vrfpurpose" value="<?php echo $rowvrfid['purpose'] ?>" id="purpose" required readonly>
+                    <label for="purpose">PURPOSE:</label>
+                </div>
+                </div>
+                <div class="vrf-details-column">
+                <div class="input-container">
+                    <input name="vrfdate_filed" type="date" value="<?php echo $rowvrfid['date_filed']; ?>" id="dateFiled" required readonly>
+                    <label for="dateFiled">DATE FILED:</label>
+                </div>
+                <div class="input-container">
+                    <input name="vrfbudget_no" type="number" id="budgetNo" required readonly value="<?php echo $rowvrfid['budget_no']; ?>">
+                    <label for="budgetNo">BUDGET No.:</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" name="vrfvehicle" value="<?php echo $rowvrfid['vehicle'] ?>" id="vehicleUsed" required readonly>
+                    <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" name="vrfdriver" value="<?php echo $rowvrfid['driver'] ?>" id="driver" required readonly>
+                    <label for="driver">DRIVER:</label>
+                </div>
+                </div>
+            </div>
+            <span class="address">
+                <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
+                <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
+            </span>
+            <div class="vrf-details" style="margin-top:1vw;">
+                <div class="input-container">
+                <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
+                <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                <div class="passenger-container">
+                    <span>NAME OF PASSENGER/S</span>
+                    <div id="passengerList">
+                        <?php
+                            if ($rowvrfid['passenger_attachment'] == null) {
+                            $selectpassenger = "SELECT * FROM passengerstb WHERE vrfid = '".$_GET['vrfid']."'";
+                            $resultpassenger = $conn->query($selectpassenger);
+                            if ($resultpassenger->num_rows > 0) {
+                                $passenger_number = 1;
+                                while($rowpassenger = $resultpassenger->fetch_assoc()) {
+                                    ?>
+                                        <div class="input-container" style="position:relative;">
+                                        <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
+                                        <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
+                                        <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                        </div>
+                                    <?php
+                                    $passenger_number++;
+                                }
+                            }
+                            } else {
+                            ?>
+                                <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
+                                    <input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                                    <input type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style="border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                    <label for="passengerCount">PASSENGER COUNT</label>
+                                </div>
 
-// Calendar initialization
-const calendar = document.getElementById('calendar');
-const eventDetails = document.getElementById('event-details');
-const monthYear = document.getElementById('month-year');
-const prevMonthBtn = document.getElementById('prev-month');
-const nextMonthBtn = document.getElementById('next-month');
-const eventModal = document.getElementById('event-modal');
-const addEventBtn = document.getElementById('add-event-btn');
-const closeModalBtn = document.getElementById('close-modal');
-const modalOverlay = document.getElementById('modal-overlay');
-const eventForm = document.getElementById('event-form');
-let currentDate = new Date();
+                            <?php
+                            }
+                        ?>
+                    </div>
+                </div>
+                
+                </div>   
+                <span class="address" style="margin-top:-1.8vw">
+                <span style="text-align:center">TRANSPORTATION COST</span>
+                <?php
+                    if($_SESSION['role'] == "Accountant")
+                    {
+                        ?>
+                            <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                            <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                        <?php
+                    }
+                ?>
+                <div class="subbtn-container">
+                    <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
+                    <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                    <button class="rejbtn" type="submit" name="vrfsubbtn">Reject</button>
+                    <button class="appbtn" type="submit" name="vrfsubbtn">Approve</button>
+                </div>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
 
-const events = <?php echo json_encode($events); ?>; // PHP data to JavaScript
+<!-- Modal for showing event details -->
+<div id="eventModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h4>Event Details</h4>
+        <div class="event-details">
+            <!-- Empty content for event details -->
+            <p><strong>Name:</strong></p>
+            <p><strong>Activity:</strong> </p>
+            <p><strong>Department:</strong> </p>
+            <p><strong>Purpose:</strong> </p>
+            <p><strong>Date Filed:</strong> </p>
+            <p><strong>Budget No:</strong> </p>
+            <p><strong>Driver:</strong> </p>
+            <p><strong>Vehicle:</strong> </p>
+            <p><strong>Destination:</strong> </p>
+            <p><strong>Departure:</strong> </p>
+            <p><strong>Passenger Count:</strong> </p>
+            <p><strong>Passenger Attachment:</strong> </p>
+            <p><strong>Letter Attachment:</strong> </p>
+        </div>
+    </div>
+</div>
 
-// Open Modal
-addEventBtn.onclick = () => {
-  eventModal.style.display = 'block';
-  modalOverlay.style.display = 'block';
-};
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const eventLinks = document.querySelectorAll(".event");
+    const modal = document.getElementById("eventModal");
+    const eventDetails = modal.querySelector(".event-details");
 
-// Close Modal
-closeModalBtn.onclick = () => {
-  eventModal.style.display = 'none';
-  modalOverlay.style.display = 'none';
-};
+    eventLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
 
-// Close Modal by clicking overlay
-modalOverlay.onclick = () => {
-  eventModal.style.display = 'none';
-  modalOverlay.style.display = 'none';
-};
+            // Populate modal with event data
+            eventDetails.innerHTML = `
+                 <p><strong>Name:</strong> ${this.dataset.name}</p>
+                <p><strong>Activity:</strong> ${this.dataset.activity}</p>
+                <p><strong>Department:</strong> ${this.dataset.department}</p>
+                <p><strong>Purpose:</strong> ${this.dataset.purpose}</p>
+                <p><strong>Date Filed:</strong> ${this.dataset.date_filed}</p>
+                <p><strong>Budget No:</strong> ${this.dataset.budget_no}</p>
+                <p><strong>Driver:</strong> ${this.dataset.driver}</p>
+                <p><strong>Vehicle:</strong> ${this.dataset.vehicle}</p>
+                <p><strong>Driver Destination:</strong> ${this.dataset.destination}</p>
+                <p><strong>Departure:</strong> ${this.dataset.departure}</p>
+                <p><strong>Passenger Count:</strong> ${this.dataset.passenger_count}</p>
+                <p><strong>Passenger Attachment:</strong> ${this.dataset.passenger_attachment}</p>
+                <p><strong>Letter Attachment:</strong> ${this.dataset.letter_attachment}</p>
+            `;
 
-function renderCalendar() {
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
-
-  const daysInMonth = lastDayOfMonth.getDate();
-  const startingDay = firstDayOfMonth.getDay();
-  const calendarBody = calendar.querySelector('tbody');
-
-  calendarBody.innerHTML = ''; // Clear the calendar
-
-  // Fill in empty cells for the first week
-  let row = document.createElement('tr');
-  for (let i = 0; i < startingDay; i++) {
-    row.appendChild(document.createElement('td'));
-  }
-
-  // Loop through the days of the month
-  for (let day = 1; day <= daysInMonth; day++) {
-    if ((startingDay + day - 1) % 7 === 0 && day !== 1) {
-      calendarBody.appendChild(row);
-      row = document.createElement('tr');
-    }
-
-    const dateCell = document.createElement('td');
-    const currentDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    dateCell.setAttribute('data-date', currentDateStr);
-    dateCell.classList.add('calendar-date');
-    dateCell.textContent = day;
-
-    // Filter events for the current day
-    const eventsForDay = events.filter(event => {
-  const cellDateStr = currentDateStr; // Use already formatted YYYY-MM-DD
-  const eventStartStr = new Date(event.start).toISOString().split('T')[0];
-  const eventEndStr = new Date(event.end).toISOString().split('T')[0];
-  return cellDateStr >= eventStartStr && cellDateStr <= eventEndStr;
-});
-
-
-    if (eventsForDay.length > 0) {
-      eventsForDay.forEach(event => {
-        const eventElement = document.createElement('div');
-        eventElement.classList.add('event');
-        eventElement.style.backgroundColor = event.color;
-        eventElement.textContent = truncateText(event.title, 15);
-
-
-        // Calculate the width for multi-day events
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
-        const eventStartDay = eventStart.getDate();
-        const eventEndDay = eventEnd.getDate();
-
-        // If event spans multiple days, adjust the event's span on the calendar
-        if (eventEnd > eventStart) {
-  for (let d = eventStartDay; d <= eventEndDay; d++) {
-    const affectedCell = document.querySelector(`td[data-date="${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}"]`);
-    if (affectedCell) {
-      // Clear existing events before appending new ones
-      affectedCell.innerHTML = ''; 
-      
-      const eventElement = document.createElement('div');
-      eventElement.classList.add('event');
-      eventElement.style.backgroundColor = event.color;
-      eventElement.textContent = truncateText(event.title, 15);
-      affectedCell.appendChild(eventElement);
-    }
-  }
-}
-
-        eventElement.onclick = () => {
-          displayEventDetails(event); // Show details when clicked
-        };
-
-        dateCell.appendChild(eventElement);
-      });
-   // Highlight the cell for days with events
-   dateCell.style.backgroundColor = eventsForDay[0].color;
-      dateCell.classList.add('event-highlight');
-    }
-
-    row.appendChild(dateCell);
-  }
-
-  calendarBody.appendChild(row);
-  monthYear.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentYear}`;
-
-  // Attach click listeners for day cells
-  addDateClickListener();
-  highlightEvents();
-}
-
-function truncateText(text, maxLength) {
-  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-}
-
-events.forEach(event => {
-  event.title = truncateText(event.title, 15); // Adjust max length as needed
-});
-
-
-function displayEventDetails(event) {
-  eventDetails.innerHTML = `
-    <h4>${event.title}</h4>
-    <p><strong>Description:</strong> ${event.description}</p>
-    <p><strong>Start:</strong> ${new Date(event.start).toLocaleString()}</p>
-    <p><strong>End:</strong> ${new Date(event.end).toLocaleString()}</p>
-    <form method="POST" action="">
-      <input type="hidden" name="delete_event_id" value="${event.id}">
-      <button type="submit" onclick="return confirm('Are you sure you want to delete this event?');">
-        Delete Event
-      </button>
-    </form>
-  `;
-}
-
-
-// Initialize the calendar on page load
-document.addEventListener('DOMContentLoaded', () => {
-  renderCalendar();
-});
-
-// Add navigation functionality for next and previous months
-prevMonthBtn.onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar();
-};
-
-nextMonthBtn.onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar();
-};
-
-function highlightEvents() {
-  const cells = document.querySelectorAll('#calendar td[data-date]');
-  
-  cells.forEach(cell => {
-    cell.querySelectorAll('.event').forEach(e => e.remove()); // Clear previous highlights
-    
-    const cellDate = cell.getAttribute('data-date');
-    const eventsForDate = events.filter(event => {
-      const eventStartDate = new Date(event.start).toISOString().split('T')[0];
-      return cellDate === eventStartDate; // Match only the start date
+            // Show modal
+            modal.classList.add("active");
+        });
     });
+});
 
-    if (eventsForDate.length > 0) {
-      eventsForDate.forEach(event => {
-        const eventElement = document.createElement('div');
-        eventElement.classList.add('event');
-        eventElement.style.backgroundColor = event.color;
-        eventElement.textContent = truncateText(event.title, 15);
-        cell.appendChild(eventElement);
-      });
-    }
-  });
+function closeModal() {
+    const modal = document.getElementById("eventModal");
+    modal.classList.remove("active");
 }
-
-
-function addDateClickListener() {
-  const dateCells = document.querySelectorAll('.calendar-date');
-  dateCells.forEach(cell => {
-    cell.onclick = () => {
-      const selectedDate = cell.getAttribute('data-date');
-      displayEventsForDate(selectedDate);
-    };
-  });
-}
-
-function displayEventsForDate(selectedDate) {
-  const eventsForDate = events.filter(event => {
-    const eventStart = new Date(event.start).toISOString().split('T')[0];
-    const eventEnd = new Date(event.end).toISOString().split('T')[0];
-    return selectedDate >= eventStart && selectedDate <= eventEnd;
-  });
-
-  eventDetails.innerHTML = eventsForDate.length
-    ? eventsForDate.map(event => `
-      <div class="event-card">
-        <h4>${event.title}</h4>
-        <p><strong>Description:</strong> ${event.description}</p>
-        <p><strong>Start:</strong> ${new Date(event.start).toLocaleString()}</p>
-        <p><strong>End:</strong> ${new Date(event.end).toLocaleString()}</p>
-        <form method="POST" onsubmit="return confirm('Are you sure you want to delete this event?')">
-          <input type="hidden" name="delete_event_id" value="${event.id}">
-          <br>
-          <button type="submit" class="delete-btn">Delete</button>
-         <br>
-          <br>
-          </form>
-        <hr>
-      </div>
-    `).join('')
-    : '<p>No events for this date.</p>';
-}
-
-
-prevMonthBtn.onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar(currentDate);
-};
-
-nextMonthBtn.onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar(currentDate);
-};
-
-eventForm.onsubmit = () => {
-  eventForm.submit();
-};
-
-renderCalendar(currentDate);
 </script>
 
 </body>
