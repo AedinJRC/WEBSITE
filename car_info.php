@@ -46,6 +46,12 @@ $total_cars = $result->num_rows;
     --hoverColor: #0056b3;
 }
 
+.center_info {
+   
+    justify-content: center;   /* center horizontally */
+    align-items: flex-start;   /* align to the top */
+}
+
 h2 {
     color: var(--maroonColor);
     margin-bottom: 1.5vh;
@@ -377,157 +383,142 @@ label {
     </style>
 </head>
 <body>
-    <section class="table-section">
-        <h2>CAR INFORMATION</h2>
-        <div class="table-container">
-            <table>
-                <tr>
-                    <th>Image</th>
-                    <th>Plate Number</th>
-                    <th>Color</th>
-                    <th>Brand</th>
-                    <th>Model</th>
-                    <th>Year</th>
-                    <th>Capacity</th>
-                    <th>Body Type</th>
-                    <th>Transmission</th>
-                    <th>Registration</th>
-                    <th>Action</th>
-                </tr>
-                <?php 
-if ($conn) { // Check if connection is successful
-    $result = $conn->query("SELECT * FROM carstb");
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td><img src='" . htmlspecialchars($row['image']) . "' alt='Car Image' onclick='openImageModal(this.src)'></td>";
-            echo "<td>" . htmlspecialchars($row['plate_number']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['color']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['brand']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['model']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['year_model']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['capacity']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['body_type']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['transmission']) . "</td>";
-            echo "<td>" . date("F j, Y", strtotime($row['registration_from'])) . " to " . date("F j, Y", strtotime($row['registration_to'])) . "</td>";
-            
-            echo "<td class='action-buttons'>
-    <span class='edit-btn' onclick='openEditModal(" . json_encode($row) . ")'>&#9998;</span>
-    <form method='POST' action='' onsubmit='return confirmDelete()'>
-        <input type='hidden' name='delete_plate_number' value='" . htmlspecialchars($row['plate_number']) . "'>
-        <button type='submit' class='delete-btnplt'><i style'color:#80050d;' class='fas fa-trash'></i></button>
-    </form>
-</td>";
-                            echo "</tr>";
-        }
-    } else {
-        echo "<tr><td colspan='10'>No cars available.</td></tr>";
-    }
-} else {
-    echo "<tr><td colspan='10'>Database connection failed.</td></tr>";
-}
-?>
-            </table>
-            
-        </div>
-        <div class="total-cars-box">
-    <p>Total Cars Added: 
-        <strong><?php echo $total_cars; ?></strong>
-    </p>
+    <div class="center_info">
+<section class="table-section">
+    <h2>CAR INFORMATION</h2>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Image</th>
+                <th>Plate Number</th>
+                <th>Color</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Year</th>
+                <th>Capacity</th>
+                <th>Body Type</th>
+                <th>Transmission</th>
+                <th>Registration</th>
+                <th>Action</th>
+            </tr>
+            <?php 
+            if ($conn) {
+                $result = $conn->query("SELECT * FROM carstb");
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td><img src='" . htmlspecialchars($row['image']) . "' alt='Car Image' onclick='openImageModal(this.src)'></td>";
+                        echo "<td>" . htmlspecialchars($row['plate_number']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['color']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['brand']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['model']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['year_model']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['capacity']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['body_type']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['transmission']) . "</td>";
+                        echo "<td>" . date("F j, Y", strtotime($row['registration_from'])) . " to " . date("F j, Y", strtotime($row['registration_to'])) . "</td>";
+                        echo "<td class='action-buttons'>
+                                <span class='edit-btn' onclick='openEditModal(" . json_encode($row) . ")'>&#9998;</span>
+                                <form method='POST' action='' onsubmit='return confirmDelete()'>
+                                    <input type='hidden' name='delete_plate_number' value='" . htmlspecialchars($row['plate_number']) . "'>
+                                    <button type='submit' class='delete-btnplt'><i style='color:#80050d;' class='fas fa-trash'></i></button>
+                                </form>
+                            </td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='11'>No cars available.</td></tr>";
+                }
+            } else {
+                echo "<tr><td colspan='11'>Database connection failed.</td></tr>";
+            }
+            ?>
+        </table>
+    </div>
+
+    <div class="total-cars-box">
+        <p>Total Cars Added: <strong><?php echo $total_cars; ?></strong></p>
+    </div>
+</section>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">  
+    <div class="content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h3>Edit Car Information</h3>
+        <form action="car_info_update.php" method="POST">
+            <input type="hidden" id="plate_number_hidden" name="plate_number">
+
+            <div class="form-group">
+                <img id="editCarImage" src="" alt="Car Image">
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <div class="form-group">
+                        <label for="color">Color:</label>
+                        <input type="text" id="color" name="color" placeholder="Enter color">
+                    </div>
+                    <div class="form-group">
+                        <label for="brand">Brand:</label>
+                        <input type="text" id="brand" name="brand" placeholder="Enter brand">
+                    </div>
+                    <div class="form-group">
+                        <label for="model">Model:</label>
+                        <input type="text" id="model" name="model" placeholder="Enter model">
+                    </div>
+                    <div class="form-group">
+                        <label for="year_model">Year:</label>
+                        <input type="text" id="year_model" name="year_model" placeholder="Enter year">
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="form-group">
+                        <label for="plate_display">Plate Number:</label>
+                        <input type="text" id="plate_display" name="plate_display" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="capacity">Capacity:</label>
+                        <input type="text" id="capacity" name="capacity" placeholder="Enter capacity">
+                    </div>
+                    <div class="form-group">
+                        <label for="body_type">Body Type:</label>
+                        <select id="body_type" name="body_type">
+                            <option value="Sedan">Sedan</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Truck">Truck</option>
+                            <option value="Van">Van</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transmission">Transmission:</label>
+                        <select id="transmission" name="transmission">
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="registration_from">Registration From:</label>
+                <input type="date" id="registration_from" name="registration_from">
+            </div>
+
+            <div class="form-group">
+                <label for="registration_to">Registration To:</label>
+                <input type="date" id="registration_to" name="registration_to">
+            </div>
+
+            <button type="submit" class="save-btn">Save Changes</button>
+        </form>
+    </div>
 </div>
-<div class="table-container">
 
-    </section>
-
- <!-- Edit Modal -->
- <div id="editModal" class="modal">  
-        <div class="content">
-            <span class="close" onclick="closeEditModal()">&times;</span>
-            <h3></h3>
-            <form action="car_info_update.php" method="POST">
-                <input type="hidden" id="plate_number" name="plate_number">
-
-                <div class="form-group">
-           
-            <img id="editCarImage" src="" alt="Car Image" >
-        </div>
-                
-                <div class="row">
-        <!-- Left Column -->
-        <div class="column">
-            <div class="form-group">
-                <label for="color">Color:</label>
-                <input type="text" id="color" name="color" placeholder="Enter color">
-            </div>
-
-            <div class="form-group">
-                <label for="brand">Brand:</label>
-                <input type="text" id="brand" name="brand" placeholder="Enter brand">
-            </div>
-
-            <div class="form-group">
-                <label for="model">Model:</label>
-                <input type="text" id="model" name="model" placeholder="Enter model">
-            </div>
-
-            <div class="form-group">
-            <label for="year_model">Year:</label>
-            <input type="text" id="year_model" name="year_model" placeholder="Enter year">
-            </div>
-        </div>
-
-        <!-- Right Column -->
-        <div class="column">
-
-        <div class="form-group">
-    <label for="plate_display">Plate Number:</label>
-    <input type="text" id="plate_display" name="plate_display" placeholder="Plate Number" readonly>
 </div>
 
-<!-- Hidden Plate Number (for form submission) -->
-<input type="hidden" id="plate_number" name="plate_number">
-
-            <div class="form-group">
-                <label for="capacity">Capacity:</label>
-                <input type="text" id="capacity" name="capacity" placeholder="Enter capacity">
-            </div>
-
-            <div class="form-group">
-                <label for="body_type">Body Type:</label>
-                <select id="body_type" name="body_type">
-                    <option value="Sedan">Sedan</option>
-                    <option value="SUV">SUV</option>
-                    <option value="Truck">Truck</option>
-                    <option value="Van">Van</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="transmission">Transmission:</label>
-                <select id="transmission" name="transmission">
-                    <option value="Automatic">Automatic</option>
-                    <option value="Manual">Manual</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="registration_from">Registration From:</label>
-        <input type="date" id="registration_from" name="registration_from">
-    </div>
-
-    <div class="form-group">
-        <label for="registration_to">Registration To:</label>
-        <input type="date" id="registration_to" name="registration_to">
-    </div>
-
-    <button type="submit" class="save-btn">Save Changes</button>
-</form>
-        </div>
-    </div>
-
- <!-- Image Modal -->
+<!-- Image Modal -->
 <div id="imageModal" class="modal">
     <div class="modal-container" onclick="closeImageModal()"> 
         <div class="modal-content-wrapper" onclick="event.stopPropagation();">
@@ -537,87 +528,62 @@ if ($conn) { // Check if connection is successful
     </div>
 </div>
 
-    <script>
+<script>
 function openImageModal(imgSrc) {
-    let modal = document.getElementById("imageModal");
-    let modalImg = document.getElementById("modalImage");
-
-    modalImg.src = imgSrc;
-    modal.style.display = "flex";
+    document.getElementById("modalImage").src = imgSrc;
+    document.getElementById("imageModal").style.display = "flex";
 }
 
-// Function to close the image modal
 function closeImageModal() {
     document.getElementById("imageModal").style.display = "none";
 }
 
-// Function to open the edit modal
 function openEditModal(data) {
-    let modal = document.getElementById("editModal");
-
     document.getElementById("plate_display").value = data.plate_number || "";
-    document.getElementById("plate_number").value = data.plate_number || "";
+    document.getElementById("plate_number_hidden").value = data.plate_number || "";
     document.getElementById("color").value = data.color || "";
     document.getElementById("brand").value = data.brand || "";
     document.getElementById("year_model").value = data.year_model || "";
     document.getElementById("model").value = data.model || "";
     document.getElementById("capacity").value = data.capacity || "";
-
-    // Set selected value for Body Type
     document.getElementById("body_type").value = data.body_type || "Sedan";
-
-    // Set selected value for Transmission
     document.getElementById("transmission").value = data.transmission || "Automatic";
-     // Populate the registration dates
-     document.getElementById("registration_from").value = data.registration_from || "";
+    document.getElementById("registration_from").value = data.registration_from || "";
     document.getElementById("registration_to").value = data.registration_to || "";
-
     document.getElementById("editCarImage").src = data.image || "";
 
-    modal.style.display = "flex";
+    document.getElementById("editModal").style.display = "flex";
 }
 
-// Function to close modals when clicking outside
-window.onclick = function(event) {
-    let imageModal = document.getElementById("imageModal");
-    let editModal = document.getElementById("editModal");
-
-    if (event.target === imageModal) {
-        closeImageModal();
-    }
-    
-    if (event.target === editModal) {
-        closeEditModal();
-    }
-};
-
-// Function to close the edit modal
 function closeEditModal() {
-    let modal = document.getElementById("editModal");
-    modal.style.display = "none";
+    document.getElementById("editModal").style.display = "none";
     document.querySelector("#editModal form").reset();
 }
 
 function confirmDelete() {
-            return confirm("Are you sure you want to delete this car?");
-        }
+    return confirm("Are you sure you want to delete this car?");
+}
 
-        document.addEventListener("DOMContentLoaded", function () {
-    let sidebar = document.getElementById("sidebar"); // Sidebar element
-    let tableSection = document.querySelector(".table-section");
+window.onclick = function(event) {
+    if (event.target === document.getElementById("imageModal")) {
+        closeImageModal();
+    }
+    if (event.target === document.getElementById("editModal")) {
+        closeEditModal();
+    }
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebar = document.getElementById("sidebar");
+    const tableSection = document.querySelector(".table-section");
 
     document.getElementById("sidebarToggle").addEventListener("click", function () {
-        sidebar.classList.toggle("sidebar-expanded"); // Toggle sidebar class
-
-        if (sidebar.classList.contains("sidebar-expanded")) {
-            tableSection.style.width = "85%"; // Reduce table width
-        } else {
-            tableSection.style.width = "96%"; // Reset table width
-        }
+        sidebar.classList.toggle("sidebar-expanded");
+        tableSection.style.width = sidebar.classList.contains("sidebar-expanded") ? "85%" : "96%";
     });
 });
+</script>
 
-    </script>
 
 </body>
 </html>
