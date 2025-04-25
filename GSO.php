@@ -938,11 +938,13 @@
    }
    function manageAccount()
    {
-      include 'manageaccount.php';
+         include 'manageaccount.php';
+      
    }
    function manageDepartment()
    {
-      include 'managedept.php';
+         include 'managedept.php';
+      
    }
    function summaryReport()
    {
