@@ -35,28 +35,6 @@ function generateRandomColor() {
     }
     return $hex;
 }
-
-// Check if an event ID is passed to display its details
-if (isset($_GET['event_id'])) {
-    $eventId = $_GET['event_id'];
-
-    // Query to fetch the details of the event by ID
-    $eventDetailsSql = "SELECT * FROM vrftb WHERE id = ?";
-    $stmt = $conn->prepare($eventDetailsSql);
-    $stmt->bind_param("i", $eventId); // Use parameterized query for security
-    $stmt->execute();
-    $eventDetailsResult = $stmt->get_result();
-    $eventDetails = $eventDetailsResult->fetch_assoc();
-
-    // Return the event details as JSON if found
-    if ($eventDetails) {
-        echo json_encode($eventDetails);
-    } else {
-        echo json_encode(['error' => 'Event not found']);
-    }
-
-    exit; // Stop the script from rendering the rest of the page
-}
 ?>
 
 <!DOCTYPE html>
@@ -211,17 +189,12 @@ if (isset($_GET['event_id'])) {
             line-height: 1.6;
         }
 
-        /* Event Details */
-        .modal .event-details p {
-            margin: 10px 0;
-        }
-
         #eventModal {
-    display: none;
-}
-#eventModal.active {
-    display: flex;
-}
+            display: none;
+        }
+        #eventModal.active {
+            display: flex;
+        }
     </style>
 </head>
 <body>
@@ -259,24 +232,24 @@ if (isset($_GET['event_id'])) {
             echo "<div class='calendar-day'></div>";
         }
 
-      // Loop through all days of the month
-for ($day = 1; $day <= $daysInMonth; $day++) {
-    echo "<div class='calendar-day'>";
-    echo $day;
+        // Loop through all days of the month
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            echo "<div class='calendar-day'>";
+            echo $day;
 
-// Check if there are events for this day based on departure date
-$eventsOnDay = array_filter($events, function($event) use ($day, $currentMonth, $currentYear) {
-    return date('j', strtotime($event['departure'])) == $day &&
-           date('n', strtotime($event['departure'])) == $currentMonth &&
-           date('Y', strtotime($event['departure'])) == $currentYear;
-});
+            // Check if there are events for this day based on departure date
+            $eventsOnDay = array_filter($events, function($event) use ($day, $currentMonth, $currentYear) {
+                return date('j', strtotime($event['departure'])) == $day &&
+                       date('n', strtotime($event['departure'])) == $currentMonth &&
+                       date('Y', strtotime($event['departure'])) == $currentYear;
+            });
 
-foreach ($eventsOnDay as $event) {
-    $color = generateRandomColor();
-    echo "<a href='#' class='event' data-id='{$event['id']}' style='background-color: $color'>{$event['activity']}</a>";
-}
-echo "</div>";
-}
+            foreach ($eventsOnDay as $event) {
+                $color = generateRandomColor();
+                echo "<a href='#' class='event' data-id='{$event['id']}' style='background-color: $color'>{$event['activity']}</a>";
+            }
+            echo "</div>";
+        }
         ?>
     </div>
 </div>
@@ -287,18 +260,19 @@ echo "</div>";
         <span class="close" onclick="closeModal()">&times;</span>
         <h4>Event Details</h4>
         <div class="event-details">
-            <p><strong>Activity:</strong> <span id="activity"></span></p>
-            <p><strong>Department:</strong> <span id="department"></span></p>
-            <p><strong>Purpose:</strong> <span id="purpose"></span></p>
-            <p><strong>Date Filed:</strong> <span id="date_filed"></span></p>
-            <p><strong>Budget No:</strong> <span id="budget_no"></span></p>
-            <p><strong>Driver:</strong> <span id="driver"></span></p>
-            <p><strong>Vehicle:</strong> <span id="vehicle"></span></p>
-            <p><strong>Driver Destination:</strong> <span id="driver_destination"></span></p>
-            <p><strong>Departure:</strong> <span id="departure"></span></p>
-            <p><strong>Passenger Count:</strong> <span id="passenger_count"></span></p>
-            <p><strong>Passenger Attachment:</strong> <span id="passenger_attachment"></span></p>
-            <p><strong>Letter Attachment:</strong> <span id="letter_attachment"></span></p>
+            <!-- Empty content for event details -->
+            <p><strong>Activity:</strong> </p>
+            <p><strong>Department:</strong> </p>
+            <p><strong>Purpose:</strong> </p>
+            <p><strong>Date Filed:</strong> </p>
+            <p><strong>Budget No:</strong> </p>
+            <p><strong>Driver:</strong> </p>
+            <p><strong>Vehicle:</strong> </p>
+            <p><strong>Driver Destination:</strong> </p>
+            <p><strong>Departure:</strong> </p>
+            <p><strong>Passenger Count:</strong> </p>
+            <p><strong>Passenger Attachment:</strong> </p>
+            <p><strong>Letter Attachment:</strong> </p>
         </div>
     </div>
 </div>
@@ -311,34 +285,8 @@ document.addEventListener("DOMContentLoaded", function () {
     eventLinks.forEach(link => {
         link.addEventListener("click", function (e) {
             e.preventDefault();
-            const eventId = this.getAttribute("data-id");
-
-            fetch(`?event_id=${eventId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert("Event not found");
-                        return;
-                    }
-
-                    document.getElementById("activity").textContent = data.activity || '';
-                    document.getElementById("department").textContent = data.department || '';
-                    document.getElementById("purpose").textContent = data.purpose || '';
-                    document.getElementById("date_filed").textContent = data.date_filed || '';
-                    document.getElementById("budget_no").textContent = data.budget_no || '';
-                    document.getElementById("driver").textContent = data.driver || '';
-                    document.getElementById("vehicle").textContent = data.vehicle || '';
-                    document.getElementById("driver_destination").textContent = data.driver_destination || '';
-                    document.getElementById("departure").textContent = data.departure || '';
-                    document.getElementById("passenger_count").textContent = data.passenger_count || '';
-                    document.getElementById("passenger_attachment").textContent = data.passenger_attachment || '';
-                    document.getElementById("letter_attachment").textContent = data.letter_attachment || '';
-
-                    modal.classList.add("active");
-                })
-                .catch(err => {
-                    console.error("Error fetching event details:", err);
-                });
+            // No need to fetch details from the server anymore
+            modal.classList.add("active");
         });
     });
 });
@@ -348,7 +296,6 @@ function closeModal() {
     modal.classList.remove("active");
 }
 </script>
-
 
 </body>
 </html>
