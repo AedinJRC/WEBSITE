@@ -94,6 +94,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             --yellowColor: #efb954;
         }
 
+        * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -105,16 +112,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             min-height: 100vh;
         }
 
-        .form-section {
-            background-color: white;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 450px;
-            border-radius: 8px;
-            overflow-y: auto;
-            max-height: 90vh;
-        }
+        .car-form-section { 
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    max-width: 450px;
+    border-radius: 8px;
+}
+
+.car-add-center {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
 
         h2 {
             margin-bottom: 15px;
@@ -125,11 +139,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 20px;
         }
 
-        .form-container {
+        .car-form-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    width: 90%;
+    width: 100%;
     max-width: 450px;
     background: white;
     padding: 20px;
@@ -141,26 +155,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     position: relative;
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 /* Style for labels */
 .form-group label {
     position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 0.75rem;
+    left: 0.75rem;
     font-size: 14px;
+    background: white;
     color: #888;
+    padding: 0 5px;
     transition: 0.3s;
     pointer-events: none;
-    background: white;
-    padding: 0 5px;
 }
 
-/* Floating Label for Select */
+.form-group input:focus + label,
 .form-group input:valid + label,
-.form-group:focus-within label {
-    top: 5px;
+.form-group select:focus + label,
+.form-group select:valid + label {
+    top: -8px;
+    left: 10px;
     font-size: 12px;
     color: var(--maroonColor);
 }
@@ -169,11 +185,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 .form-group input,.form-group select
 {
     width: 100%;
+    height: 44px;
     padding: 12px;
     font-size: 14px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box;
     outline: none;
     background: transparent;
 }
@@ -185,7 +201,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 /* Floating Label for Date Inputs */
 .form-group input[type="date"]:valid + label {
-    top: 5px;
+    top: -5px;
     font-size: 12px;
     color: var(--maroonColor);
 }
@@ -200,7 +216,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .form-group select:focus ~ label,
         .form-group select.has-value ~ label {
-            top: 0;
+            top: 4;
             font-size: 13px;
             color: var(--maroonColor);
             background: white;
@@ -243,7 +259,7 @@ button.submit-btn:hover {
 /* Image Preview */
 #image-preview {
     width: 100%;
-    max-width: 300px;
+    max-width: 250px;
     height: auto;
     object-fit: contain;
     margin: 5px auto;
@@ -294,40 +310,96 @@ button.submit-btn:hover {
 }
 
 
-        @media (max-width: 480px) {
-            .form-section {
-                padding: 10px;
-                max-width: 90%;
-            }
+@media (max-width: 768px) {
+    .car-form-section {
+        padding: 15px;
+        max-width: 95%;
+    }
 
-            h2 {
-                font-size: 16px;
-            }
+    .car-form-container {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
 
-            .form-container {
-                grid-template-columns: 1fr;
-            }
+    h2 {
+        font-size: 18px;
+    }
 
-            .form-group label {
-                font-size: 12px;
-            }
+    .form-group input,
+    .form-group select {
+        padding: 10px;
+        font-size: 13px;
+    }
 
-            .form-group input,
-            .form-group select {
-                padding: 6px;
-                font-size: 12px;
-            }
+    .form-group label {
+        font-size: 13px;
+    }
 
-            button.submit-btn {
-                font-size: 12px;
-                padding: 8px;
-                border-radius: 6px;
-            }
+    button.submit-btn {
+        font-size: 14px;
+        padding: 10px 30px;
+    }
 
-            #image-preview {
-                max-width: 200px;
-            }
-        }
+    .custom-file-input {
+        width: 70%;
+        padding: 10px;
+    }
+
+    #image-preview {
+        max-width: 180px;
+    }
+
+    .modal-content {
+        max-width: 95%;
+        max-height: 95%;
+    }
+}
+
+/* Retain your 480px adjustments for ultra-small devices */
+@media (max-width: 480px) {
+    .car-form-section {
+        padding: 10px;
+        max-width: 95%;
+    }
+
+    .car-form-container {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 16px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    button.submit-btn {
+        font-size: 12px;
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    #image-preview {
+        max-width: 150px;
+    }
+
+    .custom-file-input {
+        width: 90%;
+    }
+
+    .modal-content {
+        max-width: 90%;
+        max-height: 90%;
+    }
+}
 
          /* Modal styles */
          .modal {
@@ -384,6 +456,7 @@ button.submit-btn:hover {
 .date-input label {
     font-size: 14px;
     font-weight: bold;
+    margin-bottom: 14px; /* add this line */
     color: var(--maroonColor);
 }
 
@@ -393,20 +466,14 @@ button.submit-btn:hover {
     border: 1px solid #ddd;
     border-radius: 4px;
     width: 100%;
-    box-sizing: border-box;
 }
 
-/* Responsive design */
-@media (max-width: 480px) {
-    .date-range-container {
-        flex-direction: column;
-        gap: 5px;
-    }
-}
+
     </style>
 </head>
 <body>
-<section class="form-section">
+<div class="car-add-center">
+<section class="car-form-section">
     <h2>Add a New Car</h2>
     <img id="image-preview" src="#" alt="Car Image Preview">
     <form action="#" method="POST" id="add-car-form" enctype="multipart/form-data">
@@ -417,13 +484,13 @@ button.submit-btn:hover {
                     <input type="file" id="car-image" name="car-image" accept="image/*" required>
                 </div>
             </div>
-            <img id="image-preview" alt="Image Preview">
+            <img id="image-preview" style="display: none;" alt="Car Image Preview">
         </div>
 
-        <div class="form-container">
+        <div class="car-form-container">
                                 <div class="form-group">
                                     <input type="text" id="plate-number" name="plate-number" placeholder=" " required>
-                                    <label for="plate-number">Plate Number</label>
+                                    <label for="plate-number">Plate No.</label>
                                 </div>
                                 <div class="form-group">
                                     <input type="text" id="color" name="color" placeholder=" " required>
@@ -451,7 +518,7 @@ button.submit-btn:hover {
                                 <option value="Automatic">Automatic</option>
                                 <option value="Manual">Manual</option>
                             </select>
-                            <label for="transmission">Transmission Type:</label>
+                            <label for="transmission">Transmission</label>
                         </div>
 
                         <div class="form-group">
@@ -481,6 +548,7 @@ button.submit-btn:hover {
  
 
 </section>
+</div>
 
     <!-- Modal for Image Popup -->
     <div id="image-modal" class="modal">
@@ -489,18 +557,23 @@ button.submit-btn:hover {
     </div>
 
     <script>
-     document.getElementById("car-image").addEventListener("change", function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById("image-preview");
-                    preview.src = e.target.result;
-                    preview.style.display = "block";
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+ document.getElementById("car-image").addEventListener("change", function(event) {
+    const preview = document.getElementById("image-preview");
+    const file = event.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // If no file selected (user cancelled), hide preview and clear src
+        preview.src = "#";
+        preview.style.display = "none";
+    }
+});
 
         // Image popup modal functionality
         const imagePreview = document.getElementById("image-preview");
