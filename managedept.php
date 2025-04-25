@@ -258,14 +258,14 @@
                 <thead>
                     <tr>
                         <th>Department</th>
-                        <th>Actions</th>
+                        <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($row["department"]); ?></td>
-                        <td>
+                        <td style="text-align: right;">
                             <form method="POST" style="display: inline;">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['id']); ?>">
                                 <button type="submit" name="delete" class="delete-btn">Delete</button>

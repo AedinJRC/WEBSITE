@@ -115,7 +115,7 @@ function generateRandomColor() {
 
         /* Calendar Day */
         .calendar-day {
-            padding: 20px;
+            padding: 10px;
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
@@ -129,15 +129,19 @@ function generateRandomColor() {
         }
 
         .event {
-            display: block;
-            background-color: #3498db;
-            color: white;
-            padding: 5px;
-            margin-top: 5px;
-            border-radius: 3px;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
+    display: block;
+    background-color: #3498db;
+    color: white;
+    padding: 2px 4px; /* smaller padding */
+    margin-top: 3px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 0.7rem; /* smaller font size */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 
         .event:hover {
             background-color: #2980b9;
@@ -246,7 +250,27 @@ function generateRandomColor() {
 
             foreach ($eventsOnDay as $event) {
                 $color = generateRandomColor();
-                echo "<a href='#' class='event' data-id='{$event['id']}' style='background-color: $color'>{$event['activity']}</a>";
+                echo "<a href='#' 
+                          class='event'
+         title='{$event['activity']}'
+
+                         data-name='{$event['name']}'
+                         data-id='{$event['id']}'
+                         data-activity='{$event['activity']}'
+                         data-department='{$event['department']}'
+                         data-purpose='{$event['purpose']}'
+                         data-date_filed='{$event['date_filed']}'
+                         data-budget_no='{$event['budget_no']}'
+                         data-driver='{$event['driver']}'
+                         data-vehicle='{$event['vehicle']}'
+                         data-destination='{$event['destination']}'
+                         data-departure='{$event['departure']}'
+                         data-passenger_count='{$event['passenger_count']}'
+                         data-passenger_attachment='{$event['passenger_attachment']}'
+                         data-letter_attachment='{$event['letter_attachment']}'
+                          style='background-color: $color'>
+         {$event['activity']}
+                     </a>";
             }
             echo "</div>";
         }
@@ -261,6 +285,7 @@ function generateRandomColor() {
         <h4>Event Details</h4>
         <div class="event-details">
             <!-- Empty content for event details -->
+            <p><strong>Name:</strong></p>
             <p><strong>Activity:</strong> </p>
             <p><strong>Department:</strong> </p>
             <p><strong>Purpose:</strong> </p>
@@ -268,7 +293,7 @@ function generateRandomColor() {
             <p><strong>Budget No:</strong> </p>
             <p><strong>Driver:</strong> </p>
             <p><strong>Vehicle:</strong> </p>
-            <p><strong>Driver Destination:</strong> </p>
+            <p><strong>Destination:</strong> </p>
             <p><strong>Departure:</strong> </p>
             <p><strong>Passenger Count:</strong> </p>
             <p><strong>Passenger Attachment:</strong> </p>
@@ -281,11 +306,30 @@ function generateRandomColor() {
 document.addEventListener("DOMContentLoaded", function () {
     const eventLinks = document.querySelectorAll(".event");
     const modal = document.getElementById("eventModal");
+    const eventDetails = modal.querySelector(".event-details");
 
     eventLinks.forEach(link => {
         link.addEventListener("click", function (e) {
             e.preventDefault();
-            // No need to fetch details from the server anymore
+
+            // Populate modal with event data
+            eventDetails.innerHTML = `
+                 <p><strong>Name:</strong> ${this.dataset.name}</p>
+                <p><strong>Activity:</strong> ${this.dataset.activity}</p>
+                <p><strong>Department:</strong> ${this.dataset.department}</p>
+                <p><strong>Purpose:</strong> ${this.dataset.purpose}</p>
+                <p><strong>Date Filed:</strong> ${this.dataset.date_filed}</p>
+                <p><strong>Budget No:</strong> ${this.dataset.budget_no}</p>
+                <p><strong>Driver:</strong> ${this.dataset.driver}</p>
+                <p><strong>Vehicle:</strong> ${this.dataset.vehicle}</p>
+                <p><strong>Driver Destination:</strong> ${this.dataset.destination}</p>
+                <p><strong>Departure:</strong> ${this.dataset.departure}</p>
+                <p><strong>Passenger Count:</strong> ${this.dataset.passenger_count}</p>
+                <p><strong>Passenger Attachment:</strong> ${this.dataset.passenger_attachment}</p>
+                <p><strong>Letter Attachment:</strong> ${this.dataset.letter_attachment}</p>
+            `;
+
+            // Show modal
             modal.classList.add("active");
         });
     });
