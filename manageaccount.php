@@ -1,62 +1,3 @@
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "vehiclemonitoringdbms";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Initialize message variable
-$message = '';
-
-// Handle Update Request
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
-    $employeeid = $_POST['employeeid'];
-    $fname = $_POST['fname'];
-    $lname = $_POST['lname'];
-    $role = $_POST['role'];
-    $created_at = $_POST['created_at'];
-
-    $stmt = $conn->prepare("UPDATE usertb SET fname=?, lname=?, role=?, created_at=? WHERE employeeid=?");
-    $stmt->bind_param("sssss", $fname, $lname, $role, $created_at, $employeeid);
-    
-    if ($stmt->execute()) {
-        $message = "Account updated successfully!";
-        header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
-    } else {
-        $message = "Error updating account: " . $conn->error;
-    }
-    $stmt->close();
-}
-
-// Handle Delete Request
-if (isset($_POST['delete'])) {
-    $employeeid = $_POST['employeeid'];
-    $stmt = $conn->prepare("DELETE FROM usertb WHERE employeeid=?");
-    $stmt->bind_param("s", $employeeid);
-    
-    if ($stmt->execute()) {
-        $message = "Account deleted successfully!";
-        header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
-    } else {
-        $message = "Error deleting account: " . $conn->error;
-    }
-    $stmt->close();
-}
-
-// Fetch records
-$selectsql = "SELECT * FROM usertb ORDER BY lname ASC";
-$result = $conn->query($selectsql);
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,89 +5,285 @@ $result = $conn->query($selectsql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Account</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 1500px;
-            margin: auto;
-            background: white;
+            background-color: #f3f4f6;
             padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 24px;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+        
+        #message-container {
+            margin-bottom: 24px;
+        }
+        
+        .message {
+            padding: 16px;
             border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
         }
-        .table-container {
-            overflow-x: auto;
+        
+        .success {
+            background-color: #d1fae5;
+            color: #065f46;
         }
+        
+        .error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
+        
+        thead {
+            background-color: #b91c1c;
+        }
+        
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             text-align: center;
         }
-        th {
-            background-color: rgb(156, 7, 7);
-            color: white;
+        
+        td {
+            padding: 16px;
+            vertical-align: middle;
         }
-        input[type="text"], input[type="date"], select {
-            border: 1px solid #ddd;
-            padding: 5px;
-            border-radius: 4px;
-            width: 90%;
+        
+        tr {
+            border-bottom: 1px solid #e5e7eb;
         }
-        .btn {
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            margin: 2px;
+        
+        tr:last-child {
+            border-bottom: none;
         }
-        .update-btn {
-            background-color: #28a745;
-            color: white;
-        }
-        .delete-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-        .message {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-        .error {
-            background-color: #ffdddd;
-            color: #d8000c;
-        }
-        .success {
-            background-color: #ddffdd;
-            color: #4F8A10;
-        }
+        
         .profile-img {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             object-fit: cover;
         }
+        
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+        
+        select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        select:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        
+        .btn-update {
+            background-color: #16a34a;
+            color: white;
+        }
+        
+        .btn-update:hover {
+            background-color: #15803d;
+        }
+        
+        .btn-delete {
+            background-color: #dc2626;
+            color: white;
+            margin-left: 8px;
+        }
+        
+        .btn-delete:hover {
+            background-color: #b91c1c;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: nowrap;
+            
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                padding: 16px;
+            }
+            
+            th, td {
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn-delete {
+                margin-left: 0;
+                margin-top: 8px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+            
+            h2 {
+                font-size: 1.25rem;
+            }
+            
+            th, td {
+                padding: 8px;
+                font-size: 0.75rem;
+            }
+            
+            .profile-img {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-100 p-5">
-    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Accounts</h2>
+<body>
+    <div class="container">
+        <h2>Manage Accounts</h2>
         
-        <?php if (!empty($message)): ?>
-            <div class="message <?php echo strpos($message, 'Error') === 0 ? 'error' : 'success'; ?>">
-                <?php echo htmlspecialchars($message); ?>
-            </div>
-        <?php endif; ?>
-        
-        <div class="table-container">
+        <div id="message-container"></div>
+
+        <?php
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "vehiclemonitoringdbms";
+
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Handle AJAX Update Request
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+            $employeeid = $_POST['employeeid'];
+            $fname = $_POST['fname'];
+            $lname = $_POST['lname'];
+            $role = $_POST['role'];
+            
+            $stmt = $conn->prepare("UPDATE usertb SET fname=?, lname=?, role=? WHERE employeeid=?");
+            $stmt->bind_param("ssss", $fname, $lname, $role, $employeeid);
+            
+            $response = [];
+            if ($stmt->execute()) {
+                $response['success'] = true;
+                $response['message'] = "Account updated successfully!";
+            } else {
+                $response['success'] = false;
+                $response['message'] = "Error updating account: " . $conn->error;
+            }
+            $stmt->close();
+            
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit();
+        }
+
+        // Handle AJAX Delete Request
+        if (isset($_POST['delete'])) {
+            $employeeid = $_POST['employeeid'];
+            $stmt = $conn->prepare("DELETE FROM usertb WHERE employeeid=?");
+            $stmt->bind_param("s", $employeeid);
+            
+            $response = [];
+            if ($stmt->execute()) {
+                $response['success'] = true;
+                $response['message'] = "Account deleted successfully!";
+            } else {
+                $response['success'] = false;
+                $response['message'] = "Error deleting account: " . $conn->error;
+            }
+            $stmt->close();
+            
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit();
+        }
+
+        // Fetch records for initial page load
+        $selectsql = "SELECT * FROM usertb ORDER BY lname ASC";
+        $result = $conn->query($selectsql);
+        ?>
+
+        <div style="overflow-x: auto;">
             <table>
                 <thead>
                     <tr>
@@ -158,41 +295,45 @@ $result = $conn->query($selectsql);
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                    <tr>
+                    <tr id="row-<?php echo htmlspecialchars($row['employeeid']); ?>">
                         <td>
-                            <img src="uploads/<?php echo htmlspecialchars($row['profile_pic'] ?? 'default.jpg'); ?>" 
+                            <img src="uploads/<?php echo htmlspecialchars($row['ppicture']); ?>" 
                                  alt="Profile" class="profile-img">
                         </td>
                         <td>
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="employeeid" value="<?php echo htmlspecialchars($row['employeeid']); ?>">
-                                <input type="text" name="fname" value="<?php echo htmlspecialchars($row['fname']); ?>">
+                            <input type="text" id="fname-<?php echo htmlspecialchars($row['employeeid']); ?>" 
+                                   value="<?php echo htmlspecialchars($row['fname']); ?>">
                         </td>
                         <td>
-                                <input type="text" name="lname" value="<?php echo htmlspecialchars($row['lname']); ?>">
+                            <input type="text" id="lname-<?php echo htmlspecialchars($row['employeeid']); ?>" 
+                                   value="<?php echo htmlspecialchars($row['lname']); ?>">
                         </td>
                         <td>
-                                <select name="role">
-                                    <option value="Admin" <?php echo $row['role'] == 'Admin' ? 'selected' : ''; ?>>Admin</option>
-                                    <option value="User" <?php echo $row['role'] == 'User' ? 'selected' : ''; ?>>User</option>
-                                    <option value="Accountant" <?php echo $row['role'] == 'Accountant' ? 'selected' : ''; ?>>Accountant</option>
-                                    <option value="GSO" <?php echo $row['role'] == 'GSO' ? 'selected' : ''; ?>>GSO</option>
-                                    <option value="GSO Director" <?php echo $row['role'] == 'GSO Director' ? 'selected' : ''; ?>>GSO Director</option>
-                                    <option value="Immediate Head" <?php echo $row['role'] == 'Immediate Head' ? 'selected' : ''; ?>>Immediate Head</option>
-                                </select>
+                            <select id="role-<?php echo htmlspecialchars($row['employeeid']); ?>">
+                                <option value="Admin" <?php echo $row['role'] == 'Admin' ? 'selected' : ''; ?>>Admin</option>
+                                <option value="User" <?php echo $row['role'] == 'User' ? 'selected' : ''; ?>>User</option>
+                                <option value="Accountant" <?php echo $row['role'] == 'Accountant' ? 'selected' : ''; ?>>Accountant</option>
+                                <option value="GSO" <?php echo $row['role'] == 'GSO' ? 'selected' : ''; ?>>GSO</option>
+                                <option value="GSO Director" <?php echo $row['role'] == 'GSO Director' ? 'selected' : ''; ?>>GSO Director</option>
+                                <option value="Immediate Head" <?php echo $row['role'] == 'Immediate Head' ? 'selected' : ''; ?>>Immediate Head</option>
+                            </select>
                         </td>
                         <td>
-                                <?php echo htmlspecialchars($row['created_at']); ?>
+                            <?php echo htmlspecialchars($row['created_at']); ?>
                         </td>
                         <td>
-                                <button type="submit" name="update" class="btn update-btn">Update</button>
-                            </form>
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="employeeid" value="<?php echo htmlspecialchars($row['employeeid']); ?>">
-                                <button type="submit" name="delete" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this account?')">Delete</button>
-                            </form>
+                            <div class="btn-group" >
+                                <button onclick="updateAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
+                                        class="btn btn-update">
+                                    Update
+                                </button>
+                                <button onclick="deleteAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
+                                        class="btn btn-delete">
+                                    Delete
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     <?php endwhile; ?>
@@ -200,6 +341,77 @@ $result = $conn->query($selectsql);
             </table>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    function showMessage(message, isSuccess) {
+        const messageDiv = $(`
+            <div class="message ${isSuccess ? 'success' : 'error'}">
+                ${message}
+            </div>
+        `);
+        
+        $('#message-container').html(messageDiv);
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            messageDiv.fadeOut(500, function() {
+                $(this).remove();
+            });
+        }, 5000);
+    }
+
+    function updateAccount(employeeid) {
+        const fname = $(`#fname-${employeeid}`).val();
+        const lname = $(`#lname-${employeeid}`).val();
+        const role = $(`#role-${employeeid}`).val();
+        
+        $.ajax({
+            type: 'POST',
+            url: window.location.href,
+            data: {
+                update: true,
+                employeeid: employeeid,
+                fname: fname,
+                lname: lname,
+                role: role
+            },
+            dataType: 'json',
+            success: function(response) {
+                showMessage(response.message, response.success);
+            },
+            error: function() {
+                showMessage('Error communicating with server', false);
+            }
+        });
+    }
+
+    function deleteAccount(employeeid) {
+        if (!confirm('Are you sure you want to delete this account?')) {
+            return;
+        }
+        
+        $.ajax({
+            type: 'POST',
+            url: window.location.href,
+            data: {
+                delete: true,
+                employeeid: employeeid
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    $(`#row-${employeeid}`).remove();
+                }
+                showMessage(response.message, response.success);
+            },
+            error: function() {
+                showMessage('Error communicating with server', false);
+            }
+        });
+    }
+    </script>
+    
     <?php $conn->close(); ?>
 </body>
 </html>
