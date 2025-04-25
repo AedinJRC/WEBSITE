@@ -157,7 +157,8 @@
                   </li>
                <?php
             }
-            if ($_SESSION['role'] == 'Admin') {
+            if (in_array($_SESSION['role'], ['Secretary', 'Admin', 'Director'])) 
+            {
                ?>
                   <li>
                      <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
@@ -225,7 +226,7 @@
       else
       {
          ?>
-            <main onclick="closeSidebar()">
+            <main>
          <?php
       }
    ?>
@@ -685,7 +686,9 @@
    }
    function vehicleSchedules()
    {
-      include('calendar.php');
+      ?>
+         
+      <?php
    }
    function driverSchedules()
    {
@@ -718,6 +721,10 @@
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
+            if($_SESSION['role'])
+            {
+               
+            }
             include 'config.php';
             $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status!='Approved' ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
@@ -905,6 +912,7 @@
                                        <button class="rejbtn" type="submit" name="vrfsubbtn">Reject</button>
                                        <button class="appbtn" type="submit" name="vrfsubbtn">Approve</button>
                                     </div>
+
                                  </span>
                               </div>
                            </form>
