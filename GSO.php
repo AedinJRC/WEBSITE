@@ -685,9 +685,7 @@
    }
    function vehicleSchedules()
    {
-      ?>
-         
-      <?php
+      include('calendar.php');
    }
    function driverSchedules()
    {
