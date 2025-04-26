@@ -194,6 +194,12 @@
             <button type="submit" class="signup-btn" name="signup_sigbtn">LET'S START !</button>
         </form>
     </div>
+    <?php
+        if (isset($_POST['signup_sigbtn'])) {
+            include 'config.php';
+            
+        }
+    ?>
 
     <script>
         function signupPreviewImage(input) {
