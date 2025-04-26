@@ -16,7 +16,7 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>GSO</title>
+      <title>Vehicle Reservation and Maintenance System</title>
       <link rel="stylesheet" href="styles.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
       <style>
@@ -309,7 +309,7 @@
                <div class="vrf-details">
                   <div class="vrf-details-column">
                      <div class="input-container">
-                        <input name="vrfname" value="<?php if($_SESSION['role']!="Admin") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" required>
+                        <input name="vrfname" value="<?php if($_SESSION['role']!="Secretary") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" required>
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
@@ -483,7 +483,7 @@
                            inputContainers.forEach((container, index) => 
                               {
                                  const removeButton = container.querySelector("button");
-                                 if (removeButton) removeButton.style.display = (index === inputContainers.length - 1) ? "inline-block" : "none";
+                                 if (removeButton) removeButton.style.display = (index === inputContainers.length - 2) ? "inline-block" : "none";
                               }
                            );
                         }
@@ -541,6 +541,37 @@
                   <span class="address" style="margin-top:-1.8vw">
                      <span style="text-align:center">TRANSPORTATION COST</span>
                      <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                     <div class="input-container">
+                        <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;" step="0.01" min="0" readonly>
+                        <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                        <div>
+                           <label id="pesoSign">₱</label>
+                        </div>
+                     </div>
+                     <script>
+                     const input = document.getElementById("totalCost");
+                     const pesoSign = document.getElementById("pesoSign");
+
+                     function updatePesoVisibility() {
+                        if (document.activeElement === input || input.checkValidity()) {
+                           pesoSign.style.visibility = "visible";
+                        } else {
+                           pesoSign.style.visibility = "hidden";
+                        }
+                     }
+
+                     input.addEventListener("input", function () {
+                        const value = this.value;
+                        if (value.includes('.')) {
+                           const [whole, decimal] = value.split('.');
+                           if (decimal.length > 2) {
+                           this.value = `${whole}.${decimal.slice(0, 2)}`;
+                           }
+                        }
+                        updatePesoVisibility();
+                     });
+
+                     </script>
                      <div class="subbtn-container">
                         <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                         <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
@@ -718,7 +749,7 @@
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
-            if($_SESSION['role']=='Secretary')
+            if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
             {
                $status='gsoassistant_status';
             }
@@ -970,6 +1001,22 @@
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
+            if($_SESSION['role']=='Secretary')
+            {
+               $status='gsoassistant_status';
+            }
+            elseif($_SESSION['role']=='Immediate Head')
+            {
+               $status='immediatehead_status';
+            }
+            elseif($_SESSION['role']=='Director')
+            {
+               $status='gsodirector_status';
+            }
+            else if($_SESSION['role']=='Accountant')
+            {
+               $status='accounting_status';
+            }
             include 'config.php';
             $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
@@ -978,6 +1025,16 @@
                   ?>
                      <a href="GSO.php?papp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
+                     if (isset($_GET['vrfid'])) {
+                        include 'config.php';
+                        $updatevrf = "UPDATE vrftb SET $status='Clicked' WHERE id = ?";
+                        $stmt = $conn->prepare($updatevrf);
+                        if ($stmt) {
+                           $stmt->bind_param("s", $_GET['vrfid']);
+                           $stmt->execute();
+                           $stmt->close();
+                        }
+                     }
                      if($rowvrf[$status] != "Clicked")
                      { 
                         ?> <div class="info-box"> <?php 
@@ -1164,7 +1221,7 @@
    }
    function maintenanceChecklist()
    {
-      include 'checklist.php';
+         include 'checklist.php';
    }
    function manageAccount()
    {

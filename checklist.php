@@ -1,167 +1,316 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "vehiclemonitoringdbms";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Initialize message variables
+$showPopup = false;
+$popupMessage = '';
+$isError = false;
+
+// Handle form submission
+if(isset($_POST["save_checklist"])) {
+    $plate_number = $_POST["plate_number"];
+    $employee_id = $_POST["employee_id"];
+    $check_date = $_POST["check_date"];
+    
+    // Save checklist items
+    foreach($_POST['checks'] as $check_id => $status) {
+        $sql = "INSERT INTO vehicle_checklists 
+                (plate_number, employee_id, check_id, status, check_date) 
+                VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("siiss", $plate_number, $employee_id, $check_id, $status, $check_date);
+        
+        if(!$stmt->execute()) {
+            $isError = true;
+            $popupMessage = "Error saving checklist: " . $stmt->error;
+        }
+        $stmt->close();
+    }
+    
+    if(!$isError) {
+        $showPopup = true;
+        $popupMessage = "Vehicle checklist saved successfully!";
+    }
+}
+
+// Get vehicles
+$vehicles = $conn->query("SELECT * FROM carstb ORDER BY brand, model");
+
+// Get employees
+$employees = $conn->query("SELECT * FROM usertb");
+
+// Checklist items
+$checklist_items = [
+    1 => "Engine oil level and condition",
+    2 => "Coolant level",
+    3 => "Brake fluid level",
+    4 => "Power steering fluid",
+    5 => "Tire pressure and condition",
+    6 => "Lights (headlights, brake, signals)",
+    7 => "Wiper blades condition",
+    8 => "Battery condition",
+    9 => "Brake system inspection",
+    10 => "Emergency equipment (spare tire, jack)"
+];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Maintenance Checklist</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Vehicle Maintenance Checklist</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color:rgb(12, 42, 71);
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+        }
+        .form-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 14px;
+        }
+        select, input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #f8f9fa;
+        }
+        select:focus, input[type="date"]:focus {
+            outline: none;
+            border-color:rgb(8, 47, 73);
+            box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+        }
+        .checklist-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 14px;
+        }
+        .checklist-table th {
+            background-color:rgb(105, 11, 39);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .checklist-table td {
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .checklist-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .checklist-table tr:hover {
+            background-color: #f1f5f9;
+        }
+        .status-option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="radio"] {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .btn {
+            background-color:rgb(107, 10, 47);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            display: block;
+            width: 200px;
+            margin: 25px auto 0;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color:rgb(87, 5, 5);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 25px;
+            border: none;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close:hover {
+            color: #555;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        .vehicle-info {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 3px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-2xl">
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">Car Maintenance Checklist</h1>
-            
-            <div class="space-y-4">
-                <!-- Engine Section -->
-                <div class="border-b pb-4">
-                    <h2 class="text-lg font-semibold text-gray-700 mb-3">Engine</h2>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Check engine oil level and condition</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Replace engine oil and filter</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Inspect belts for wear and tension</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Check coolant level and condition</span>
-                        </label>
-                    </div>
+<body>
+    <div class="container">
+        <h1>Vehicle Maintenance Checklist</h1>
+        
+        <form method="post" action="">
+            <div class="form-header">
+                <div class="form-group">
+                    <label for="plate_number">Vehicle:</label>
+                    <select name="plate_number" id="plate_number" required>
+                        <option value="">-- Select Vehicle --</option>
+                        <?php while($vehicle = $vehicles->fetch_assoc()): ?>
+                            <option value="<?php echo $vehicle['plate_number']; ?>">
+                                <?php echo $vehicle['brand'].' '.$vehicle['model'].' ('.$vehicle['plate_number'].')'; ?>
+                                <span class="vehicle-info">
+                                    <?php echo $vehicle['year_model'].' • '.$vehicle['color'].' • '.$vehicle['transmission']; ?>
+                                </span>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
                 </div>
                 
-                <!-- Tires Section -->
-                <div class="border-b pb-4">
-                    <h2 class="text-lg font-semibold text-gray-700 mb-3">Tires</h2>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Check tire pressure (including spare)</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Inspect tires for wear and damage</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Rotate tires</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Check wheel alignment</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Brakes Section -->
-                <div class="border-b pb-4">
-                    <h2 class="text-lg font-semibold text-gray-700 mb-3">Brakes</h2>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Inspect brake pads/shoes</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Check brake fluid level</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Inspect brake lines and hoses</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Lights & Electrical Section -->
-                <div class="border-b pb-4">
-                    <h2 class="text-lg font-semibold text-gray-700 mb-3">Lights & Electrical</h2>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Check all exterior lights</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Test horn</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Check battery terminals and charge</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Inspect windshield wipers and fluid</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Additional Maintenance -->
-                <div class="pb-4">
-                    <h2 class="text-lg font-semibold text-gray-700 mb-3">Additional Maintenance</h2>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Replace cabin air filter</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Inspect suspension components</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Check exhaust system</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
-                            <span class="text-gray-700">Lubricate door hinges and locks</span>
-                        </label>
-                    </div>
+                <div class="form-group">
+                    <label for="employee_id">Inspected By:</label>
+                    <select name="employee_id" id="employee_id" required>
+                        <option value="">-- Select Employee --</option>
+                        <?php while($employee = $employees->fetch_assoc()): ?>
+                            <option value="<?php echo $employee['employeeid']; ?>">
+                                <?php echo $employee['fname'].' '.$employee['lname']; ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
                 </div>
             </div>
             
-            <!-- Notes Section -->
-            <div class="mt-6">
-                <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
-                <textarea id="notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+            <div class="form-group">
+                <label for="check_date">Inspection Date:</label>
+                <input type="date" name="check_date" id="check_date" required value="<?php echo date('Y-m-d'); ?>">
             </div>
             
-            <!-- Save Button -->
-            <div class="mt-6 flex justify-end">
-                <button id="saveBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                    Save Checklist
-                </button>
-            </div>
+            <table class="checklist-table">
+                <thead>
+                    <tr>
+                        <th width="52%">Checklist Item</th>
+                        <th width="16%">Good</th>
+                        <th width="16%">Fair</th>
+                        <th width="16%">Bad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($checklist_items as $id => $item): ?>
+                        <tr>
+                            <td><?php echo $item; ?></td>
+                            <td>
+                                <div class="status-option">
+                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="Yes" required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-option">
+                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="No">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-option">
+                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="No">
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            
+            <button type="submit" name="save_checklist" class="btn">Save Checklist</button>
+        </form>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="messageModal" class="modal" style="<?php echo $showPopup ? 'display: block;' : 'display: none;'; ?>">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('messageModal').style.display='none'">&times;</span>
+            <p class="<?php echo $isError ? 'error' : 'success'; ?>"><?php echo $popupMessage; ?></p>
         </div>
     </div>
 
     <script>
-        document.getElementById('saveBtn').addEventListener('click', function() {
-            // Get all checked items
-            const checkedItems = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(checkbox => checkbox.nextElementSibling.textContent);
-            
-            // Get notes
-            const notes = document.getElementById('notes').value;
-            
-            // Create a data object to save (in a real app, you would send this to a server)
-            const data = {
-                checkedItems,
-                notes,
-                date: new Date().toISOString()
-            };
-            
-            // For demo purposes, just show an alert
-            alert('Checklist saved!\n\nChecked items: ' + checkedItems.length + '\nNotes: ' + (notes || 'None'));
-            
-            // In a real application, you would:
-            // 1. Send data to a backend API
-            // 2. Or save to localStorage: localStorage.setItem('carChecklist', JSON.stringify(data));
-        });
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('messageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     </script>
 </body>
 </html>
