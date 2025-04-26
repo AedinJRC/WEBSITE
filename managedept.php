@@ -258,7 +258,7 @@
                 <thead>
                     <tr>
                         <th>Department</th>
-                        <th style="text-align: right; padding-right: 30px;">Actions</th>
+                        <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
