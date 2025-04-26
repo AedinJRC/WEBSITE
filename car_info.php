@@ -32,7 +32,7 @@ $total_cars = $result->num_rows;
     <title>Car List</title>
     <style>
  body { 
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     background: #f4f4f4;
     margin: 0;
     padding: 0;
