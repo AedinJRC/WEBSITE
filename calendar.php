@@ -1,3 +1,5 @@
+
+
 <?php
 // Include config file for database connection
 include('config.php');
@@ -263,11 +265,11 @@ function generateRandomColor() {
 <div class="calendar-container">
     <!-- Navigation Buttons -->
     <div class="nav-buttons">
-        <a href="?month=<?php echo ($currentMonth - 1 == 0) ? 12 : $currentMonth - 1; ?>&year=<?php echo ($currentMonth == 1) ? $currentYear - 1 : $currentYear; ?>">
+        <a href="?vsch=a&month=<?php echo ($currentMonth - 1 == 0) ? 12 : $currentMonth - 1; ?>&year=<?php echo ($currentMonth == 1) ? $currentYear - 1 : $currentYear; ?>">
             <button>&lt;</button>
         </a>
         <span><?php echo date('F', strtotime("{$currentYear}-{$currentMonth}-01")) . " " . $currentYear; ?></span>
-        <a href="?month=<?php echo ($currentMonth + 1 == 13) ? 1 : $currentMonth + 1; ?>&year=<?php echo ($currentMonth == 12) ? $currentYear + 1 : $currentYear; ?>">
+        <a href="?vsch=a&month=<?php echo ($currentMonth + 1 == 13) ? 1 : $currentMonth + 1; ?>&year=<?php echo ($currentMonth == 12) ? $currentYear + 1 : $currentYear; ?>">
             <button>&gt;</button>
         </a>
     </div>
@@ -346,186 +348,152 @@ function generateRandomColor() {
                 <span id="vrf">VEHICLE RESERVATION FORM</span>
                 <span>
                 <span id="fid">Form ID:</span>
-                <?php
-                    include 'config.php';
-                    $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
-                    $resultvrfid = $conn->query($selectvrfid);
-                    $resultvrfid->num_rows > 0;
-                    $rowvrfid = $resultvrfid->fetch_assoc();
-                    echo $rowvrfid['id'];
-                ?>
+                <!-- Placeholder for Form ID -->
                 </span>
             </span>
             <div class="vrf-details">
                 <div class="vrf-details-column">
-                <div class="input-container">
-                    <input name="vrfname" value="<?php echo $rowvrfid['name'] ?>" type="text" id="name" required readonly>
-                    <label for="name">NAME:</label>
-                </div>
-                <div class="input-container">
-                    <input name="vrfdepartment" value="<?php echo $rowvrfid['department'] ?>" type="text"  id="department" required readonly>
-                    <label for="department">DEPARTMENT:</label>
-                </div>
-                <div class="input-container">
-                    <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required readonly>
-                    <label for="activity">ACTIVITY:</label>
-                </div>
-                <div class="input-container">
-                    <input type="text" name="vrfpurpose" value="<?php echo $rowvrfid['purpose'] ?>" id="purpose" required readonly>
-                    <label for="purpose">PURPOSE:</label>
-                </div>
+                    <div class="input-container">
+                        <input name="vrfname" type="text" id="name" required readonly>
+                        <label for="name">NAME:</label>
+                    </div>
+                    <div class="input-container">
+                        <input name="vrfdepartment" type="text" id="department" required readonly>
+                        <label for="department">DEPARTMENT:</label>
+                    </div>
+                    <div class="input-container">
+                        <input name="vrfactivity" type="text" id="activity" required readonly>
+                        <label for="activity">ACTIVITY:</label>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" name="vrfpurpose" id="purpose" required readonly>
+                        <label for="purpose">PURPOSE:</label>
+                    </div>
                 </div>
                 <div class="vrf-details-column">
-                <div class="input-container">
-                    <input name="vrfdate_filed" type="date" value="<?php echo $rowvrfid['date_filed']; ?>" id="dateFiled" required readonly>
-                    <label for="dateFiled">DATE FILED:</label>
-                </div>
-                <div class="input-container">
-                    <input name="vrfbudget_no" type="number" id="budgetNo" required readonly value="<?php echo $rowvrfid['budget_no']; ?>">
-                    <label for="budgetNo">BUDGET No.:</label>
-                </div>
-                <div class="input-container">
-                    <input type="text" name="vrfvehicle" value="<?php echo $rowvrfid['vehicle'] ?>" id="vehicleUsed" required readonly>
-                    <label for="vehicleUsed">VEHICLE TO BE USED:</label>
-                </div>
-                <div class="input-container">
-                    <input type="text" name="vrfdriver" value="<?php echo $rowvrfid['driver'] ?>" id="driver" required readonly>
-                    <label for="driver">DRIVER:</label>
-                </div>
+                    <div class="input-container">
+                        <input name="vrfdate_filed" type="date" id="dateFiled" required readonly>
+                        <label for="dateFiled">DATE FILED:</label>
+                    </div>
+                    <div class="input-container">
+                        <input name="vrfbudget_no" type="number" id="budgetNo" required readonly>
+                        <label for="budgetNo">BUDGET No.:</label>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" name="vrfvehicle" id="vehicleUsed" required readonly>
+                        <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" name="vrfdriver" id="driver" required readonly>
+                        <label for="driver">DRIVER:</label>
+                    </div>
                 </div>
             </div>
             <span class="address">
                 <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
-                <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
+                <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required readonly></textarea>
             </span>
             <div class="vrf-details" style="margin-top:1vw;">
                 <div class="input-container">
-                <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
-                <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
-                <div class="passenger-container">
-                    <span>NAME OF PASSENGER/S</span>
-                    <div id="passengerList">
-                        <?php
-                            if ($rowvrfid['passenger_attachment'] == null) {
-                            $selectpassenger = "SELECT * FROM passengerstb WHERE vrfid = '".$_GET['vrfid']."'";
-                            $resultpassenger = $conn->query($selectpassenger);
-                            if ($resultpassenger->num_rows > 0) {
-                                $passenger_number = 1;
-                                while($rowpassenger = $resultpassenger->fetch_assoc()) {
-                                    ?>
-                                        <div class="input-container" style="position:relative;">
-                                        <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
-                                        <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                        <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
-                                        </div>
-                                    <?php
-                                    $passenger_number++;
-                                }
-                            }
-                            } else {
-                            ?>
-                                <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
-                                    <input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;">
-                                    <input type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style="border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
-                                    <label for="passengerCount">PASSENGER COUNT</label>
-                                </div>
-
-                            <?php
-                            }
-                        ?>
+                    <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
+                    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                    <div class="passenger-container">
+                        <span>NAME OF PASSENGER/S</span>
+                        <div id="passengerList">
+                            <!-- Placeholder for passenger list -->
+                        </div>
                     </div>
-                </div>
-                
                 </div>   
                 <span class="address" style="margin-top:-1.8vw">
-                <span style="text-align:center">TRANSPORTATION COST</span>
-                <?php
-                    if($_SESSION['role'] == "Accountant")
-                    {
-                        ?>
-                            <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
-                        <?php
-                    }
-                    else
-                    {
-                        ?>
-                            <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
-                        <?php
-                    }
-                ?>
-                <div class="subbtn-container">
-                    <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
-                    <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
-                    <button class="rejbtn" type="submit" name="vrfsubbtn">Reject</button>
-                    <button class="appbtn" type="submit" name="vrfsubbtn">Approve</button>
-                </div>
+                    <span style="text-align:center">TRANSPORTATION COST</span>
+                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                    <div class="subbtn-container">
+                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
+                        <a href="uploads/letter_attachment" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                    </div>
                 </span>
+            </div>
+
+            <!-- Modal for showing event details -->
+            <div id="eventModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h4>Event Details</h4>
+                    <div class="event-details">
+                        <!-- Empty content for event details -->
+                        <p><strong>Name:</strong></p>
+                        <p><strong>Activity:</strong> </p>
+                        <p><strong>Department:</strong> </p>
+                        <p><strong>Purpose:</strong> </p>
+                        <p><strong>Date Filed:</strong> </p>
+                        <p><strong>Budget No:</strong> </p>
+                        <p><strong>Driver:</strong> </p>
+                        <p><strong>Vehicle:</strong> </p>
+                        <p><strong>Destination:</strong> </p>
+                        <p><strong>Departure:</strong> </p>
+                        <p><strong>Passenger Count:</strong> </p>
+                        <p><strong>Passenger Attachment:</strong> </p>
+                        <p><strong>Letter Attachment:</strong> </p>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Modal for showing event details -->
-<div id="eventModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h4>Event Details</h4>
-        <div class="event-details">
-            <!-- Empty content for event details -->
-            <p><strong>Name:</strong></p>
-            <p><strong>Activity:</strong> </p>
-            <p><strong>Department:</strong> </p>
-            <p><strong>Purpose:</strong> </p>
-            <p><strong>Date Filed:</strong> </p>
-            <p><strong>Budget No:</strong> </p>
-            <p><strong>Driver:</strong> </p>
-            <p><strong>Vehicle:</strong> </p>
-            <p><strong>Destination:</strong> </p>
-            <p><strong>Departure:</strong> </p>
-            <p><strong>Passenger Count:</strong> </p>
-            <p><strong>Passenger Attachment:</strong> </p>
-            <p><strong>Letter Attachment:</strong> </p>
-        </div>
-    </div>
-</div>
-
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const eventLinks = document.querySelectorAll(".event");
-    const modal = document.getElementById("eventModal");
-    const eventDetails = modal.querySelector(".event-details");
+    // Wait for the document to fully load before adding event listeners
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the modal
+        var modal = document.getElementById("vrespopup");
+        var closeModal = document.querySelector(".closepopup");
 
-    eventLinks.forEach(link => {
-        link.addEventListener("click", function (e) {
+        // Add event listener for each event link
+        var eventLinks = document.querySelectorAll(".event");
+        eventLinks.forEach(function (eventLink) {
+            eventLink.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                // Get the event data from the clicked element
+                var name = eventLink.getAttribute("data-name");
+                var department = eventLink.getAttribute("data-department");
+                var activity = eventLink.getAttribute("data-activity");
+                var purpose = eventLink.getAttribute("data-purpose");
+                var dateFiled = eventLink.getAttribute("data-date_filed");
+                var budgetNo = eventLink.getAttribute("data-budget_no");
+                var driver = eventLink.getAttribute("data-driver");
+                var vehicle = eventLink.getAttribute("data-vehicle");
+                var destination = eventLink.getAttribute("data-destination");
+
+                // Set the form values in the modal
+                document.getElementById("name").value = name;
+                document.getElementById("department").value = department;
+                document.getElementById("activity").value = activity;
+                document.getElementById("purpose").value = purpose;
+                document.getElementById("dateFiled").value = dateFiled;
+                document.getElementById("budgetNo").value = budgetNo;
+                document.getElementById("vehicleUsed").value = vehicle;
+                document.getElementById("driver").value = driver;
+                document.getElementById("destination").value = destination;
+
+                // Display the modal
+                modal.style.display = "flex";
+            });
+        });
+
+        // Close modal when the close button is clicked
+        closeModal.addEventListener("click", function (e) {
             e.preventDefault();
+            modal.style.display = "none";
+        });
 
-            // Populate modal with event data
-            eventDetails.innerHTML = `
-                 <p><strong>Name:</strong> ${this.dataset.name}</p>
-                <p><strong>Activity:</strong> ${this.dataset.activity}</p>
-                <p><strong>Department:</strong> ${this.dataset.department}</p>
-                <p><strong>Purpose:</strong> ${this.dataset.purpose}</p>
-                <p><strong>Date Filed:</strong> ${this.dataset.date_filed}</p>
-                <p><strong>Budget No:</strong> ${this.dataset.budget_no}</p>
-                <p><strong>Driver:</strong> ${this.dataset.driver}</p>
-                <p><strong>Vehicle:</strong> ${this.dataset.vehicle}</p>
-                <p><strong>Driver Destination:</strong> ${this.dataset.destination}</p>
-                <p><strong>Departure:</strong> ${this.dataset.departure}</p>
-                <p><strong>Passenger Count:</strong> ${this.dataset.passenger_count}</p>
-                <p><strong>Passenger Attachment:</strong> ${this.dataset.passenger_attachment}</p>
-                <p><strong>Letter Attachment:</strong> ${this.dataset.letter_attachment}</p>
-            `;
-
-            // Show modal
-            modal.classList.add("active");
+        // Close modal if user clicks outside of the modal content
+        window.addEventListener("click", function (e) {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
         });
     });
-});
-
-function closeModal() {
-    const modal = document.getElementById("eventModal");
-    modal.classList.remove("active");
-}
 </script>
 
 </body>
