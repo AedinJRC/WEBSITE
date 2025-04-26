@@ -261,9 +261,10 @@ $checklist_items = [
             <table class="checklist-table">
                 <thead>
                     <tr>
-                        <th width="60%">Checklist Item</th>
-                        <th width="20%">Yes</th>
-                        <th width="20%">No</th>
+                        <th width="52%">Checklist Item</th>
+                        <th width="16%">Good</th>
+                        <th width="16%">Fair</th>
+                        <th width="16%">Bad</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -273,6 +274,11 @@ $checklist_items = [
                             <td>
                                 <div class="status-option">
                                     <input type="radio" name="checks[<?php echo $id; ?>]" value="Yes" required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-option">
+                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="No">
                                 </div>
                             </td>
                             <td>
