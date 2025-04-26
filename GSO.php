@@ -1190,7 +1190,7 @@
    }
    function maintenanceChecklist()
    {
-      include 'checklist.php';
+         include 'checklist.php';
    }
    function manageAccount()
    {
