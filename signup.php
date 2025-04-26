@@ -1,9 +1,70 @@
+<?php
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "vehiclemonitoringdbms";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Initialize message variables
+$showPopup = false;
+$popupMessage = '';
+$isError = false;
+
+if(isset($_POST["sigbtn"])) {
+    // Get form data
+    $employeeid = $_POST["employee-number"];
+    $fname = $_POST["first-name"];
+    $lname = $_POST["last-name"];
+    $pword = $_POST["password"]; // Storing in plain text (INSECURE)
+    
+    // Handle file upload
+    $ppicture = 'default_avatar.png'; // Default value
+    if(isset($_FILES["ppicture"]) && $_FILES["ppicture"]["error"] == UPLOAD_ERR_OK) {
+        $target_dir = "uploads/";
+        if(!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        $file_extension = pathinfo($_FILES["ppicture"]["name"], PATHINFO_EXTENSION);
+        $new_filename = "avatar_" . $employeeid . "." . $file_extension;
+        $target_file = $target_dir . $new_filename;
+        
+        if(move_uploaded_file($_FILES["ppicture"]["tmp_name"], $target_file)) {
+            $ppicture = $target_file;
+        }
+    }
+    
+    // Prepare and execute SQL statement
+    $signupinsert = "INSERT INTO usertb (employeeid, ppicture, fname, lname, pword, role) 
+                    VALUES (?, ?, ?, ?, ?, 'User')";
+    
+    $stmt = $conn->prepare($signupinsert);
+    $stmt->bind_param("sssss", $employeeid, $ppicture, $fname, $lname, $pword);
+    
+    if($stmt->execute()) {
+        $showPopup = true;
+        $popupMessage = "Registration successful!";
+    } else {
+        $showPopup = true;
+        $isError = true;
+        $popupMessage = "Error: " . $stmt->error;
+    }
+    $stmt->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Signup Page</title>
     <style>
         body {
             display: flex;
@@ -21,6 +82,7 @@
             margin-bottom: 20px;
             font-weight: normal;
         }
+
         form {
             display: flex;
             flex-direction: column;
@@ -28,24 +90,25 @@
             width: 100%;
             max-width: 300px;
         }
-        .form-group {
-            width: 150%;
-            margin-bottom: 15px;
-            text-align: left;
-        }
+
         label {
             display: block;
+            text-align: left;
             font-weight: normal;
             margin-bottom: 5px;
             font-size: 14px;
+            width: 150%;
         }
+
         input {
-            width: 100%;
+            width: 150%;
             padding: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
         }
+
         .btn {
             background-color: #7D192E;
             color: white;
@@ -57,116 +120,139 @@
             cursor: pointer;
             box-sizing: border-box;
         }
+
         .btn:hover {
             background-color: #5a1121;
         }
-        .profile-pic-container {
-            width: 150%;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .profile-pic-preview {
+
+        #preview {
             width: 80px;
             height: 80px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
-            display: "default_avatar.png";
         }
-        .file-input-label {
-            display: inline-block;
-            padding: 8px 12px;
-            background-color: #f1f0f0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            width: 100%;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .file-input-label:hover {
-            background-color: #e0e0e0;
-        }
-        #profile-pic {
+
+        #password-error {
             display: none;
-        }
-        .error-message {
             color: red;
             font-size: 12px;
-            margin-top: 5px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        /* Modal styles */
+        .modal {
             display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
         }
     </style>
 </head>
 <body>
     <h1>Welcome</h1>
-    <form method="post" action="" enctype="multipart/form-data" onsubmit="return validatePasswords()">
-        <!-- Profile Picture Upload (Optional) -->
-        <div class="profile-pic-container">
-            <img id="preview" src="default_avatar.png" class="profile-pic-preview" alt="Profile Picture Preview">
-            <label for="profile-pic" class="file-input-label">Choose Profile Picture (Optional)</label>
-            <input type="file" id="profile-pic" name="profile-pic" accept="image/*" onchange="previewImage(this)">
-        </div>
-        
-        <div class="form-group">
-            <label for="employee">Employee No.</label>
-            <input type="text" id="employee" name="employee" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="first-name">First Name</label>
-            <input type="text" id="first-name" name="first-name" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="last-name">Last Name</label>
-            <input type="text" id="last-name" name="last-name" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="confirm-password">Confirm Password</label>
-            <input type="password" id="confirm-password" name="confirm-password" required>
-            <div id="password-error" class="error-message">Passwords do not match!</div>
-        </div>
-        
-        <button type="submit" class="btn" name="signup-btn">LET'S START !</button>
+    <form method="post" enctype="multipart/form-data" onsubmit="return validatePasswords()">
+        <img id="preview" src="default_avatar.png" alt="Avatar Preview">
+
+        <label for="ppicture">Upload Avatar</label>
+        <input type="file" name="ppicture" id="ppicture" accept="image/*" onchange="previewImage(this)">
+
+        <label for="employee">Employee No.</label>
+        <input type="text" id="employee" name="employee-number" required maxlength="10">
+
+        <label for="first-name">First Name</label>
+        <input type="text" id="first-name" name="first-name" required maxlength="30">
+
+        <label for="last-name">Last Name</label>
+        <input type="text" id="last-name" name="last-name" required maxlength="20">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required maxlength="100">
+
+        <label for="retype-password">Re-type Password</label>
+        <input type="password" id="retype-password" name="retype-password" required maxlength="100">
+
+        <div id="password-error">Passwords do not match!</div>
+
+        <button type="submit" class="btn" name="sigbtn">LET'S START !</button>
     </form>
 
+    <!-- Modal Popup -->
+    <div id="messageModal" class="modal" style="<?php echo $showPopup ? 'display: block;' : 'display: none;'; ?>">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('messageModal').style.display='none'">&times;</span>
+            <p class="<?php echo $isError ? 'error' : 'success'; ?>"><?php echo $popupMessage; ?></p>
+        </div>
+    </div>
+
     <script>
-        function validatePasswords() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const errorElement = document.getElementById('password-error');
-            
-            if (password !== confirmPassword) {
-                errorElement.style.display = 'block';
-                return false;
-            }
-            errorElement.style.display = 'none';
-            return true;
-        }
-        
         function previewImage(input) {
             const preview = document.getElementById('preview');
-            
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                
                 reader.onload = function(e) {
                     preview.src = e.target.result;
-                    preview.style.display = 'block';
                 }
-                
                 reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function validatePasswords() {
+            const password = document.getElementById("password").value;
+            const retype = document.getElementById("retype-password").value;
+            const error = document.getElementById("password-error");
+
+            if (password !== retype) {
+                error.style.display = "block";
+                return false;
+            } else {
+                error.style.display = "none";
+                return true;
+            }
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('messageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
             }
         }
     </script>
