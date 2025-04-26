@@ -248,19 +248,22 @@ main
                height: 8vw;
                border-bottom-left-radius: 0;
                border-bottom-right-radius: 0;
+               border-bottom: 0;
             }
             #totalCost
             {
-               border-top: 0;
                border-top-right-radius: 0;
                border-top-left-radius: 0;
                width: 28vw;
             }
-            #pesoSign {
+            label#pesoSign {
                visibility: hidden;
                position: absolute;
                font-weight: 100;
                color: black;
+               transform: translateY(0.45vw);
+               background-color: transparent;
+               font-size: 1vw;
             }           
          }
       }   
@@ -867,4 +870,23 @@ li
    border-color: var(--maroon);
 }
 
+#vehiclepopup
+{
+   display: none;
+   position: fixed;
+   inset:0;
+   justify-content: center;
+   align-items: center;
+   .popupcontainer
+   {
+      background-color: rgba(0, 0, 0, 0.3);
+      box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
+      padding: 1vw;
+   }
+}
+#vehiclepopup:target
+{
+   display: flex;
+   z-index: 1000;
+}
 
