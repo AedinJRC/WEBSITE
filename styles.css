@@ -26,6 +26,7 @@ main
    transition: 0.3s;
    width: 100%;
    padding: 7vw;
+   padding-top: 3vw;
    div.vres
    {
       display: flex;
