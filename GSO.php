@@ -109,6 +109,7 @@
       <script type="text/javascript" src="app.js" defer></script>
    </head>
 <body>
+   
    <nav class="sidebar active">
       <button onclick="toggleSidebar()" id="logo">
          <img src="PNG/GSO_Logo.png" alt="">
@@ -216,6 +217,11 @@
          </a>
       </div>
    </nav>
+
+   
+
+
+
    <?php
       if(isset($_GET["papp"]) and !empty($_GET["papp"]))
       {
