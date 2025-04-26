@@ -109,7 +109,6 @@
       <script type="text/javascript" src="app.js" defer></script>
    </head>
 <body>
-   
    <nav class="sidebar active">
       <button onclick="toggleSidebar()" id="logo">
          <img src="PNG/GSO_Logo.png" alt="">
@@ -217,11 +216,6 @@
          </a>
       </div>
    </nav>
-
-   
-
-
-
    <?php
       if(isset($_GET["papp"]) and !empty($_GET["papp"]))
       {
@@ -319,31 +313,19 @@
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
-                        <?php
-                           if ($_SESSION['role'] != 'Secretary') {
-                              ?>
-                                 <input name="vrfname" value="<?php echo $_SESSION['department'] ?>" type="text" id="name" required>
-                              <?php
-                           }
-                           else
-                           {
-                              ?>
-                                 <select name="vrfdepartment" id="department" required>
-                                    <option value="" disabled selected></option>
-                                    <?php
-                                       include 'config.php';
-                                       $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
-                                       $resultdepartment = $conn->query($selectdepartment);
-                                       if ($resultdepartment->num_rows > 0) {
-                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
-                                             echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
-                                          }
-                                       }
-                                    ?>
-                                 </select>
-                              <?php
-                           }
-                        ?>
+                        <select name="vrfdepartment" id="department" required>
+                           <option value="" disabled selected></option>
+                           <?php
+                              include 'config.php';
+                              $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                              $resultdepartment = $conn->query($selectdepartment);
+                              if ($resultdepartment->num_rows > 0) {
+                                 while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                    echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                                 }
+                              }
+                           ?>
+                        </select>
                         <label for="department">DEPARTMENT:</label>
                      </div>
                      <div class="input-container">
@@ -370,33 +352,47 @@
                         <label for="budgetNo">BUDGET No.:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfvehicle" id="vehicleUsed" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectvehicle = "SELECT * FROM carstb ORDER BY plate_number ASC";
-                              $resultvehicle = $conn->query($selectvehicle);
-                              while($rowvehicle = $resultvehicle->fetch_assoc()) {
-                                 echo "<option value='".$rowvehicle['plate_number']."'>".$rowvehicle['plate_number']."</option>";
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') {
+                              ?>
+                                 <button type=button style="border:0;"><input style="cursor: not-allowed;" name=" vrfdriver" type="text" id="vehicelUsed" readonly></button>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                <a href="#"><input style="cursor: pointer;" name="vrfvehicle" type="text" id="vehicleUsed" readonly></a>
+                              <?php
+                           }
+                        ?>
                         <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfdriver" id="driver" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
-                              $resultdriver = $conn->query($selectdriver);
-                              if ($resultdriver->num_rows > 0) {
-                                 while($rowdriver = $resultdriver->fetch_assoc()) {
-                                    echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
-                                 }
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') {
+                              ?>
+                                 <button type=button style="border:0;"><input style="cursor: not-allowed;" name=" vrfdriver" type="text" id="vehicelUsed" readonly></button>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                 <select name="vrfdriver" id="driver" required>
+                                    <option value="" disabled selected></option>
+                                    <?php
+                                       include 'config.php';
+                                       $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
+                                       $resultdriver = $conn->query($selectdriver);
+                                       if ($resultdriver->num_rows > 0) {
+                                          while($rowdriver = $resultdriver->fetch_assoc()) {
+                                             echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
+                                          }
+                                       }
+                                    ?>
+                                 </select>
+                              <?php
+                           }
+                        ?>
                         <label for="driver">DRIVER:</label>
                      </div>
                   </div>
@@ -560,7 +556,7 @@
                      <span style="text-align:center">TRANSPORTATION COST</span>
                      <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
                      <div class="input-container">
-                        <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;" step="0.01" min="0" readonly>
+                        <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly>
                         <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                         <div>
                            <label id="pesoSign">₱</label>
