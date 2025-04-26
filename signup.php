@@ -136,15 +136,12 @@
     </style>
 </head>
 <body>
+    <div class="signup-container">
 
-<div class="signup-container">
-        <div class="signup-header" >
-            <div class="signup-title">Welcome</div>
-        </div>
         <form class="signup-form" method="post" enctype="multipart/form-data" onsubmit="return signupValidatePasswords()">
             
             <div class="signup-avatar-container">
-                <img id="signup-preview" src="default_avatar.png" alt="Avatar Preview">
+                <img id="signup-preview" src="uploads/default_avatar.png" alt="Avatar Preview">
                 <div class="signup-file-container">
                     <label for="signup-ppicture" class="custom-file-upload">Upload Profile</label>
                     <input type="file" name="signup_ppicture" id="signup-ppicture" accept="image/*" onchange="signupPreviewImage(this)">
@@ -168,8 +165,18 @@
 
             <div class="signup-form-group">
                 <label for="signup-department">Department</label>
-                <select id="signup-department" name="signup_department" required>
-                    <option value="">-- Select Department --</option>
+                <select name="signup_department" id="department" required>
+                <option value="" disabled selected></option>
+                <?php
+                    include 'config.php';
+                    $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                    $resultdepartment = $conn->query($selectdepartment);
+                    if ($resultdepartment->num_rows > 0) {
+                        while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                            echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                        }
+                    }
+                ?>
                 </select>
             </div>
 
@@ -188,6 +195,12 @@
             <button type="submit" class="signup-btn" name="signup_sigbtn">LET'S START !</button>
         </form>
     </div>
+    <?php
+        if (isset($_POST['signup_sigbtn'])) {
+            include 'config.php';
+            
+        }
+    ?>
 
     <script>
         function signupPreviewImage(input) {

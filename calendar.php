@@ -14,7 +14,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
 }
 
 // Query the database for events in the selected month and year based on the departure date
-$sql = "SELECT * FROM vrftb WHERE YEAR(departure) = ? AND MONTH(departure) = ? ORDER BY departure";
+$sql = "SELECT * FROM vrftb WHERE YEAR(departure) = ? AND MONTH(departure) = ? AND gsodirector_status = 'Approved' ORDER BY departure";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $currentYear, $currentMonth); // Use parameterized query for security
 $stmt->execute();
@@ -48,7 +48,7 @@ function generateRandomColor() {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Roboto', sans-serif;
             background-color: #f7f7f7;
             margin: 0;
             padding: 0;
@@ -258,6 +258,11 @@ function generateRandomColor() {
         font-size: 0.9rem;
     }
 }
+
+.vehicle-reservation-form {
+    max-height: 70vh; 
+}
+
     </style>
 </head>
 <body>
@@ -337,8 +342,9 @@ function generateRandomColor() {
     </div>
 </div>
 
-<div id="vrespopup">
+<div id="vrespopup" style="justify-content: center; align-items: center;">
     <div class="vres">
+
         <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
             <a href="GSO.php?papp=a" class="closepopup">×</a>
             <img src="PNG/CSA_Logo.png" alt="">
@@ -347,16 +353,19 @@ function generateRandomColor() {
                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                 <span id="vrf">VEHICLE RESERVATION FORM</span>
                 <span>
-                <span id="fid">Form ID:</span>
-                <!-- Placeholder for Form ID -->
+                <span id="fid">Form ID: <span id="formIdDisplay"></span></span>
+             
                 </span>
             </span>
             <div class="vrf-details">
                 <div class="vrf-details-column">
-                    <div class="input-container">
-                        <input name="vrfname" type="text" id="name" required readonly>
-                        <label for="name">NAME:</label>
-                    </div>
+
+                <div class="input-container"> 
+                    <input name="vrfname" type="text" id="fullname" required readonly>
+                    <label for="fullname">NAME:</label>
+                </div>
+
+
                     <div class="input-container">
                         <input name="vrfdepartment" type="text" id="department" required readonly>
                         <label for="department">DEPARTMENT:</label>
@@ -390,71 +399,33 @@ function generateRandomColor() {
                 </div>
             </div>
             <span class="address">
-                <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
+                <span>DESTINATION:</span>
                 <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required readonly></textarea>
             </span>
             <div class="vrf-details" style="margin-top:1vw;">
-                <div class="input-container">
-                    <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
-                    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
-                    <div class="passenger-container">
-                        <span>NAME OF PASSENGER/S</span>
-                        <div id="passengerList">
-                            <!-- Placeholder for passenger list -->
-                        </div>
-                    </div>
-                </div>   
-                <span class="address" style="margin-top:-1.8vw">
-                    <span style="text-align:center">TRANSPORTATION COST</span>
-                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
-                    <div class="subbtn-container">
-                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
-                        <a href="uploads/letter_attachment" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
-                    </div>
+            <div class="input-container">
+    <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
+    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+</div>  
                 </span>
             </div>
 
-            <!-- Modal for showing event details -->
-            <div id="eventModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="closeModal()">&times;</span>
-                    <h4>Event Details</h4>
-                    <div class="event-details">
-                        <!-- Empty content for event details -->
-                        <p><strong>Name:</strong></p>
-                        <p><strong>Activity:</strong> </p>
-                        <p><strong>Department:</strong> </p>
-                        <p><strong>Purpose:</strong> </p>
-                        <p><strong>Date Filed:</strong> </p>
-                        <p><strong>Budget No:</strong> </p>
-                        <p><strong>Driver:</strong> </p>
-                        <p><strong>Vehicle:</strong> </p>
-                        <p><strong>Destination:</strong> </p>
-                        <p><strong>Departure:</strong> </p>
-                        <p><strong>Passenger Count:</strong> </p>
-                        <p><strong>Passenger Attachment:</strong> </p>
-                        <p><strong>Letter Attachment:</strong> </p>
-                    </div>
-                </div>
-            </div>
         </form>
     </div>
 </div>
 
 <script>
-    // Wait for the document to fully load before adding event listeners
     document.addEventListener("DOMContentLoaded", function () {
-        // Get the modal
         var modal = document.getElementById("vrespopup");
         var closeModal = document.querySelector(".closepopup");
 
-        // Add event listener for each event link
         var eventLinks = document.querySelectorAll(".event");
         eventLinks.forEach(function (eventLink) {
             eventLink.addEventListener("click", function (e) {
                 e.preventDefault();
 
-                // Get the event data from the clicked element
+                var id = eventLink.getAttribute("data-id");
+                var departure = eventLink.getAttribute("data-departure");
                 var name = eventLink.getAttribute("data-name");
                 var department = eventLink.getAttribute("data-department");
                 var activity = eventLink.getAttribute("data-activity");
@@ -465,8 +436,9 @@ function generateRandomColor() {
                 var vehicle = eventLink.getAttribute("data-vehicle");
                 var destination = eventLink.getAttribute("data-destination");
 
-                // Set the form values in the modal
-                document.getElementById("name").value = name;
+                document.getElementById("formIdDisplay").textContent = id;
+                document.getElementById("departureDate").value = departure;
+                document.getElementById("fullname").value = name;
                 document.getElementById("department").value = department;
                 document.getElementById("activity").value = activity;
                 document.getElementById("purpose").value = purpose;
@@ -476,20 +448,18 @@ function generateRandomColor() {
                 document.getElementById("driver").value = driver;
                 document.getElementById("destination").value = destination;
 
-                // Display the modal
-                modal.style.display = "flex";
+                modal.style.display = "flex"; // show popup
             });
         });
 
-        // Close modal when the close button is clicked
         closeModal.addEventListener("click", function (e) {
             e.preventDefault();
             modal.style.display = "none";
         });
 
-        // Close modal if user clicks outside of the modal content
-        window.addEventListener("click", function (e) {
-            if (e.target === modal) {
+        // Optional: Close popup when clicking outside it
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
                 modal.style.display = "none";
             }
         });

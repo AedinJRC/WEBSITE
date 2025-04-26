@@ -109,6 +109,7 @@
       <script type="text/javascript" src="app.js" defer></script>
    </head>
 <body>
+   
    <nav class="sidebar active">
       <button onclick="toggleSidebar()" id="logo">
          <img src="PNG/GSO_Logo.png" alt="">
@@ -216,6 +217,11 @@
          </a>
       </div>
    </nav>
+
+   
+
+
+
    <?php
       if(isset($_GET["papp"]) and !empty($_GET["papp"]))
       {
@@ -313,19 +319,31 @@
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfdepartment" id="department" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
-                              $resultdepartment = $conn->query($selectdepartment);
-                              if ($resultdepartment->num_rows > 0) {
-                                 while($rowdepartment = $resultdepartment->fetch_assoc()) {
-                                    echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
-                                 }
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') {
+                              ?>
+                                 <input name="vrfname" value="<?php echo $_SESSION['department'] ?>" type="text" id="name" required>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                 <select name="vrfdepartment" id="department" required>
+                                    <option value="" disabled selected></option>
+                                    <?php
+                                       include 'config.php';
+                                       $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                                       $resultdepartment = $conn->query($selectdepartment);
+                                       if ($resultdepartment->num_rows > 0) {
+                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                             echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                                          }
+                                       }
+                                    ?>
+                                 </select>
+                              <?php
+                           }
+                        ?>
                         <label for="department">DEPARTMENT:</label>
                      </div>
                      <div class="input-container">
@@ -483,7 +501,7 @@
                            inputContainers.forEach((container, index) => 
                               {
                                  const removeButton = container.querySelector("button");
-                                 if (removeButton) removeButton.style.display = (index === inputContainers.length - 1) ? "inline-block" : "none";
+                                 if (removeButton) removeButton.style.display = (index === inputContainers.length - 2) ? "inline-block" : "none";
                               }
                            );
                         }
@@ -541,6 +559,37 @@
                   <span class="address" style="margin-top:-1.8vw">
                      <span style="text-align:center">TRANSPORTATION COST</span>
                      <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                     <div class="input-container">
+                        <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;" step="0.01" min="0" readonly>
+                        <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                        <div>
+                           <label id="pesoSign">₱</label>
+                        </div>
+                     </div>
+                     <script>
+                     const input = document.getElementById("totalCost");
+                     const pesoSign = document.getElementById("pesoSign");
+
+                     function updatePesoVisibility() {
+                        if (document.activeElement === input || input.checkValidity()) {
+                           pesoSign.style.visibility = "visible";
+                        } else {
+                           pesoSign.style.visibility = "hidden";
+                        }
+                     }
+
+                     input.addEventListener("input", function () {
+                        const value = this.value;
+                        if (value.includes('.')) {
+                           const [whole, decimal] = value.split('.');
+                           if (decimal.length > 2) {
+                           this.value = `${whole}.${decimal.slice(0, 2)}`;
+                           }
+                        }
+                        updatePesoVisibility();
+                     });
+
+                     </script>
                      <div class="subbtn-container">
                         <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                         <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>

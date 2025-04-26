@@ -1259,7 +1259,9 @@ footer .column > a:hover {
                             $_SESSION["fname"] = $loginrow["fname"];
                             $_SESSION["lname"] = $loginrow["lname"];
                             $_SESSION["role"] = $loginrow["role"];
+                            $_SESSION["department"] = $loginrow["department"];
                             $_SESSION["created_at"] = $loginrow["created_at"];
+                            $_SESSION["updated_at"] = $loginrow["updated_at"];
                             $logincount = mysqli_num_rows($loginquery);
                             if($logincount == 1)
                                 header("location: gso.php");
