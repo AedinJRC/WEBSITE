@@ -313,19 +313,31 @@
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfdepartment" id="department" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
-                              $resultdepartment = $conn->query($selectdepartment);
-                              if ($resultdepartment->num_rows > 0) {
-                                 while($rowdepartment = $resultdepartment->fetch_assoc()) {
-                                    echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
-                                 }
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') {
+                              ?>
+                                 <input name="vrfname" value="<?php echo $_SESSION['department'] ?>" type="text" id="name" required>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                 <select name="vrfdepartment" id="department" required>
+                                    <option value="" disabled selected></option>
+                                    <?php
+                                       include 'config.php';
+                                       $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                                       $resultdepartment = $conn->query($selectdepartment);
+                                       if ($resultdepartment->num_rows > 0) {
+                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                             echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                                          }
+                                       }
+                                    ?>
+                                 </select>
+                              <?php
+                           }
+                        ?>
                         <label for="department">DEPARTMENT:</label>
                      </div>
                      <div class="input-container">

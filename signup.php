@@ -164,8 +164,18 @@
 
             <div class="signup-form-group">
                 <label for="signup-department">Department</label>
-                <select id="signup-department" name="signup_department" required>
-                    <option value="">-- Select Department --</option>
+                <select name="signup_department" id="department" required>
+                <option value="" disabled selected></option>
+                <?php
+                    include 'config.php';
+                    $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                    $resultdepartment = $conn->query($selectdepartment);
+                    if ($resultdepartment->num_rows > 0) {
+                        while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                            echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                        }
+                    }
+                ?>
                 </select>
             </div>
 
