@@ -551,12 +551,11 @@
             </form>
             <?php
                include 'config.php';
-               if ($_SERVER["REQUEST_METHOD"] == "POST") {
+               if (isset( $_POST['vrfsubbtn'])) {
                   if (
                      isset($_POST['vrfname'], $_POST['vrfdepartment'], $_POST['vrfactivity'], $_POST['vrfpurpose'], 
                      $_POST['vrfdate_filed'], $_POST['vrfbudget_no'], $_POST['vrfvehicle'], 
-                     $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture'], 
-                     $_POST['vrftransportation_cost']) 
+                     $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture'],) 
                      && isset($_FILES["vrfletter_attachment"]) // Letter attachment is required
                      )   
                   {
@@ -721,12 +720,24 @@
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
-            if($_SESSION['role'])
+            if($_SESSION['role']=='Secretary')
             {
-               
+               $status='gsoassistant_status';
+            }
+            elseif($_SESSION['role']=='Immediate Head')
+            {
+               $status='immediatehead_status';
+            }
+            elseif($_SESSION['role']=='Director')
+            {
+               $status='gsodirector_status';
+            }
+            else if($_SESSION['role']=='Accountant')
+            {
+               $status='accounting_status';
             }
             include 'config.php';
-            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status!='Approved' ORDER BY date_filed DESC, id DESC";
+            $selectvrf = "SELECT * FROM vrftb WHERE $status!='Approved' ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
                while($rowvrf = $resultvrf->fetch_assoc()) {
@@ -735,7 +746,7 @@
                   <?php
                      if (isset($_GET['vrfid'])) {
                         include 'config.php';
-                        $updatevrf = "UPDATE vrftb SET gsoassistant_status='Clicked' WHERE id = ?";
+                        $updatevrf = "UPDATE vrftb SET $status='Clicked' WHERE id = ?";
                         $stmt = $conn->prepare($updatevrf);
                         if ($stmt) {
                            $stmt->bind_param("s", $_GET['vrfid']);
@@ -743,7 +754,7 @@
                            $stmt->close();
                         }
                      }
-                     if($rowvrf['gsoassistant_status'] != "Clicked")
+                     if($rowvrf[$status] != "Clicked")
                      { 
                         ?> <div class="info-box"> <?php 
                      }
@@ -754,7 +765,7 @@
                         ?>
                            <div class="pending">
                               <?php
-                                 if($rowvrf['gsoassistant_status'] == "Pending")
+                                 if($rowvrf[$status] == "Pending")
                                  {
                                     echo '<div class="circle"></div>';
                                  }
@@ -790,7 +801,7 @@
                      </a>
                      <div id="vrespopup">
                         <div class="vres">
-                           <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
+                           <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
                               <a href="GSO.php?papp=a" class="closepopup">×</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
@@ -909,10 +920,233 @@
                                     <div class="subbtn-container">
                                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                                        <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
-                                       <button class="rejbtn" type="submit" name="vrfsubbtn">Reject</button>
-                                       <button class="appbtn" type="submit" name="vrfsubbtn">Approve</button>
+                                       <button class="rejbtn" type="submit" name="vrfrejbtn">Reject</button>
+                                       <button class="appbtn" type="submit" name="vrfappbtn">Approve</button>
                                     </div>
+                                 </span>
+                              </div>
+                           </form>
+                        </div>
+                     </div>
+                  <?php
+               }
+               if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                  if (isset($_POST['vrfappbtn'])) {
+                     $id = htmlspecialchars($_GET['vrfid']);
+                     $updateStatus = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
+                     $stmt = $conn->prepare($updateStatus);
+                     if ($stmt) {
+                        $stmt->bind_param("s", $id);
+                        $stmt->execute();
+                        $stmt->close();
+                        echo "<script>alert('Reservation approved successfully!');</script>";
+                     } else {
+                        echo "<script>alert('Error updating status.');</script>";
+                     }
+                  } elseif (isset($_POST['vrfrejbtn'])) {
+                     $id = htmlspecialchars($_GET['vrfid']);
+                     $updateStatus = "UPDATE vrftb SET $status='Rejected' WHERE id = ?";
+                     $stmt = $conn->prepare($updateStatus);
+                     if ($stmt) {
+                        $stmt->bind_param("s", $id);
+                        $stmt->execute();
+                        $stmt->close();
+                        echo "<script>alert('Reservation rejected successfully!');</script>";
+                     } else {
+                        echo "<script>alert('Error updating status.');</script>";
+                     }
+                  }
+               }
+            }
+         ?>
+      <?php
+   }
+   function reservationApproved()
+   {
+      ?>
+         <input class="search" type="text" id="search" placeholder="Search reservation">
+         <div class="maintitle">
+            <h1>Reservation Approved</h1>
+            <p>New</p>
+         </div>
+         <div class="whitespace"></div>
+         <div class="whitespace2"></div>
+         <?php
+            include 'config.php';
+            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
+            $resultvrf = $conn->query($selectvrf);
+            if ($resultvrf->num_rows > 0) {
+               while($rowvrf = $resultvrf->fetch_assoc()) {
+                  ?>
+                     <a href="GSO.php?papp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
+                  <?php
+                     if($rowvrf[$status] != "Clicked")
+                     { 
+                        ?> <div class="info-box"> <?php 
+                     }
+                     else
+                     { 
+                        ?> <div class="info-box" style="background-color:#eeeeee;"> <?php 
+                     }
+                        ?>
+                           <div class="pending">
+                              <?php
+                                 if($rowvrf[$status] == "Pending")
+                                 {
+                                    echo '<div class="circle"></div>';
+                                 }
+                              ?>
+                              <span class="time">1 hour ago</span>
+                           </div>
+                           <div class="info-heading">
+                              <img src="uploads/Maynard.png" alt="Profile">
+                              <span class="info-heading-text">
+                                 <span class="name"><?php echo $rowvrf['name'] ?></span>
+                                 <span class="department"><?php echo $rowvrf['department'] ?></span>
+                                 <span class="date"><?php echo "Date: ".date("m/d/Y", strtotime($rowvrf['date_filed']));?></span>
+                              </span>
+                           </div>
+                           <div class="info-details">
+                              <div>
+                                 <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
+                                 <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
+                                 <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
+                              </div>
+                              <div>
+                                 <div><div class="title">Departure Date:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("F j, Y"); ?></div></div>
+                                 <div><div class="title">Departure Time:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("g:iA"); ?></div></div>
+                                 <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                              </div>
+                              <div>
+                                 <div><div class="title">Driver:</div><div class="dikoalam"><?php echo $rowvrf['driver']; ?></div></div>
+                                 <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
+                                 <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
+                              </div>
+                           </div>
+                        </div>
+                     </a>
+                     <div id="vrespopup">
+                        <div class="vres">
+                           <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
+                              <a href="GSO.php?papp=a" class="closepopup">×</a>
+                              <img src="PNG/CSA_Logo.png" alt="">
+                              <span class="header">
+                                 <span id="csab">Colegio San Agustin-Biñan</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                                 <span id="vrf">VEHICLE RESERVATION FORM</span>
+                                 <span>
+                                    <span id="fid">Form ID:</span>
+                                    <?php
+                                       include 'config.php';
+                                       $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
+                                       $resultvrfid = $conn->query($selectvrfid);
+                                       $resultvrfid->num_rows > 0;
+                                       $rowvrfid = $resultvrfid->fetch_assoc();
+                                       echo $rowvrfid['id'];
+                                    ?>
+                                 </span>
+                              </span>
+                              <div class="vrf-details">
+                                 <div class="vrf-details-column">
+                                    <div class="input-container">
+                                       <input name="vrfname" value="<?php echo $rowvrfid['name'] ?>" type="text" id="name" required readonly>
+                                       <label for="name">NAME:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfdepartment" value="<?php echo $rowvrfid['department'] ?>" type="text"  id="department" required readonly>
+                                       <label for="department">DEPARTMENT:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required readonly>
+                                       <label for="activity">ACTIVITY:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input type="text" name="vrfpurpose" value="<?php echo $rowvrfid['purpose'] ?>" id="purpose" required readonly>
+                                       <label for="purpose">PURPOSE:</label>
+                                    </div>
+                                 </div>
+                                 <div class="vrf-details-column">
+                                    <div class="input-container">
+                                       <input name="vrfdate_filed" type="date" value="<?php echo $rowvrfid['date_filed']; ?>" id="dateFiled" required readonly>
+                                       <label for="dateFiled">DATE FILED:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfbudget_no" type="number" id="budgetNo" required readonly value="<?php echo $rowvrfid['budget_no']; ?>">
+                                       <label for="budgetNo">BUDGET No.:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input type="text" name="vrfvehicle" value="<?php echo $rowvrfid['vehicle'] ?>" id="vehicleUsed" required readonly>
+                                       <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input type="text" name="vrfdriver" value="<?php echo $rowvrfid['driver'] ?>" id="driver" required readonly>
+                                       <label for="driver">DRIVER:</label>
+                                    </div>
+                                 </div>
+                              </div>
+                              <span class="address">
+                                 <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
+                                 <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
+                              </span>
+                              <div class="vrf-details" style="margin-top:1vw;">
+                                 <div class="input-container">
+                                    <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
+                                    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                                    <div class="passenger-container">
+                                       <span>NAME OF PASSENGER/S</span>
+                                       <div id="passengerList">
+                                          <?php
+                                             if ($rowvrfid['passenger_attachment'] == null) {
+                                                $selectpassenger = "SELECT * FROM passengerstb WHERE vrfid = '".$_GET['vrfid']."'";
+                                                $resultpassenger = $conn->query($selectpassenger);
+                                                if ($resultpassenger->num_rows > 0) {
+                                                   $passenger_number = 1;
+                                                   while($rowpassenger = $resultpassenger->fetch_assoc()) {
+                                                      ?>
+                                                         <div class="input-container" style="position:relative;">
+                                                            <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
+                                                            <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                         </div>
+                                                      <?php
+                                                      $passenger_number++;
+                                                   }
+                                                }
+                                             } else {
+                                                ?>
+                                                   <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <label for="passengerCount">PASSENGER NAMES</label>
+                                                   </div>
 
+                                                <?php
+                                             }
+                                          ?>
+                                       </div>
+                                    </div>
+                                    
+                                 </div>   
+                                 <span class="address" style="margin-top:-1.8vw">
+                                    <span style="text-align:center">TRANSPORTATION COST</span>
+                                    <?php
+                                       if($_SESSION['role'] == "Accountant")
+                                       {
+                                          ?>
+                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                                          <?php
+                                       }
+                                       else
+                                       {
+                                          ?>
+                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                                          <?php
+                                       }
+                                    ?>
+                                    <div class="subbtn-container">
+                                       <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
+                                       <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                    </div>
                                  </span>
                               </div>
                            </form>
@@ -922,12 +1156,6 @@
                }
             }
          ?>
-      <?php
-   }
-   function reservationApproved()
-   {
-      ?>
-         
       <?php
    }
    function cancelledRequests()
