@@ -245,8 +245,23 @@ main
             #transportation-cost
             {
                width: 28vw;
-               height: 10vw;
+               height: 8vw;
+               border-bottom-left-radius: 0;
+               border-bottom-right-radius: 0;
             }
+            #totalCost
+            {
+               border-top: 0;
+               border-top-right-radius: 0;
+               border-top-left-radius: 0;
+               width: 28vw;
+            }
+            #pesoSign {
+               visibility: hidden;
+               position: absolute;
+               font-weight: 100;
+               color: black;
+            }           
          }
       }   
       .subbtn-container
