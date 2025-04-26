@@ -16,7 +16,7 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>GSO</title>
+      <title>Vehicle Reservation and Maintenance System</title>
       <link rel="stylesheet" href="styles.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
       <style>
@@ -309,7 +309,7 @@
                <div class="vrf-details">
                   <div class="vrf-details-column">
                      <div class="input-container">
-                        <input name="vrfname" value="<?php if($_SESSION['role']!="Admin") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" required>
+                        <input name="vrfname" value="<?php if($_SESSION['role']!="Secretary") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" required>
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
@@ -685,9 +685,7 @@
    }
    function vehicleSchedules()
    {
-      ?>
-         
-      <?php
+      include("calendar.php");
    }
    function driverSchedules()
    {
@@ -720,7 +718,7 @@
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
-            if($_SESSION['role']=='Secretary')
+            if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
             {
                $status='gsoassistant_status';
             }
@@ -972,6 +970,22 @@
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
+            if($_SESSION['role']=='Secretary')
+            {
+               $status='gsoassistant_status';
+            }
+            elseif($_SESSION['role']=='Immediate Head')
+            {
+               $status='immediatehead_status';
+            }
+            elseif($_SESSION['role']=='Director')
+            {
+               $status='gsodirector_status';
+            }
+            else if($_SESSION['role']=='Accountant')
+            {
+               $status='accounting_status';
+            }
             include 'config.php';
             $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
@@ -980,6 +994,16 @@
                   ?>
                      <a href="GSO.php?papp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
+                     if (isset($_GET['vrfid'])) {
+                        include 'config.php';
+                        $updatevrf = "UPDATE vrftb SET $status='Clicked' WHERE id = ?";
+                        $stmt = $conn->prepare($updatevrf);
+                        if ($stmt) {
+                           $stmt->bind_param("s", $_GET['vrfid']);
+                           $stmt->execute();
+                           $stmt->close();
+                        }
+                     }
                      if($rowvrf[$status] != "Clicked")
                      { 
                         ?> <div class="info-box"> <?php 
@@ -1166,7 +1190,9 @@
    }
    function maintenanceChecklist()
    {
-      include 'checklist.php';
+      ?>
+        
+      <?php
    }
    function manageAccount()
    {
