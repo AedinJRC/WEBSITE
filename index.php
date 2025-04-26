@@ -10,7 +10,7 @@
     <!-- FontAwesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-    <title>Vehicle Monitoring and Maintenance System</title>
+    <title>Vehicle Reservation and Maintenance System</title>
     <style>
         
     
@@ -1166,7 +1166,7 @@ footer .column > a:hover {
                 <div class="left-section">
                     <div class="red-bar"></div>
                     <div class="text-section">
-                        <span>Vehicle Monitoring and Maintenance</span>
+                        <span>Vehicle Reservation and Monitoring System</span>
                         <h1>General Services Office</h1>
                     </div>
                 </div>
@@ -1276,36 +1276,6 @@ footer .column > a:hover {
     }
     function signup() 
     {
-        ?>
-            <div id="welcome">
-                <form method="post" action="index.php?sig=a" onsubmit="return validatePasswords()">
-                    <h1>Welcome</h1>
-                    <label for="employee">Employee No.</label>
-                    <input type="text" id="employee" name="employee-number" required>
-                    
-                    <label for="first-name">First Name</label>
-                    <input type="text" id="first-name" name="first-name" required>
-                    
-                    <label for="last-name">Last Name</label>
-                    <input type="text" id="last-name" name="last-name" required>
-                    
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                    
-                    <label for="retype-password">Re-type Password</label>
-                    <input type="password" id="retype-password" name="retype-password" required>
-                    
-                    <button type="submit" class="btn" name="sigbtn">LET'S START !</button>
-                </form>
-                <?php
-                    if(isset($_POST["sigbtn"]))
-                    {
-                        include("config.php");
-                        $signupinsert = "INSERT INTO usertb(employeeid, ppicture, fname, lname, pword, created_by) VALUES('".$_POST["employee-number"]."', '".$_POST["first-name"]."', '".$_POST["last-name"]."', '".$_POST["password"]."')";
-                        $signupquery = mysqli_query($conn, $signupinsert);
-                    }
-                ?>
-            </div>
-        <?php
+        include("signup.php");
     }
 ?>
