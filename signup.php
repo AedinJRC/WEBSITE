@@ -136,12 +136,13 @@
     </style>
 </head>
 <body>
-    <div class="signup-container">
+
+<div class="signup-container">
         <div class="signup-header" >
             <div class="signup-title">Welcome</div>
         </div>
-
         <form class="signup-form" method="post" enctype="multipart/form-data" onsubmit="return signupValidatePasswords()">
+            
             <div class="signup-avatar-container">
                 <img id="signup-preview" src="default_avatar.png" alt="Avatar Preview">
                 <div class="signup-file-container">
