@@ -137,13 +137,10 @@
 </head>
 <body>
     <div class="signup-container">
-        <div class="signup-header" >
-            <div class="signup-title">Welcome</div>
-        </div>
 
         <form class="signup-form" method="post" enctype="multipart/form-data" onsubmit="return signupValidatePasswords()">
             <div class="signup-avatar-container">
-                <img id="signup-preview" src="default_avatar.png" alt="Avatar Preview">
+                <img id="signup-preview" src="uploads/default_avatar.png" alt="Avatar Preview">
                 <div class="signup-file-container">
                     <label for="signup-ppicture" class="custom-file-upload">Upload Profile</label>
                     <input type="file" name="signup_ppicture" id="signup-ppicture" accept="image/*" onchange="signupPreviewImage(this)">
