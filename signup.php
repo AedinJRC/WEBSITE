@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,8 +138,7 @@
 </head>
 <body>
     <div class="signup-container">
-
-        <form class="signup-form" method="post" enctype="multipart/form-data" onsubmit="return signupValidatePasswords()">
+         <form class="signup-form" method="post" enctype="multipart/form-data" onsubmit="return signupValidatePasswords()">
             
             <div class="signup-avatar-container">
                 <img id="signup-preview" src="uploads/default_avatar.png" alt="Avatar Preview">
@@ -196,11 +196,58 @@
         </form>
     </div>
     <?php
-        if (isset($_POST['signup_sigbtn'])) {
-            include 'config.php';
-            
+    if (isset($_POST['signup_sigbtn'])) {
+        include 'config.php';
+
+        // Get values from the form
+        $employeeid = $_POST['signup_employee-number'];
+        $fname = $_POST['signup_first-name'];
+        $lname = $_POST['signup_last-name']; 
+        $pword = $_POST['signup_password'];
+        $departmen = $_POST['signup_department'];
+
+        // Handle file upload
+        if (isset($_FILES['signup_ppicture']) && $_FILES['signup_ppicture']['error'] === 0) {
+            $filename = uniqid() . "_" . basename($_FILES['signup_ppicture']['name']);
+            $target_directory = "uploads/";
+            $target_file = $target_directory . $filename;
+            move_uploaded_file($_FILES['signup_ppicture']['tmp_name'], $target_file);
+            $ppicture = $filename;
+        } else {
+            $ppicture = "default_avatar.png";
         }
-    ?>
+
+        // 1. Check if employee ID already exists
+        $checkUser = "SELECT employeeid FROM usertb WHERE employeeid = ?";
+        $stmtCheck = $conn->prepare($checkUser);
+        $stmtCheck->bind_param("s", $employeeid);
+        $stmtCheck->execute();
+        $stmtCheck->store_result();
+
+        if ($stmtCheck->num_rows > 0) {
+            // Duplicate found
+            echo "<script>alert('Employee Number already exists! Please use a different one.');</script>";
+        } else {
+            // 2. If no duplicate, proceed to insert
+            $insertUser = "INSERT INTO usertb (employeeid, ppicture, fname, lname, pword, department) 
+                           VALUES (?, ?, ?, ?, ?,?)";
+            $stmt = $conn->prepare($insertUser);
+            $stmt->bind_param("ssssss", $employeeid, $ppicture, $fname, $lname,  $pword, $departmen);
+
+            if ($stmt->execute()) {
+                echo "<script>alert('Account created successfully!');</script>";
+            } else {
+                echo "<script>alert('Something went wrong. Please try again.');</script>";
+            }
+
+            $stmt->close();
+        }
+
+        $stmtCheck->close();
+        $conn->close();
+    }
+?>
+
 
     <script>
         function signupPreviewImage(input) {

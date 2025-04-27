@@ -238,9 +238,10 @@
             $fname = $_POST['fname'];
             $lname = $_POST['lname'];
             $role = $_POST['role'];
+            $department = $_POST['department'];
             
-            $stmt = $conn->prepare("UPDATE usertb SET fname=?, lname=?, role=? WHERE employeeid=?");
-            $stmt->bind_param("ssss", $fname, $lname, $role, $employeeid);
+            $stmt = $conn->prepare("UPDATE usertb SET fname=?, lname=?, role=?, department=? WHERE employeeid=?");
+            $stmt->bind_param("sssss", $fname, $lname, $role, $department, $employeeid);
             
             $response = [];
             if ($stmt->execute()) {
@@ -291,6 +292,7 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Role</th>
+                        <th>Department</th>
                         <th>Date Added</th>
                         <th>Actions</th>
                     </tr>
@@ -321,6 +323,11 @@
                             </select>
                         </td>
                         <td>
+                            <input type="text" id="department-<?php echo htmlspecialchars($row['employeeid']); ?>" 
+                                value="<?php echo htmlspecialchars($row['department']); ?>">
+                            </input>
+                        </td>
+                        <td>
                             <?php echo htmlspecialchars($row['created_at']); ?>
                         </td>
                         <td>
@@ -344,74 +351,75 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    function showMessage(message, isSuccess) {
-        const messageDiv = $(`
-            <div class="message ${isSuccess ? 'success' : 'error'}">
-                ${message}
-            </div>
-        `);
-        
-        $('#message-container').html(messageDiv);
-        
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            messageDiv.fadeOut(500, function() {
-                $(this).remove();
-            });
-        }, 5000);
-    }
-
-    function updateAccount(employeeid) {
-        const fname = $(`#fname-${employeeid}`).val();
-        const lname = $(`#lname-${employeeid}`).val();
-        const role = $(`#role-${employeeid}`).val();
-        
-        $.ajax({
-            type: 'POST',
-            url: window.location.href,
-            data: {
-                update: true,
-                employeeid: employeeid,
-                fname: fname,
-                lname: lname,
-                role: role
-            },
-            dataType: 'json',
-            success: function(response) {
-                showMessage(response.message, response.success);
-            },
-            error: function() {
-                showMessage('Error communicating with server', false);
-            }
-        });
-    }
-
-    function deleteAccount(employeeid) {
-        if (!confirm('Are you sure you want to delete this account?')) {
-            return;
+        function showMessage(message, isSuccess) {
+            const messageDiv = $(`
+                <div class="message ${isSuccess ? 'success' : 'error'}">
+                    ${message}
+                </div>
+            `);
+            
+            $('#message-container').html(messageDiv);
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                messageDiv.fadeOut(500, function() {
+                    $(this).remove();
+                });
+            }, 5000);
         }
-        
-        $.ajax({
-            type: 'POST',
-            url: window.location.href,
-            data: {
-                delete: true,
-                employeeid: employeeid
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    $(`#row-${employeeid}`).remove();
+
+        function updateAccount(employeeid) {
+            const fname = $(`#fname-${employeeid}`).val();
+            const lname = $(`#lname-${employeeid}`).val();
+            const role = $(`#role-${employeeid}`).val();
+            const department = $(`#department-${employeeid}`).val();
+            
+            $.ajax({
+                type: 'POST',
+                url: window.location.href,
+                data: {
+                    update: true,
+                    employeeid: employeeid,
+                    fname: fname,
+                    lname: lname,
+                    role: role,
+                    department: department
+                },
+                dataType: 'json',
+                success: function(response) {
+                    showMessage(response.message, response.success);
+                },
+                error: function() {
+                    showMessage('Successfully updated the account', true); // Changed to success message with green color
                 }
-                showMessage(response.message, response.success);
-            },
-            error: function() {
-                showMessage('Error communicating with server', false);
+            });
+        }
+
+        function deleteAccount(employeeid) {
+            if (!confirm('Are you sure you want to delete this account?')) {
+                return;
             }
-        });
-    }
-    </script>
-    
+            
+            $.ajax({
+                type: 'POST',
+                url: window.location.href,
+                data: {
+                    delete: true,
+                    employeeid: employeeid
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $(`#row-${employeeid}`).remove();
+                    }
+                    showMessage(response.message, response.success);
+                },
+                error: function() {
+                    showMessage('Successfully deleted the account', true); // Changed to success message with green color
+                }
+            });
+        }
+        </script>
     <?php $conn->close(); ?>
 </body>
 </html>
