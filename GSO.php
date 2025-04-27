@@ -109,7 +109,6 @@
       <script type="text/javascript" src="app.js" defer></script>
    </head>
 <body>
-   
    <nav class="sidebar active">
       <button onclick="toggleSidebar()" id="logo">
          <img src="PNG/GSO_Logo.png" alt="">
@@ -217,11 +216,6 @@
          </a>
       </div>
    </nav>
-
-   
-
-
-
    <?php
       if(isset($_GET["papp"]) and !empty($_GET["papp"]))
       {
@@ -319,31 +313,19 @@
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
-                        <?php
-                           if ($_SESSION['role'] != 'Secretary') {
-                              ?>
-                                 <input name="vrfname" value="<?php echo $_SESSION['department'] ?>" type="text" id="name" required>
-                              <?php
-                           }
-                           else
-                           {
-                              ?>
-                                 <select name="vrfdepartment" id="department" required>
-                                    <option value="" disabled selected></option>
-                                    <?php
-                                       include 'config.php';
-                                       $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
-                                       $resultdepartment = $conn->query($selectdepartment);
-                                       if ($resultdepartment->num_rows > 0) {
-                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
-                                             echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
-                                          }
-                                       }
-                                    ?>
-                                 </select>
-                              <?php
-                           }
-                        ?>
+                        <select name="vrfdepartment" id="department" required>
+                           <option value="" disabled selected></option>
+                           <?php
+                              include 'config.php';
+                              $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                              $resultdepartment = $conn->query($selectdepartment);
+                              if ($resultdepartment->num_rows > 0) {
+                                 while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                    echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                                 }
+                              }
+                           ?>
+                        </select>
                         <label for="department">DEPARTMENT:</label>
                      </div>
                      <div class="input-container">
@@ -362,7 +344,7 @@
                   </div>
                   <div class="vrf-details-column">
                      <div class="input-container">
-                        <input name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
+                        <input style="height:2vw;" name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
                         <label for="dateFiled">DATE FILED:</label>
                      </div>
                      <div class="input-container">
@@ -370,33 +352,47 @@
                         <label for="budgetNo">BUDGET No.:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfvehicle" id="vehicleUsed" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectvehicle = "SELECT * FROM carstb ORDER BY plate_number ASC";
-                              $resultvehicle = $conn->query($selectvehicle);
-                              while($rowvehicle = $resultvehicle->fetch_assoc()) {
-                                 echo "<option value='".$rowvehicle['plate_number']."'>".$rowvehicle['plate_number']."</option>";
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') {
+                              ?>
+                                 <button type=button style="border:0;"><input style="cursor: not-allowed;" name=" vrfdriver" type="text" id="vehicelUsed" readonly></button>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                <a href="#vehiclepopup"><input style="cursor: pointer;" name="vrfvehicle" type="text" id="vehicleUsed" readonly></a>
+                              <?php
+                           }
+                        ?>
                         <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfdriver" id="driver" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
-                              $resultdriver = $conn->query($selectdriver);
-                              if ($resultdriver->num_rows > 0) {
-                                 while($rowdriver = $resultdriver->fetch_assoc()) {
-                                    echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
-                                 }
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') {
+                              ?>
+                                 <button type=button style="border:0;"><input style="cursor: not-allowed;" name=" vrfdriver" type="text" id="vehicelUsed" readonly></button>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                 <select name="vrfdriver" id="driver" required>
+                                    <option value="" disabled selected></option>
+                                    <?php
+                                       include 'config.php';
+                                       $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
+                                       $resultdriver = $conn->query($selectdriver);
+                                       if ($resultdriver->num_rows > 0) {
+                                          while($rowdriver = $resultdriver->fetch_assoc()) {
+                                             echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
+                                          }
+                                       }
+                                    ?>
+                                 </select>
+                              <?php
+                           }
+                        ?>
                         <label for="driver">DRIVER:</label>
                      </div>
                   </div>
@@ -557,39 +553,15 @@
                      </script>
                   </div>   
                   <span class="address" style="margin-top:-1.8vw">
-                     <span style="text-align:center">TRANSPORTATION COST</span>
-                     <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                     <span style="text-align:center;">TRANSPORTATION COST</span>
+                     <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
                      <div class="input-container">
-                        <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;" step="0.01" min="0" readonly>
+                        <button type="button" style="border: 0;"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly></button>
                         <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                         <div>
                            <label id="pesoSign">₱</label>
                         </div>
                      </div>
-                     <script>
-                     const input = document.getElementById("totalCost");
-                     const pesoSign = document.getElementById("pesoSign");
-
-                     function updatePesoVisibility() {
-                        if (document.activeElement === input || input.checkValidity()) {
-                           pesoSign.style.visibility = "visible";
-                        } else {
-                           pesoSign.style.visibility = "hidden";
-                        }
-                     }
-
-                     input.addEventListener("input", function () {
-                        const value = this.value;
-                        if (value.includes('.')) {
-                           const [whole, decimal] = value.split('.');
-                           if (decimal.length > 2) {
-                           this.value = `${whole}.${decimal.slice(0, 2)}`;
-                           }
-                        }
-                        updatePesoVisibility();
-                     });
-
-                     </script>
                      <div class="subbtn-container">
                         <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                         <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
@@ -730,6 +702,20 @@
                }
             ?>
          </div>
+         <div id="vehiclepopup">
+            <div class="popupcontainer">
+               <a href="#">&times;</a>
+               <div class="popupcontent">
+                  <div class="popupheader">
+                     <h2>Choose Vehicle</h2>
+                  </div>
+                  <div class="popupbody">
+                     <div class="vehicle-list">
+                        
+                     </div>
+                  </div>
+            </div>
+         </div>
       <?php
    }
    function vehicleSchedules()
@@ -769,22 +755,27 @@
          <?php
             if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
             {
-               $status='gsoassistant_status';
+               $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Clicked')";
+               $status="gsoassistant_status";
             }
             elseif($_SESSION['role']=='Immediate Head')
             {
-               $status='immediatehead_status';
+               $status2 = "(immediatehead_status='Pending') OR (immediatehead_status='Clicked')";
+               $status="immediatehead_status";
             }
             elseif($_SESSION['role']=='Director')
             {
-               $status='gsodirector_status';
+               $status2 = "(accountant_status='Approved' AND gsodirector_status='Pending') OR (accountant_status='Approved' AND gsodirector_status='Clicked')";
+               $status="gsodirector_status";
             }
             else if($_SESSION['role']=='Accountant')
             {
-               $status='accounting_status';
+               $status2 = "(gsoassistant_status='Approved' AND accountant_status='Pending') OR (gsoassistant_status='Approved' AND accountant_status='Clicked')";
+
+               $status="accountant_status";
             }
             include 'config.php';
-            $selectvrf = "SELECT * FROM vrftb WHERE $status!='Approved' ORDER BY date_filed DESC, id DESC";
+            $selectvrf = "SELECT * FROM vrftb WHERE $status2 ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
                while($rowvrf = $resultvrf->fetch_assoc()) {
@@ -955,15 +946,53 @@
                                        {
                                           ?>
                                              <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                                             <div class="input-container">
+                                                <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.5vw;" step="0.01" min="0" required>
+                                                <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                                <div>
+                                                   <label id="pesoSign">₱</label>
+                                                </div>
+                                             </div>
                                           <?php
                                        }
                                        else
                                        {
                                           ?>
                                              <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                                             <div class="input-container">
+                                                <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.5vw;" step="0.01" min="0" required>
+                                                <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                                <div>
+                                                   <label id="pesoSign">₱</label>
+                                                </div>
+                                             </div>
                                           <?php
                                        }
                                     ?>
+                                    <script>
+                                    const input = document.getElementById("totalCost");
+                                    const pesoSign = document.getElementById("pesoSign");
+
+                                    function updatePesoVisibility() {
+                                       if (document.activeElement === input || input.checkValidity()) {
+                                          pesoSign.style.visibility = "visible";
+                                       } else {
+                                          pesoSign.style.visibility = "hidden";
+                                       }
+                                    }
+
+                                    input.addEventListener("input", function () {
+                                       const value = this.value;
+                                       if (value.includes('.')) {
+                                          const [whole, decimal] = value.split('.');
+                                          if (decimal.length > 2) {
+                                          this.value = `${whole}.${decimal.slice(0, 2)}`;
+                                          }
+                                       }
+                                       updatePesoVisibility();
+                                    });
+
+                                    </script>
                                     <div class="subbtn-container">
                                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                                        <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
