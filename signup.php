@@ -196,59 +196,91 @@
         </form>
     </div>
     <?php
-    if (isset($_POST['signup_sigbtn'])) {
-        include 'config.php';
+        if (isset($_POST['signup_sigbtn'])) {
+            include 'config.php';
 
-        // Get values from the form
-        $employeeid = $_POST['signup_employee-number'];
-        $fname = $_POST['signup_first-name'];
-        $lname = $_POST['signup_last-name']; 
-        $pword = $_POST['signup_password'];
-        $departmen = $_POST['signup_department'];
+            // Get values from the form
+            $employeeid = $_POST['signup_employee-number'];
+            $fname = $_POST['signup_first-name'];
+            $lname = $_POST['signup_last-name']; 
+            $pword = $_POST['signup_password'];
+            $departmen = $_POST['signup_department'];
 
-        // Handle file upload
-        if (isset($_FILES['signup_ppicture']) && $_FILES['signup_ppicture']['error'] === 0) {
-            $filename = uniqid() . "_" . basename($_FILES['signup_ppicture']['name']);
-            $target_directory = "uploads/";
-            $target_file = $target_directory . $filename;
-            move_uploaded_file($_FILES['signup_ppicture']['tmp_name'], $target_file);
-            $ppicture = $filename;
-        } else {
-            $ppicture = "default_avatar.png";
-        }
-
-        // 1. Check if employee ID already exists
-        $checkUser = "SELECT employeeid FROM usertb WHERE employeeid = ?";
-        $stmtCheck = $conn->prepare($checkUser);
-        $stmtCheck->bind_param("s", $employeeid);
-        $stmtCheck->execute();
-        $stmtCheck->store_result();
-
-        if ($stmtCheck->num_rows > 0) {
-            // Duplicate found
-            echo "<script>alert('Employee Number already exists! Please use a different one.');</script>";
-        } else {
-            // 2. If no duplicate, proceed to insert
-            $insertUser = "INSERT INTO usertb (employeeid, ppicture, fname, lname, pword, department) 
-                           VALUES (?, ?, ?, ?, ?,?)";
-            $stmt = $conn->prepare($insertUser);
-            $stmt->bind_param("ssssss", $employeeid, $ppicture, $fname, $lname,  $pword, $departmen);
-
-            if ($stmt->execute()) {
-                echo "<script>alert('Account created successfully!');</script>";
+            // Handle file upload
+            if (isset($_FILES['signup_ppicture']) && $_FILES['signup_ppicture']['error'] === 0) {
+                $filename = uniqid() . "_" . basename($_FILES['signup_ppicture']['name']);
+                $target_directory = "uploads/";
+                $target_file = $target_directory . $filename;
+                move_uploaded_file($_FILES['signup_ppicture']['tmp_name'], $target_file);
+                $ppicture = $filename;
             } else {
-                echo "<script>alert('Something went wrong. Please try again.');</script>";
+                $ppicture = "default_avatar.png";
             }
 
-            $stmt->close();
+            // 🟩 Start forgiving name processing
+            $fnameProcessed = strtolower(str_replace(['-', ' '], '', $fname));
+            $lnameProcessed = strtolower(str_replace(['-', ' '], '', $lname));
+            // 🟩 End forgiving name processing
+
+            // 🟦 Start employee check with forgiving match
+            $checkEmployee = "SELECT employeeid FROM employeetb 
+                            WHERE employeeid = ?
+                            AND LOWER(REPLACE(REPLACE(fname, '-', ''), ' ', '')) = ?
+                            AND LOWER(REPLACE(REPLACE(lname, '-', ''), ' ', '')) = ?";
+            $stmtEmp = $conn->prepare($checkEmployee);
+            $stmtEmp->bind_param("sss", $employeeid, $fnameProcessed, $lnameProcessed);
+            $stmtEmp->execute();
+            $stmtEmp->store_result();
+            // 🟦 End employee check
+
+            if ($stmtEmp->num_rows == 0) {
+                // Employee not found — show JavaScript alert
+                echo "<script>
+                    alert('Employee not found in records! Please check your Employee Number, First Name, and Last Name.');
+                    window.history.back();
+                </script>";
+            } else {
+                // Employee exists — check if already registered in usertb
+                $checkUser = "SELECT employeeid FROM usertb WHERE employeeid = ?";
+                $stmtUser = $conn->prepare($checkUser);
+                $stmtUser->bind_param("s", $employeeid);
+                $stmtUser->execute();
+                $stmtUser->store_result();
+
+                if ($stmtUser->num_rows > 0) {
+                    echo "<script>
+                        alert('Employee Number already registered! Please log in.');
+                        window.location.href = 'index.php?log=a';
+                    </script>";
+                } else {
+                    // Insert into usertb
+                    $insertUser = "INSERT INTO usertb (employeeid, ppicture, fname, lname, pword, department) 
+                                VALUES (?, ?, ?, ?, ?, ?)";
+                    $stmtInsert = $conn->prepare($insertUser);
+                    $stmtInsert->bind_param("ssssss", $employeeid, $ppicture, $fname, $lname, $pword, $departmen);
+
+                    if ($stmtInsert->execute()) {
+                        echo "<script>
+                            alert('Account created successfully! You can now log in.');
+                            window.location.href = 'index.php?log=a'; 
+                        </script>";
+                    } else {
+                        echo "<script>
+                            alert('Something went wrong during signup. Please try again.');
+                            window.history.back();
+                        </script>";
+                    }
+
+                    $stmtInsert->close();
+                }
+
+                $stmtUser->close();
+            }
+
+            $stmtEmp->close();
+            $conn->close();
         }
-
-        $stmtCheck->close();
-        $conn->close();
-    }
-?>
-
-
+    ?>
     <script>
         function signupPreviewImage(input) {
             const preview = document.getElementById('signup-preview');
