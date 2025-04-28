@@ -264,9 +264,12 @@
 <?php
    function home()
    {
-      ?>
-         
-      <?php
+      if ($_SESSION['role'] == 'User') {
+         include 'calendar.php';
+      }
+      else {
+         include 'calendar.php';
+      }
    }
    function vehicleReservationForm()
    {
@@ -313,19 +316,32 @@
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfdepartment" id="department" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
-                              $resultdepartment = $conn->query($selectdepartment);
-                              if ($resultdepartment->num_rows > 0) {
-                                 while($rowdepartment = $resultdepartment->fetch_assoc()) {
-                                    echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
-                                 }
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') 
+                           {
+                              ?>
+                                 <input name="vrfdepartment" value="<?php echo $_SESSION['department'] ?>" type="text" id="department" required>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                 <select name="vrfdepartment" id="department" required>
+                                    <option value="" disabled selected></option>
+                                    <?php
+                                       include 'config.php';
+                                       $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                                       $resultdepartment = $conn->query($selectdepartment);
+                                       if ($resultdepartment->num_rows > 0) {
+                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                             echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                                          }
+                                       }
+                                    ?>
+                                 </select>
+                              <?php    
+                           }
+                        ?>
                         <label for="department">DEPARTMENT:</label>
                      </div>
                      <div class="input-container">
@@ -573,12 +589,7 @@
             <?php
                include 'config.php';
                if (isset( $_POST['vrfsubbtn'])) {
-                  if (
-                     isset($_POST['vrfname'], $_POST['vrfdepartment'], $_POST['vrfactivity'], $_POST['vrfpurpose'], 
-                     $_POST['vrfdate_filed'], $_POST['vrfbudget_no'], $_POST['vrfvehicle'], 
-                     $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture'],) 
-                     && isset($_FILES["vrfletter_attachment"]) // Letter attachment is required
-                     )   
+                  if (isset($_FILES["vrfletter_attachment"]))   
                   {
                      $id = htmlspecialchars($_POST['vrfid']);
                      $name = htmlspecialchars($_POST['vrfname']);
@@ -695,7 +706,7 @@
                   else 
                   {
                      echo "<script>
-                              alert('Please fill in all required fields.');
+                              alert('Please upload a letter attachment.');
                               window.history.back();
                            </script>";
                   }
