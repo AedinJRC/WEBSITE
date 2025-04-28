@@ -40,7 +40,7 @@ main
          width: 60vw;
          height: 44vw;
          border: 0.3vw solid #555555;
-         border-radius: 20px;
+         border-radius: 2vw;
          img
          {
             position: absolute;
@@ -396,17 +396,61 @@ main
                color: white;
             }
             background: white;
-            input
+            .input-container {
+               position: relative;
+             }
+             .input-container input,
+             .input-container select {
+               font-size: 0.9vw;
+               padding: 0.4vw;
+               width: 18vw;
+               border: 0.1vw solid #555555;
+               border-radius: 0.5vw;
+               outline: none;
+               appearance: none; /* Removes default browser styles */
+               background-color: white;
+             }
+             .input-container label {
+               position: absolute;
+               left: 0.5vw;
+               top: 50%;
+               transform: translateY(-50%);
+               transition: all 0.3s ease;
+               font-size: 0.95vw;
+               color: #777;
+               letter-spacing: .15vw;
+               font-weight: bold;
+               pointer-events: none;
+             }
+             /* Float the label up when input is focused or has content */
+             .input-container input:focus + label,
+             .input-container input.has-content + label,
+             .input-container select:focus + label,
+             .input-container select.has-content + label {
+               top: 0;
+               font-size: 0.75vw;
+               color: black;
+               background: white;
+               padding: 0 0.3vw;
+             }
+             .input-container input:focus,
+.input-container input.has-content,
+.input-container select:focus,
+.input-container select.has-content {
+  border-color: maroon;
+}
+            .input-container label
             {
-               border-color: var(--maroon);
-            }
-            label
-            {
-                  top: 0;
-                  font-size: 0.75vw;
-                  color: black;
-                  background: white;
-                  padding: 0 0.3vw;
+               position: absolute;
+               left: 0.5vw;
+               top: 50%;
+               transform: translateY(-50%);
+               transition: all 0.3s ease;
+               font-size: 0.95vw;
+               color: #777;
+               letter-spacing: .15vw;
+               font-weight: bold;
+               pointer-events: none;
             }
          }
       }
