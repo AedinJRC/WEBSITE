@@ -14,7 +14,6 @@
         
         body {
             background-color: #f3f4f6;
-            padding: 20px;
         }
         
         .container {
@@ -126,7 +125,7 @@
         }
         
         .btn {
-            padding: 8px 16px;
+            padding: 4px 8px;
             font-size: 0.875rem;
             font-weight: 500;
             border-radius: 6px;
@@ -136,22 +135,20 @@
         }
         
         .btn-update {
-            background-color: #16a34a;
+            background-color: #efb954;
             color: white;
         }
         
         .btn-update:hover {
-            background-color: #15803d;
+            background-color:rgb(216, 168, 78);
         }
         
         .btn-delete {
-            background-color: #dc2626;
-            color: white;
             margin-left: 8px;
         }
         
         .btn-delete:hover {
-            background-color: #b91c1c;
+            background-color: rgb(214, 213, 213);
         }
         
         .btn-group {
@@ -314,31 +311,40 @@
                         </td>
                         <td>
                             <select id="role-<?php echo htmlspecialchars($row['employeeid']); ?>">
-                                <option value="Admin" <?php echo $row['role'] == 'Admin' ? 'selected' : ''; ?>>Admin</option>
-                                <option value="User" <?php echo $row['role'] == 'User' ? 'selected' : ''; ?>>User</option>
-                                <option value="Accountant" <?php echo $row['role'] == 'Accountant' ? 'selected' : ''; ?>>Accountant</option>
-                                <option value="GSO" <?php echo $row['role'] == 'GSO' ? 'selected' : ''; ?>>GSO</option>
-                                <option value="GSO Director" <?php echo $row['role'] == 'GSO Director' ? 'selected' : ''; ?>>GSO Director</option>
-                                <option value="Immediate Head" <?php echo $row['role'] == 'Immediate Head' ? 'selected' : ''; ?>>Immediate Head</option>
+                            <?php
+                                $roles = ['Accountant', 'Admin', 'Director', 'Driver', 'Immediate, Secretary, User']; 
+                                foreach ($roles as $role) {
+                                    $selected = ($row['role'] == $role) ? 'selected' : '';
+                                    echo "<option value='" . htmlspecialchars($role) . "' $selected>" . htmlspecialchars($role) . "</option>";
+                                }
+                            ?>
                             </select>
                         </td>
                         <td>
-                            <input type="text" id="department-<?php echo htmlspecialchars($row['employeeid']); ?>" 
-                                value="<?php echo htmlspecialchars($row['department']); ?>">
-                            </input>
+                            <select id="department-<?php echo htmlspecialchars($row['employeeid']); ?>">
+                                <?php
+                                    $selectdepartmentsql = "SELECT * FROM departmentstb ORDER BY department ASC";
+                                    $departmentresult = $conn->query($selectdepartmentsql);
+                                    while ($departmentrow = $departmentresult->fetch_assoc())
+                                    {
+                                        $selected = ($row['department'] == $departmentrow['department']) ? 'selected' : '';
+                                        echo "<option value='" . htmlspecialchars($departmentrow['department']) . "' $selected>" . htmlspecialchars($departmentrow['department']) . "</option>";
+                                    }
+                                ?>
+                            </select>
                         </td>
-                        <td>
-                            <?php echo htmlspecialchars($row['created_at']); ?>
+                        <td style="white-space: nowrap;">
+                            <?php echo date("M j 'y", strtotime($row['created_at'])); ?>
                         </td>
                         <td>
                             <div class="btn-group" >
                                 <button onclick="updateAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
                                         class="btn btn-update">
-                                    Update
+                                    ✎
                                 </button>
                                 <button onclick="deleteAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
                                         class="btn btn-delete">
-                                    Delete
+                                    <i style="color:#80050d;" class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </td>
