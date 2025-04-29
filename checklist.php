@@ -20,16 +20,14 @@ $isError = false;
 // Handle form submission
 if(isset($_POST["save_checklist"])) {
     $plate_number = $_POST["plate_number"];
-    $employee_id = $_POST["employee_id"];
-    $check_date = $_POST["check_date"];
     
     // Save checklist items
     foreach($_POST['checks'] as $check_id => $status) {
         $sql = "INSERT INTO vehicle_checklists 
-                (plate_number, employee_id, check_id, status, check_date) 
-                VALUES (?, ?, ?, ?, ?)";
+                (plate_number, check_id, status) 
+                VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("siiss", $plate_number, $employee_id, $check_id, $status, $check_date);
+        $stmt->bind_param("sis", $plate_number, $check_id, $status);
         
         if(!$stmt->execute()) {
             $isError = true;
@@ -46,9 +44,6 @@ if(isset($_POST["save_checklist"])) {
 
 // Get vehicles
 $vehicles = $conn->query("SELECT * FROM carstb ORDER BY brand, model");
-
-// Get employees
-$employees = $conn->query("SELECT * FROM usertb");
 
 // Checklist items
 $checklist_items = [
@@ -75,7 +70,6 @@ $checklist_items = [
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f7fa;
             margin: 0;
-            padding: 20px;
         }
         .container {
             max-width: 900px;
@@ -91,12 +85,6 @@ $checklist_items = [
             margin-bottom: 25px;
             padding-bottom: 10px;
         }
-        .form-header {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
         .form-group {
             margin-bottom: 15px;
         }
@@ -107,7 +95,7 @@ $checklist_items = [
             color: #34495e;
             font-size: 14px;
         }
-        select, input[type="date"] {
+        select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -116,7 +104,7 @@ $checklist_items = [
             font-size: 14px;
             background-color: #f8f9fa;
         }
-        select:focus, input[type="date"]:focus {
+        select:focus {
             outline: none;
             border-color:rgb(8, 47, 73);
             box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
@@ -224,38 +212,19 @@ $checklist_items = [
         <h1>Vehicle Maintenance Checklist</h1>
         
         <form method="post" action="">
-            <div class="form-header">
-                <div class="form-group">
-                    <label for="plate_number">Vehicle:</label>
-                    <select name="plate_number" id="plate_number" required>
-                        <option value="">-- Select Vehicle --</option>
-                        <?php while($vehicle = $vehicles->fetch_assoc()): ?>
-                            <option value="<?php echo $vehicle['plate_number']; ?>">
-                                <?php echo $vehicle['brand'].' '.$vehicle['model'].' ('.$vehicle['plate_number'].')'; ?>
-                                <span class="vehicle-info">
-                                    <?php echo $vehicle['year_model'].' • '.$vehicle['color'].' • '.$vehicle['transmission']; ?>
-                                </span>
-                            </option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="employee_id">Inspected By:</label>
-                    <select name="employee_id" id="employee_id" required>
-                        <option value="">-- Select Employee --</option>
-                        <?php while($employee = $employees->fetch_assoc()): ?>
-                            <option value="<?php echo $employee['employeeid']; ?>">
-                                <?php echo $employee['fname'].' '.$employee['lname']; ?>
-                            </option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-            </div>
-            
             <div class="form-group">
-                <label for="check_date">Inspection Date:</label>
-                <input type="date" name="check_date" id="check_date" required value="<?php echo date('Y-m-d'); ?>">
+                <label for="plate_number">Vehicle:</label>
+                <select name="plate_number" id="plate_number" required>
+                    <option value="">-- Select Vehicle --</option>
+                    <?php while($vehicle = $vehicles->fetch_assoc()): ?>
+                        <option value="<?php echo $vehicle['plate_number']; ?>">
+                            <?php echo $vehicle['brand'].' '.$vehicle['model'].' ('.$vehicle['plate_number'].')'; ?>
+                            <span class="vehicle-info">
+                                <?php echo $vehicle['year_model'].' • '.$vehicle['color'].' • '.$vehicle['transmission']; ?>
+                            </span>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
             </div>
             
             <table class="checklist-table">

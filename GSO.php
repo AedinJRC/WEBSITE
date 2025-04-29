@@ -225,6 +225,7 @@ if (window.innerWidth < 992) {
                      <ul class="dropdown-container">
                         <div>
                            <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                           <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
                         </div>
                      </ul>
                   </li>
@@ -284,6 +285,8 @@ if (window.innerWidth < 992) {
          manageDepartment();
          elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
          summaryReport();
+         elseif(isset($_GET["mrep"]) and !empty($_GET["mrep"]))
+         maintenanceReport();
          else
          home();
       ?>
@@ -2078,5 +2081,9 @@ if (window.innerWidth < 992) {
       ?>
          
       <?php
+   }
+   function maintenanceReport()
+   {
+      include 'maintenanceReport.php';
    }
 ?>
