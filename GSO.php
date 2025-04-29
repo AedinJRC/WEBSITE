@@ -160,7 +160,6 @@ if (window.innerWidth < 992) {
                <div>
                   <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
                   <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                  <li><a href="GSO.php?dsch=a"><span>Driver Schedules</span></a></li>
                </div>
             </ul>
          </li>
@@ -274,8 +273,6 @@ if (window.innerWidth < 992) {
          vehicleReservationForm();
          elseif(isset($_GET["vsch"]) and !empty($_GET["vsch"]))
          vehicleSchedules();
-         elseif(isset($_GET["dsch"]) and !empty($_GET["dsch"]))
-         driverSchedules();
          elseif(isset($_GET["macc"]) and !empty($_GET["macc"]))
          manageAccount();
          elseif(isset($_GET["mdep"]) and !empty($_GET["mdep"]))
@@ -834,12 +831,6 @@ if (window.innerWidth < 992) {
    function vehicleSchedules()
    {
       include("calendar.php");
-   }
-   function driverSchedules()
-   {
-      ?>
-         
-      <?php
    }
    function addVehicle()
    {
