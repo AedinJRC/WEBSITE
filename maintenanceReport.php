@@ -78,7 +78,7 @@ body {
 .header h2 {
     color: var(--primary-color);
     font-size: 1.5rem;
-    font-weight: 400;
+    font-weight: bold;
 }
 
 .vehicle-list {
