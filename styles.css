@@ -863,4 +863,13 @@ li
    }
 }
 
+.burger-menu {
+   display: block;
+}
 
+/* Hide burger on large screens */
+@media (min-width: 992px) {
+   .burger-menu {
+       display: none;
+   }
+}
