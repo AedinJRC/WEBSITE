@@ -86,6 +86,7 @@ body {
     flex-direction: column;
     gap: 15px;
     margin-top: 20px;
+    align-items: left;
 }
 
 .vehicle-item {
