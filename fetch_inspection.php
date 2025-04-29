@@ -73,24 +73,29 @@ $recent_stmt->close();
 .inspection-report {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .vehicle-header {
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid #eee;
+    text-align: center;
 }
 
 .vehicle-header h2 {
     color: #2c3e50;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .vehicle-details {
     display: flex;
-    gap: 15px;
+    justify-content: center;
+    gap: 20px;
     margin-bottom: 10px;
     font-size: 14px;
+    flex-wrap: wrap;
 }
 
 .detail-label {
@@ -98,15 +103,22 @@ $recent_stmt->close();
     color: #7f8c8d;
 }
 
+.inspection-info {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
 .inspection-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 14px;
 }
 
 .inspection-table th {
-    background-color:rgb(105, 10, 18);
+    background-color: rgb(105, 10, 18);
     color: white;
     padding: 12px;
     text-align: center;
@@ -126,50 +138,48 @@ $recent_stmt->close();
 .status-good {
     color: #2ecc71;
     font-weight: 600;
-    text-align: center;
 }
 
 .status-fair {
-    color:rgb(219, 86, 9);
+    color: rgb(219, 86, 9);
     font-weight: 600;
-    text-align: center;
 }
 
 .status-bad {
-    color:rgb(167, 13, 13);
+    color: rgb(167, 13, 13);
     font-weight: 600;
-    text-align: center;
 }
 
-
-
-.last-inspection {
-    margin-top: 20px;
-    font-size: 14px;
-    color: #7f8c8d;
-    text-align: right;
+@media (max-width: 600px) {
+    .vehicle-details {
+        flex-direction: column;
+        gap: 5px;
+    }
 }
-
-
-
 </style>
 
 <div class="inspection-report">
     <div class="vehicle-header">
         <h2><?php echo htmlspecialchars($vehicle['brand'] . ' ' . $vehicle['model']); ?></h2>
         <div class="vehicle-details">
-            <div><span class="detail-label">Plate Number:</span> <?php echo htmlspecialchars($vehicle['plate_number']); ?></div>
+            <div><span class="detail-label">Plate:</span> <?php echo htmlspecialchars($vehicle['plate_number']); ?></div>
             <div><span class="detail-label">Year:</span> <?php echo htmlspecialchars($vehicle['year_model']); ?></div>
             <div><span class="detail-label">Color:</span> <?php echo htmlspecialchars($vehicle['color']); ?></div>
         </div>
+        
+        <?php if ($recent_inspection['last_inspection']): ?>
+            <div class="inspection-info">
+                <span class="detail-label">Last Inspection:</span> 
+                <?php echo date('M d, Y h:i A', strtotime($recent_inspection['last_inspection'])); ?>
+            </div>
+        <?php endif; ?>
     </div>
 
     <table class="inspection-table">
         <thead>
             <tr>
-                <th width="60%">Checklist Item</th>
-                <th width="20%">Status</th>
-                <th width="20%">Last Checked</th>
+                <th width="70%">Checklist Item</th>
+                <th width="30%">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -178,23 +188,26 @@ $recent_stmt->close();
                     <td><?php echo htmlspecialchars($item); ?></td>
                     <td class="<?php 
                         if (isset($checklist_data[$id])) {
-                            echo $checklist_data[$id]['status'] == 'Yes' ? 'status-good' : 'status-bad';
+                            $status = $checklist_data[$id]['status'];
+                            if ($status == 'Good' || $status == 'Yes') {
+                                echo 'status-good';
+                            } elseif ($status == 'Fair') {
+                                echo 'status-fair';
+                            } else {
+                                echo 'status-bad';
+                            }
                         }
                     ?>">
                         <?php 
                         if (isset($checklist_data[$id])) {
-                            echo htmlspecialchars($checklist_data[$id]['status']);
+                            $status = $checklist_data[$id]['status'];
+                            if ($status == 'Yes') {
+                                echo 'Good';
+                            } else {
+                                echo htmlspecialchars($status);
+                            }
                         } else {
                             echo 'Not checked';
-                        }
-                        ?>
-                    </td>
-                    <td>
-                        <?php 
-                        if (isset($checklist_data[$id])) {
-                            echo htmlspecialchars(date('M d, Y H:i', strtotime($checklist_data[$id]['checked_at'])));
-                        } else {
-                            echo 'N/A';
                         }
                         ?>
                     </td>
@@ -202,12 +215,6 @@ $recent_stmt->close();
             <?php endforeach; ?>
         </tbody>
     </table>
-
-    <?php if ($recent_inspection['last_inspection']): ?>
-        <div class="last-inspection">
-            Last full inspection: <?php echo date('M d, Y H:i', strtotime($recent_inspection['last_inspection'])); ?>
-        </div>
-    <?php endif; ?>
 </div>
 
 <?php
