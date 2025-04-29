@@ -242,17 +242,17 @@ $checklist_items = [
                             <td><?php echo $item; ?></td>
                             <td>
                                 <div class="status-option">
-                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="Yes" required>
+                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="Good" required>
                                 </div>
                             </td>
                             <td>
                                 <div class="status-option">
-                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="No">
+                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="Fair">
                                 </div>
                             </td>
                             <td>
                                 <div class="status-option">
-                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="No">
+                                    <input type="radio" name="checks[<?php echo $id; ?>]" value="Bad">
                                 </div>
                             </td>
                         </tr>

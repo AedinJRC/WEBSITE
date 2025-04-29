@@ -129,11 +129,19 @@ $recent_stmt->close();
     text-align: center;
 }
 
-.status-fair, .status-bad {
-    color: #e74c3c;
+.status-fair {
+    color:rgb(219, 86, 9);
     font-weight: 600;
     text-align: center;
 }
+
+.status-bad {
+    color:rgb(167, 13, 13);
+    font-weight: 600;
+    text-align: center;
+}
+
+
 
 .last-inspection {
     margin-top: 20px;
