@@ -1,5 +1,3 @@
-
-
 <?php
 // Include config file for database connection
 include('config.php');
@@ -16,19 +14,17 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
 // Query the database for events in the selected month and year based on the departure date
 $sql = "SELECT * FROM vrftb WHERE YEAR(departure) = ? AND MONTH(departure) = ? AND gsodirector_status = 'Approved' ORDER BY departure";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $currentYear, $currentMonth); // Use parameterized query for security
+$stmt->bind_param("ii", $currentYear, $currentMonth);
 $stmt->execute();
 $result = $stmt->get_result();
 
 $events = [];
 if ($result->num_rows > 0) {
-    // Fetch the data and store it in an array
     while ($row = $result->fetch_assoc()) {
         $events[] = $row;
     }
 }
 
-// Function to generate random colors
 function generateRandomColor() {
     $hex = '#';
     $characters = '0123456789ABCDEF';
@@ -290,22 +286,18 @@ function generateRandomColor() {
         <div class="calendar-header">S</div>
 
         <?php
-        // Get the first day of the month and the number of days in the month
         $firstDayOfMonth = mktime(0, 0, 0, $currentMonth, 1, $currentYear);
-        $daysInMonth = date('t', $firstDayOfMonth); // Get the number of days in the month
-        $dayOfWeek = date('w', $firstDayOfMonth); // Get the day of the week the month starts on
+        $daysInMonth = date('t', $firstDayOfMonth);
+        $dayOfWeek = date('w', $firstDayOfMonth);
 
-        // Loop to create empty cells for the first part of the calendar (before the 1st day)
         for ($i = 0; $i < $dayOfWeek; $i++) {
             echo "<div class='calendar-day'></div>";
         }
 
-        // Loop through all days of the month
         for ($day = 1; $day <= $daysInMonth; $day++) {
             echo "<div class='calendar-day'>";
             echo $day;
 
-            // Check if there are events for this day based on departure date
             $eventsOnDay = array_filter($events, function($event) use ($day, $currentMonth, $currentYear) {
                 return date('j', strtotime($event['departure'])) == $day &&
                        date('n', strtotime($event['departure'])) == $currentMonth &&
@@ -316,24 +308,23 @@ function generateRandomColor() {
                 $color = generateRandomColor();
                 echo "<a href='#' 
                           class='event'
-         title='{$event['activity']}'
-
-                         data-name='{$event['name']}'
-                         data-id='{$event['id']}'
-                         data-activity='{$event['activity']}'
-                         data-department='{$event['department']}'
-                         data-purpose='{$event['purpose']}'
-                         data-date_filed='{$event['date_filed']}'
-                         data-budget_no='{$event['budget_no']}'
-                         data-driver='{$event['driver']}'
-                         data-vehicle='{$event['vehicle']}'
-                         data-destination='{$event['destination']}'
-                         data-departure='{$event['departure']}'
-                         data-passenger_count='{$event['passenger_count']}'
-                         data-passenger_attachment='{$event['passenger_attachment']}'
-                         data-letter_attachment='{$event['letter_attachment']}'
+                          title='{$event['activity']}'
+                          data-name='{$event['name']}'
+                          data-id='{$event['id']}'
+                          data-activity='{$event['activity']}'
+                          data-department='{$event['department']}'
+                          data-purpose='{$event['purpose']}'
+                          data-date_filed='{$event['date_filed']}'
+                          data-budget_no='{$event['budget_no']}'
+                          data-driver='{$event['driver']}'
+                          data-vehicle='{$event['vehicle']}'
+                          data-destination='{$event['destination']}'
+                          data-departure='{$event['departure']}'
+                          data-passenger_count='{$event['passenger_count']}'
+                          data-passenger_attachment='{$event['passenger_attachment']}'
+                          data-letter_attachment='{$event['letter_attachment']}'
                           style='background-color: $color'>
-         {$event['activity']}
+                         {$event['activity']}
                      </a>";
             }
             echo "</div>";
@@ -344,7 +335,6 @@ function generateRandomColor() {
 
 <div id="vrespopup" style="justify-content: center; align-items: center;">
     <div class="vres">
-
         <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
             <a href="GSO.php?papp=a" class="closepopup">×</a>
             <img src="PNG/CSA_Logo.png" alt="">
@@ -352,20 +342,14 @@ function generateRandomColor() {
                 <span id="csab">Colegio San Agustin-Biñan</span>
                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                 <span id="vrf">VEHICLE RESERVATION FORM</span>
-                <span>
-                <span id="fid">Form ID: <span id="formIdDisplay"></span></span>
-             
-                </span>
+                <span><span id="fid">Form ID: <span id="formIdDisplay"></span></span></span>
             </span>
             <div class="vrf-details">
                 <div class="vrf-details-column">
-
-                <div class="input-container"> 
-                    <input name="vrfname" type="text" id="fullname" required readonly>
-                    <label for="fullname">NAME:</label>
-                </div>
-
-
+                    <div class="input-container">
+                        <input name="vrfname" type="text" id="fullname" required readonly>
+                        <label for="fullname">NAME:</label>
+                    </div>
                     <div class="input-container">
                         <input name="vrfdepartment" type="text" id="department" required readonly>
                         <label for="department">DEPARTMENT:</label>
@@ -400,70 +384,93 @@ function generateRandomColor() {
             </div>
             <span class="address">
                 <span>DESTINATION:</span>
-                <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required readonly></textarea>
+                <textarea name="vrfdestination" maxlength="255" id="destination" required readonly></textarea>
             </span>
             <div class="vrf-details" style="margin-top:1vw;">
-            <div class="input-container">
-    <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
-    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
-</div>  
-                </span>
+                <div class="input-container">
+                    <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
+                    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                </div>
             </div>
-
         </form>
     </div>
 </div>
 
+<!-- Your popup and field handlers -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var modal = document.getElementById("vrespopup");
-        var closeModal = document.querySelector(".closepopup");
+document.addEventListener("DOMContentLoaded", function () {
+    var modal = document.getElementById("vrespopup");
+    var closeModal = document.querySelector(".closepopup");
 
-        var eventLinks = document.querySelectorAll(".event");
-        eventLinks.forEach(function (eventLink) {
-            eventLink.addEventListener("click", function (e) {
-                e.preventDefault();
-
-                var id = eventLink.getAttribute("data-id");
-                var departure = eventLink.getAttribute("data-departure");
-                var name = eventLink.getAttribute("data-name");
-                var department = eventLink.getAttribute("data-department");
-                var activity = eventLink.getAttribute("data-activity");
-                var purpose = eventLink.getAttribute("data-purpose");
-                var dateFiled = eventLink.getAttribute("data-date_filed");
-                var budgetNo = eventLink.getAttribute("data-budget_no");
-                var driver = eventLink.getAttribute("data-driver");
-                var vehicle = eventLink.getAttribute("data-vehicle");
-                var destination = eventLink.getAttribute("data-destination");
-
-                document.getElementById("formIdDisplay").textContent = id;
-                document.getElementById("departureDate").value = departure;
-                document.getElementById("fullname").value = name;
-                document.getElementById("department").value = department;
-                document.getElementById("activity").value = activity;
-                document.getElementById("purpose").value = purpose;
-                document.getElementById("dateFiled").value = dateFiled;
-                document.getElementById("budgetNo").value = budgetNo;
-                document.getElementById("vehicleUsed").value = vehicle;
-                document.getElementById("driver").value = driver;
-                document.getElementById("destination").value = destination;
-
-                modal.style.display = "flex"; // show popup
-            });
-        });
-
-        closeModal.addEventListener("click", function (e) {
+    var eventLinks = document.querySelectorAll(".event");
+    eventLinks.forEach(function (eventLink) {
+        eventLink.addEventListener("click", function (e) {
             e.preventDefault();
-            modal.style.display = "none";
-        });
 
-        // Optional: Close popup when clicking outside it
-        window.addEventListener("click", function (event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
+            var id = eventLink.getAttribute("data-id");
+            var departure = eventLink.getAttribute("data-departure");
+            var name = eventLink.getAttribute("data-name");
+            var department = eventLink.getAttribute("data-department");
+            var activity = eventLink.getAttribute("data-activity");
+            var purpose = eventLink.getAttribute("data-purpose");
+            var dateFiled = eventLink.getAttribute("data-date_filed");
+            var budgetNo = eventLink.getAttribute("data-budget_no");
+            var driver = eventLink.getAttribute("data-driver");
+            var vehicle = eventLink.getAttribute("data-vehicle");
+            var destination = eventLink.getAttribute("data-destination");
+
+                    // Update form fields
+            document.getElementById("formIdDisplay").textContent = id;
+            document.getElementById("departureDate").value = departure;
+            document.getElementById("fullname").value = name;
+            document.getElementById("department").value = department;
+            document.getElementById("activity").value = activity;
+            document.getElementById("purpose").value = purpose;
+            document.getElementById("dateFiled").value = dateFiled;
+            document.getElementById("budgetNo").value = budgetNo;
+            document.getElementById("vehicleUsed").value = vehicle;
+            document.getElementById("driver").value = driver;
+            document.getElementById("destination").value = destination;
+
+            // ✅ Trigger the has-content check after setting values
+            document.querySelectorAll('.input-container input, .input-container select').forEach(function(field) {
+                if (field.value.trim() !== '') {
+                    field.classList.add('has-content');
+                } else {
+                    field.classList.remove('has-content');
+                }
+            });
+
+            modal.style.display = "flex";
         });
     });
+
+    closeModal.addEventListener("click", function (e) {
+        e.preventDefault();
+        modal.style.display = "none";
+    });
+
+    window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+
+    // >>> Your requested script <<< //
+    var fields = document.querySelectorAll('.input-container input, .input-container select');
+    function updateField(el) {
+        if (el.value.trim() !== '') {
+            el.classList.add('has-content');
+        } else {
+            el.classList.remove('has-content');
+        }
+    }
+    fields.forEach(function(field) {
+        updateField(field);
+        field.addEventListener('input', function() { updateField(field); });
+        field.addEventListener('change', function() { updateField(field); });
+    });
+});
 </script>
 
 </body>
