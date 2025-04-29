@@ -33,14 +33,14 @@ main
       justify-content: center;
       align-items: center;
       height: 100%;
-      margin-top: -1.5vw;
+      margin-top: 30px;
       form.vehicle-reservation-form
       {
          padding: 1.5vw;
          width: 60vw;
          height: 44vw;
          border: 0.3vw solid #555555;
-         border-radius: 20px;
+         border-radius: 2vw;
          img
          {
             position: absolute;
@@ -167,7 +167,7 @@ main
             font-size: 0.9vw;
             padding: 0.4vw;
             width: 18vw;
-            border: 1px solid #555555;
+            border: 0.1vw solid #555555;
             border-radius: 0.5vw;
             outline: none;
             appearance: none; /* Removes default browser styles */
@@ -234,7 +234,7 @@ main
                font-size: 1vw;
                padding: 0.4vw;
                width: 100%;
-               border: 1px solid #555555;
+               border: 0.1vw solid #555555;
                border-radius: 0.5vw;
                outline: none;
                appearance: none; /* Removes default browser styles */
@@ -248,19 +248,22 @@ main
                height: 8vw;
                border-bottom-left-radius: 0;
                border-bottom-right-radius: 0;
+               border-bottom: 0;
             }
             #totalCost
             {
-               border-top: 0;
                border-top-right-radius: 0;
                border-top-left-radius: 0;
                width: 28vw;
             }
-            #pesoSign {
+            label#pesoSign {
                visibility: hidden;
                position: absolute;
                font-weight: 100;
                color: black;
+               transform: translateY(0.45vw);
+               background-color: transparent;
+               font-size: 1vw;
             }           
          }
       }   
@@ -327,8 +330,8 @@ main
          {
             opacity: 0; /* Makes the input invisible */
             position: absolute; /* Keeps it accessible but hidden */
-            width: 1px;
-            height: 1px;
+            width: 0.1vw;
+            height: 0.1vw;
             
          }
          .attachment-label 
@@ -393,18 +396,71 @@ main
                color: white;
             }
             background: white;
-            input
-            {
-               border-color: var(--maroon);
+            .input-container {
+               position: relative;
+             }
+            .input-container input,
+            .input-container select {
+               font-size: 0.9vw;
+               padding: 0.4vw;
+               width: 18vw;
+               border: 0.1vw solid #555555;
+               border-radius: 0.5vw;
+               outline: none;
+               appearance: none; /* Removes default browser styles */
+               background-color: white;
             }
-            label
-            {
-                  top: 0;
-                  font-size: 0.75vw;
-                  color: black;
-                  background: white;
-                  padding: 0 0.3vw;
+            .input-container label {
+               position: absolute;
+               left: 0.5vw;
+               top: 50%;
+               transform: translateY(-50%);
+               transition: all 0.3s ease;
+               font-size: 0.95vw;
+               color: #777;
+               letter-spacing: .15vw;
+               font-weight: bold;
+               pointer-events: none;
             }
+            /* Float the label up when input is focused or has content */
+            .input-container input:focus + label,
+            .input-container input.has-content + label,
+            .input-container select:focus + label,
+            .input-container select.has-content + label {
+               top: 0;
+               font-size: 0.75vw;
+               color: black;
+               background: white;
+               padding: 0 0.3vw;
+             }
+            .input-container input:focus,
+            .input-container input.has-content,
+            .input-container select:focus,
+            .input-container select.has-content {
+            border-color: maroon;
+            }
+            .input-container label
+            {
+               position: absolute;
+               left: 0.5vw;
+               top: 50%;
+               transform: translateY(-50%);
+               transition: all 0.3s ease;
+               font-size: 0.95vw;
+               color: #777;
+               letter-spacing: .15vw;
+               font-weight: bold;
+               pointer-events: none;
+            }
+            label#pesoSign {
+               visibility: hidden;
+               position: absolute;
+               font-weight: 100;
+               color: black;
+               transform: translateY(-0.5vw);
+               background-color: transparent;
+               font-size: 1vw;
+            }         
          }
       }
    }
@@ -430,7 +486,7 @@ main
       position: fixed;
       z-index: 10;
       background-color: white;
-      margin-bottom: 30px;
+      margin-bottom: 0.3vw;
       h1
       {
          margin: 50px 0 20px 0;
@@ -862,6 +918,32 @@ li
       width: 2.92vw;
    }
 }
+#dateFiled
+{
+   border-color: var(--maroon);
+}
+
+#vehiclepopup
+{
+   display: none;
+   position: fixed;
+   inset:0;
+   justify-content: center;
+   align-items: center;
+   .popupcontainer
+   {
+      background-color: rgba(0, 0, 0, 0.3);
+      box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
+      padding: 1vw;
+   }
+}
+#vehiclepopup:target
+{
+   display: flex;
+   z-index: 1000;
+}
+
+
 
 .burger-menu {
    display: block;

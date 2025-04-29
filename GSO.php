@@ -245,8 +245,6 @@ if (window.innerWidth < 992) {
          </a>
       </div>
    </nav>
-
-
    <?php
       if(isset($_GET["papp"]) and !empty($_GET["papp"]))
       {
@@ -295,9 +293,12 @@ if (window.innerWidth < 992) {
 <?php
    function home()
    {
-      ?>
-         
-      <?php
+      if ($_SESSION['role'] == 'User') {
+         include 'calendar.php';
+      }
+      else {
+         include 'calendar.php';
+      }
    }
    function vehicleReservationForm()
    {
@@ -309,7 +310,7 @@ if (window.innerWidth < 992) {
                   <span id="csab">Colegio San Agustin-Biñan</span>
                   <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                   <span id="vrf">VEHICLE RESERVATION FORM</span>
-                  <span>
+                  <span id="fid">
                      <span id="fid">Form ID:</span>
                      <?php
                         include 'config.php';
@@ -344,19 +345,32 @@ if (window.innerWidth < 992) {
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfdepartment" id="department" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
-                              $resultdepartment = $conn->query($selectdepartment);
-                              if ($resultdepartment->num_rows > 0) {
-                                 while($rowdepartment = $resultdepartment->fetch_assoc()) {
-                                    echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
-                                 }
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') 
+                           {
+                              ?>
+                                 <input name="vrfdepartment" value="<?php echo $_SESSION['department'] ?>" type="text" id="department" required>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                 <select name="vrfdepartment" id="department" required>
+                                    <option value="" disabled selected></option>
+                                    <?php
+                                       include 'config.php';
+                                       $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                                       $resultdepartment = $conn->query($selectdepartment);
+                                       if ($resultdepartment->num_rows > 0) {
+                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                             echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                                          }
+                                       }
+                                    ?>
+                                 </select>
+                              <?php    
+                           }
+                        ?>
                         <label for="department">DEPARTMENT:</label>
                      </div>
                      <div class="input-container">
@@ -375,7 +389,7 @@ if (window.innerWidth < 992) {
                   </div>
                   <div class="vrf-details-column">
                      <div class="input-container">
-                        <input name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
+                        <input style="height:2vw;" name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
                         <label for="dateFiled">DATE FILED:</label>
                      </div>
                      <div class="input-container">
@@ -383,33 +397,47 @@ if (window.innerWidth < 992) {
                         <label for="budgetNo">BUDGET No.:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfvehicle" id="vehicleUsed" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectvehicle = "SELECT * FROM carstb ORDER BY plate_number ASC";
-                              $resultvehicle = $conn->query($selectvehicle);
-                              while($rowvehicle = $resultvehicle->fetch_assoc()) {
-                                 echo "<option value='".$rowvehicle['plate_number']."'>".$rowvehicle['plate_number']."</option>";
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') {
+                              ?>
+                                 <button type=button style="border:0;"><input style="cursor: not-allowed;" name=" vrfdriver" type="text" id="vehicelUsed" readonly></button>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                <a href="#vehiclepopup"><input style="cursor: pointer;" name="vrfvehicle" type="text" id="vehicleUsed" readonly></a>
+                              <?php
+                           }
+                        ?>
                         <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                      </div>
                      <div class="input-container">
-                        <select name="vrfdriver" id="driver" required>
-                           <option value="" disabled selected></option>
-                           <?php
-                              include 'config.php';
-                              $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
-                              $resultdriver = $conn->query($selectdriver);
-                              if ($resultdriver->num_rows > 0) {
-                                 while($rowdriver = $resultdriver->fetch_assoc()) {
-                                    echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
-                                 }
-                              }
-                           ?>
-                        </select>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') {
+                              ?>
+                                 <button type=button style="border:0;"><input style="cursor: not-allowed;" name=" vrfdriver" type="text" id="vehicelUsed" readonly></button>
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                 <select name="vrfdriver" id="driver" required>
+                                    <option value="" disabled selected></option>
+                                    <?php
+                                       include 'config.php';
+                                       $selectdriver = "SELECT * FROM usertb WHERE role='Driver' ORDER BY fname ASC";
+                                       $resultdriver = $conn->query($selectdriver);
+                                       if ($resultdriver->num_rows > 0) {
+                                          while($rowdriver = $resultdriver->fetch_assoc()) {
+                                             echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
+                                          }
+                                       }
+                                    ?>
+                                 </select>
+                              <?php
+                           }
+                        ?>
                         <label for="driver">DRIVER:</label>
                      </div>
                   </div>
@@ -448,8 +476,8 @@ if (window.innerWidth < 992) {
                            // Hide "USE ATTACHMENT" button when "+" button is clicked
                            attachmentButton.style.display = "none";
 
-                           // Get all current input containers
-                           const inputContainers = passengerList.querySelectorAll(".input-container");
+                           // Get all current passenger entries
+                           const inputContainers = passengerList.querySelectorAll(".passenger-entry");
                            
                            // Hide the remove button of the previous last passenger (if exists)
                            if (inputContainers.length > 0) 
@@ -463,7 +491,7 @@ if (window.innerWidth < 992) {
                            const passengerCount = inputContainers.length + 1;
 
                            const inputContainer = document.createElement("div");
-                           inputContainer.classList.add("input-container");
+                           inputContainer.classList.add("input-container", "passenger-entry"); // Added passenger-entry class
                            inputContainer.style.position = "relative";
 
                            const input = document.createElement("input");
@@ -495,6 +523,7 @@ if (window.innerWidth < 992) {
                            {
                               inputContainer.remove();
                               updateRemoveButtons();
+                              updatePassengerLabels();
                            };
 
                            inputContainer.appendChild(input);
@@ -505,20 +534,35 @@ if (window.innerWidth < 992) {
                            passengerList.insertBefore(inputContainer, addButton);
 
                            updateRemoveButtons();
+                           updatePassengerLabels();
                         }
+
                         function updateRemoveButtons() 
                         {
-                           const inputContainers = document.querySelectorAll(".input-container");
+                           const inputContainers = document.querySelectorAll(".passenger-entry");
 
                            // Show the remove button only for the last input container
                            inputContainers.forEach((container, index) => 
-                              {
-                                 const removeButton = container.querySelector("button");
-                                 if (removeButton) removeButton.style.display = (index === inputContainers.length - 2) ? "inline-block" : "none";
-                              }
-                           );
+                           {
+                              const removeButton = container.querySelector("button");
+                              if (removeButton) 
+                                 removeButton.style.display = (index === inputContainers.length - 1) ? "inline-block" : "none";
+                           });
                         }
-                        function useAttachment() {
+
+                        function updatePassengerLabels() 
+                        {
+                           const inputContainers = document.querySelectorAll(".passenger-entry");
+                           inputContainers.forEach((container, index) => 
+                           {
+                              const label = container.querySelector("label");
+                              if (label) 
+                                 label.textContent = `PASSENGER#${index + 1}`;
+                           });
+                        }
+
+                        function useAttachment() 
+                        {
                            const passengerList = document.getElementById("passengerList");
                            const addButton = document.getElementById("addButton");
                            const attachmentButton = document.getElementById("attachmentButton");
@@ -529,30 +573,30 @@ if (window.innerWidth < 992) {
 
                            // Create a container for attachment input
                            const inputContainer = document.createElement("div");
-                           inputContainer.classList.add("input-container");
-                           inputContainer.style= "transform: translateY(0.5vw);display:flex; flex-direction:row;";
+                           inputContainer.classList.add("input-container"); // No passenger-entry class here!
+                           inputContainer.style= "transform: translateY(0.5vw); display:flex; flex-direction:row;";
 
                            const attachmentInput = document.createElement("input");
                            attachmentInput.type = "file";
                            attachmentInput.name = "vrfpassenger_attachment";
                            attachmentInput.required = true;
-                           attachmentInput.style = "width:14vw;border-top-right-radius:0;border-bottom-right-radius:0;";
+                           attachmentInput.style = "width:14vw; border-top-right-radius:0; border-bottom-right-radius:0;";
 
                            const numberInput = document.createElement("input");
                            numberInput.type = "number";
                            numberInput.name = "vrfpassenger_count";
                            numberInput.required = true;
-                           numberInput.style = "text-align:center;width:4vw;border-top-left-radius:0;border-bottom-left-radius:0";
-                           
+                           numberInput.style = "text-align:center; width:4vw; border-top-left-radius:0; border-bottom-left-radius:0;";
+
                            const label = document.createElement("label");
                            label.textContent = `PASSENGER COUNT`;
 
                            // Create a remove button
                            const removeButton = document.createElement("button");
                            removeButton.textContent = "×";
-                           removeButton.style = "position:absolute;transform:translateY(2.1vw)";
-                           
-                           removeButton.onclick = function () {
+                           removeButton.style = "position:absolute; transform:translateY(2.1vw)";
+                           removeButton.onclick = function () 
+                           {
                               passengerList.removeChild(inputContainer);
                               // Show buttons again
                               addButton.style.display = "inline-block";
@@ -566,43 +610,18 @@ if (window.innerWidth < 992) {
                            inputContainer.appendChild(removeButton);
                            passengerList.appendChild(inputContainer);
                         }
-
                      </script>
                   </div>   
                   <span class="address" style="margin-top:-1.8vw">
-                     <span style="text-align:center">TRANSPORTATION COST</span>
-                     <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                     <span style="text-align:center;">TRANSPORTATION COST</span>
+                     <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
                      <div class="input-container">
-                        <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;" step="0.01" min="0" readonly>
+                        <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly></a>
                         <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                         <div>
                            <label id="pesoSign">₱</label>
                         </div>
                      </div>
-                     <script>
-                     const input = document.getElementById("totalCost");
-                     const pesoSign = document.getElementById("pesoSign");
-
-                     function updatePesoVisibility() {
-                        if (document.activeElement === input || input.checkValidity()) {
-                           pesoSign.style.visibility = "visible";
-                        } else {
-                           pesoSign.style.visibility = "hidden";
-                        }
-                     }
-
-                     input.addEventListener("input", function () {
-                        const value = this.value;
-                        if (value.includes('.')) {
-                           const [whole, decimal] = value.split('.');
-                           if (decimal.length > 2) {
-                           this.value = `${whole}.${decimal.slice(0, 2)}`;
-                           }
-                        }
-                        updatePesoVisibility();
-                     });
-
-                     </script>
                      <div class="subbtn-container">
                         <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                         <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
@@ -614,12 +633,7 @@ if (window.innerWidth < 992) {
             <?php
                include 'config.php';
                if (isset( $_POST['vrfsubbtn'])) {
-                  if (
-                     isset($_POST['vrfname'], $_POST['vrfdepartment'], $_POST['vrfactivity'], $_POST['vrfpurpose'], 
-                     $_POST['vrfdate_filed'], $_POST['vrfbudget_no'], $_POST['vrfvehicle'], 
-                     $_POST['vrfdriver'], $_POST['vrfdestination'], $_POST['vrfdeparture'],) 
-                     && isset($_FILES["vrfletter_attachment"]) // Letter attachment is required
-                     )   
+                  if (isset($_FILES["vrfletter_attachment"]))   
                   {
                      $id = htmlspecialchars($_POST['vrfid']);
                      $name = htmlspecialchars($_POST['vrfname']);
@@ -628,8 +642,8 @@ if (window.innerWidth < 992) {
                      $purpose = htmlspecialchars($_POST['vrfpurpose']);
                      $date_filed = htmlspecialchars($_POST['vrfdate_filed']);
                      $budget_no = htmlspecialchars($_POST['vrfbudget_no']);
-                     $vehicle = htmlspecialchars($_POST['vrfvehicle']);
-                     $driver = htmlspecialchars($_POST['vrfdriver']);
+                     $vehicle = isset($_POST['vrfvehicle']) && !empty($_POST['vrfvehicle']) ? htmlspecialchars($_POST['vrfvehicle']) : null;
+                     $driver = isset($_POST['vrfdriver']) && !empty($_POST['vrfdriver']) ? htmlspecialchars($_POST['vrfdriver']) : null;
                      $destination = htmlspecialchars($_POST['vrfdestination']);
                      $departure = htmlspecialchars($_POST['vrfdeparture']);
                      $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
@@ -717,7 +731,7 @@ if (window.innerWidth < 992) {
 
                               // Success message and redirection
                               echo "<script>
-                                       alert('Reservation successfully submitted!');
+                                       alert('Reservation submitted!');
                                     </script>";
                               exit;
                            } catch (Exception $e) {
@@ -736,12 +750,26 @@ if (window.innerWidth < 992) {
                   else 
                   {
                      echo "<script>
-                              alert('Please fill in all required fields.');
+                              alert('Please upload a letter attachment.');
                               window.history.back();
                            </script>";
                   }
                }
             ?>
+         </div>
+         <div id="vehiclepopup">
+            <div class="popupcontainer">
+               <a href="#">&times;</a>
+               <div class="popupcontent">
+                  <div class="popupheader">
+                     <h2>Choose Vehicle</h2>
+                  </div>
+                  <div class="popupbody">
+                     <div class="vehicle-list">
+                        
+                     </div>
+                  </div>
+            </div>
          </div>
       <?php
    }
@@ -782,22 +810,27 @@ if (window.innerWidth < 992) {
          <?php
             if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
             {
-               $status='gsoassistant_status';
+               $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Clicked')";
+               $status="gsoassistant_status";
             }
             elseif($_SESSION['role']=='Immediate Head')
             {
-               $status='immediatehead_status';
+               $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Clicked'))";
+               $status="immediatehead_status";
             }
             elseif($_SESSION['role']=='Director')
             {
-               $status='gsodirector_status';
+               $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Clicked')";
+               $status="gsodirector_status";
             }
             else if($_SESSION['role']=='Accountant')
             {
-               $status='accounting_status';
+               $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Clicked')";
+
+               $status="accounting_status";
             }
             include 'config.php';
-            $selectvrf = "SELECT * FROM vrftb WHERE $status!='Approved' ORDER BY date_filed DESC, id DESC";
+            $selectvrf = "SELECT * FROM vrftb WHERE $status2 ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
                while($rowvrf = $resultvrf->fetch_assoc()) {
@@ -868,16 +901,17 @@ if (window.innerWidth < 992) {
                                  <span id="csab">Colegio San Agustin-Biñan</span>
                                  <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                                  <span id="vrf">VEHICLE RESERVATION FORM</span>
-                                 <span>
-                                    <span id="fid">Form ID:</span>
-                                    <?php
-                                       include 'config.php';
-                                       $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
-                                       $resultvrfid = $conn->query($selectvrfid);
-                                       $resultvrfid->num_rows > 0;
-                                       $rowvrfid = $resultvrfid->fetch_assoc();
-                                       echo $rowvrfid['id'];
-                                    ?>
+                                 <span id="fid">
+                                    <span id="fid">Form ID:
+                                       <?php
+                                          include 'config.php';
+                                          $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
+                                          $resultvrfid = $conn->query($selectvrfid);
+                                          $resultvrfid->num_rows > 0;
+                                          $rowvrfid = $resultvrfid->fetch_assoc();
+                                          echo $rowvrfid['id'];
+                                       ?>
+                                    </span>
                                  </span>
                               </span>
                               <div class="vrf-details">
@@ -908,14 +942,144 @@ if (window.innerWidth < 992) {
                                        <input name="vrfbudget_no" type="number" id="budgetNo" required readonly value="<?php echo $rowvrfid['budget_no']; ?>">
                                        <label for="budgetNo">BUDGET No.:</label>
                                     </div>
-                                    <div class="input-container">
-                                       <input type="text" name="vrfvehicle" value="<?php echo $rowvrfid['vehicle'] ?>" id="vehicleUsed" required readonly>
-                                       <label for="vehicleUsed">VEHICLE TO BE USED:</label>
-                                    </div>
-                                    <div class="input-container">
-                                       <input type="text" name="vrfdriver" value="<?php echo $rowvrfid['driver'] ?>" id="driver" required readonly>
-                                       <label for="driver">DRIVER:</label>
-                                    </div>
+                                    <?php
+                                       if ($_SESSION['role'] != 'Secretary') {
+                                          ?>
+                                             <div class="input-container">
+                                                <?php
+                                                   if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                                   {
+                                                      ?>
+                                                         <a href="#vrespopup">      
+                                                      <?php
+                                                   }
+                                                ?>
+                                                   <input type="text" name="vrfvehicle" value="<?php 
+                                                   $plate_number = $rowvrfid['vehicle']; 
+                                                   $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
+                                                   $resultvehicle = $conn->query($selectvehicle);
+                                                   if ($resultvehicle->num_rows > 0) {
+                                                      $rowvehicle = $resultvehicle->fetch_assoc();
+                                                      echo $rowvehicle['brand']." ".$rowvehicle['model'];
+                                                   } else {
+                                                      echo $rowvrfid['vehicle'];
+                                                   }
+                                                   ?>" placeholder=" " id="vehicleUsed" readonly>
+                                                <?php
+                                                   if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                                   {
+                                                      ?>
+                                                         </a>     
+                                                      <?php
+                                                   }
+                                                ?>
+                                                <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                                             </div>
+                                             <div class="input-container">
+                                                <?php
+                                                   if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                                   {
+                                                      ?>
+                                                         <a href="#vrespopup">      
+                                                      <?php
+                                                   }
+                                                ?>
+                                                   <input type="text" name="vrfdriver" value="<?php 
+                                                   $employeeid = $rowvrfid['driver'];
+                                                   $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
+                                                   $resultdriver = $conn->query($selectdriver);
+                                                   if ($resultdriver->num_rows > 0) {
+                                                      $rowdriver = $resultdriver->fetch_assoc();
+                                                      echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname'];
+                                                   } else {
+                                                      echo $rowvrfid['driver'];
+                                                   }
+                                                   ?>" id="driver" readonly>
+                                                <?php
+                                                   if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                                   {
+                                                      ?>
+                                                         </a>     
+                                                      <?php
+                                                   }
+                                                ?>
+                                                <label for="driver">DRIVER:</label>
+                                             </div>
+                                          <?php
+                                       }
+                                       else
+                                       {
+                                          ?>
+                                             <div class="input-container">
+                                                <select name="vrfvehicle" id="vehicleUsed" required>
+                                                   <option value="" disabled selected></option>
+                                                   <?php
+                                                      include("config.php");
+                                                      $selectvehicle = "SELECT * FROM carstb";
+                                                      $resultvehicle = $conn->query($selectvehicle);
+                                                      if ($resultvehicle->num_rows > 0) {
+                                                         while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                                                            $departure=$rowvrf['departure'];
+                                                            $plate_number=$rowvehicle['plate_number'];
+                                                            $day = date('l', strtotime($departure));
+                                                            $last_digit=substr(str_replace(' ', '', $plate_number), -1);
+                                                            switch ($last_digit) {
+                                                               case '1':
+                                                               case '2':
+                                                                  $coding_day = 'Monday';
+                                                                  break;
+                                                               case '3':
+                                                               case '4':
+                                                                  $coding_day = 'Tuesday';
+                                                                  break;
+                                                               case '5':
+                                                               case '6':
+                                                                  $coding_day = 'Wednesday';
+                                                                  break;
+                                                               case '7':
+                                                               case '8':
+                                                                  $coding_day = 'Thursday';
+                                                                  break;
+                                                               case '9':
+                                                               case '0':
+                                                                  $coding_day = 'Friday';
+                                                                  break;
+                                                               default:
+                                                                  $coding_day = 'Invalid'; // Safety check
+                                                                  break;
+                                                            }
+                                                            if ($day != $coding_day) {
+                                                               ?>
+                                                                  <option value="<?php echo $rowvehicle['plate_number']; ?>"><?php echo $rowvehicle['brand']." ".$rowvehicle['model']; ?></option>
+                                                               <?php
+                                                            }
+                                                         }
+                                                      }
+                                                   ?>
+                                                </select>
+                                                <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                                             </div>
+                                             <div class="input-container">
+                                                <select name="vrfdriver" id="driver" required>
+                                                   <option value="" disabled selected></option>
+                                                   <?php
+                                                      include 'config.php';
+                                                      $selectdriver = "SELECT * FROM usertb WHERE role = 'Driver'";
+                                                      $resultdriver = $conn->query($selectdriver);
+                                                      if ($resultdriver->num_rows > 0) {
+                                                         while($rowdriver = $resultdriver->fetch_assoc()) {
+                                                            ?>
+                                                               <option value="<?php echo $rowdriver['employeeid']; ?>"><?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?></option>
+                                                            <?php
+                                                         }
+                                                      }
+                                                   ?>
+                                                </select>
+                                                <label for="driver">DRIVER:</label>
+                                             </div>
+                                          <?php
+                                       }
+                                    ?>
                                  </div>
                               </div>
                               <span class="address">
@@ -968,15 +1132,71 @@ if (window.innerWidth < 992) {
                                        {
                                           ?>
                                              <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                                             <div class="input-container">
+                                                <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.5vw;" step="0.01" min="0" required>
+                                                <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                                <div>
+                                                   <label id="pesoSign">₱</label>
+                                                </div>
+                                             </div>
                                           <?php
                                        }
                                        else
                                        {
                                           ?>
-                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
+                                             <div class="input-container">   
+                                                <?php
+                                                   if($rowvrf['total_cost'] == 0.00)
+                                                   {
+                                                      ?>
+                                                         <a href="#vrespopup">      
+                                                      <?php
+                                                   }
+                                                ?>
+                                                   <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                                <?php
+                                                   if($rowvrf['total_cost'] == 0.00)
+                                                   {
+                                                      ?>
+                                                         </a>      
+                                                      <?php
+                                                   }
+                                                ?>
+                                                <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                                <div>
+                                                   <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;\"" ?> id="pesoSign">₱</label>
+                                                </div>
+                                             </div>
                                           <?php
                                        }
                                     ?>
+                                    <script>
+                                       const input = document.getElementById("totalCost");
+                                       const pesoSign = document.getElementById("pesoSign");
+
+                                       function updatePesoVisibility() {
+                                          if (document.activeElement === input || input.checkValidity()) {
+                                             pesoSign.style.visibility = "visible";
+                                          } else {
+                                             pesoSign.style.visibility = "hidden";
+                                          }
+                                       }
+
+                                       input.addEventListener("input", function () {
+                                          const value = this.value;
+                                          if (value.includes('.')) {
+                                             const [whole, decimal = ''] = value.split('.');
+                                             if (decimal.length > 2) {
+                                                this.value = `${whole}.${decimal.slice(0, 2)}`;
+                                             }
+                                          }
+                                          updatePesoVisibility();
+                                       });
+
+                                       input.addEventListener("focus", updatePesoVisibility);
+                                       input.addEventListener("blur", updatePesoVisibility);
+                                    </script>
                                     <div class="subbtn-container">
                                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                                        <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
@@ -986,6 +1206,26 @@ if (window.innerWidth < 992) {
                                  </span>
                               </div>
                            </form>
+                           <script>
+                              // On DOM load, check each field and toggle .has-content if it has a value
+                              document.addEventListener('DOMContentLoaded', function() {
+                              var fields = document.querySelectorAll('.input-container input, .input-container select');
+                              function updateField(el) {
+                                 if (el.value.trim() !== '') {
+                                    el.classList.add('has-content');
+                                 } else {
+                                    el.classList.remove('has-content');
+                                 }
+                              }
+                              fields.forEach(function(field) {
+                                 // Initial check on page load
+                                 updateField(field);
+                                 // On user input or change, update class
+                                 field.addEventListener('input', function() { updateField(field); });
+                                 field.addEventListener('change', function() { updateField(field); });
+                              });
+                              });
+                           </script>
                         </div>
                      </div>
                   <?php
@@ -993,15 +1233,35 @@ if (window.innerWidth < 992) {
                if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   if (isset($_POST['vrfappbtn'])) {
                      $id = htmlspecialchars($_GET['vrfid']);
-                     $updateStatus = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
+                     if($_SESSION['role']=='Immediate Head' OR $_SESSION['role']=='Director')
+                     {
+                        $updateStatus = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
+                     }
+                     elseif($_SESSION['role']=='Secretary')
+                     {
+                        $vehicle = $_POST['vrfvehicle'];
+                        $driver = $_POST['vrfdriver'];
+                        $updateStatus = "UPDATE vrftb SET vehicle='$vehicle', driver='$driver', $status='Approved' WHERE id = ?";
+                     }
+                     elseif($_SESSION['role']=='Accountant')
+                     {
+                        $total_cost = $_POST['vrftotal_cost'];
+                        $transportation_cost = $_POST['vrftransportation_cost'];
+                        $updateStatus = "UPDATE vrftb SET transportation_cost='$transportation_cost', total_cost='$total_cost', $status='Approved' WHERE id = ?";
+                     }
                      $stmt = $conn->prepare($updateStatus);
                      if ($stmt) {
                         $stmt->bind_param("s", $id);
                         $stmt->execute();
                         $stmt->close();
-                        echo "<script>alert('Reservation approved successfully!');</script>";
+                        echo "<script>
+                                 alert('Reservation approved');
+                                 window.history.back();
+                              </script>";
                      } else {
-                        echo "<script>alert('Error updating status.');</script>";
+                        echo "<script>
+                                 alert('Error updating status.');
+                              </script>";
                      }
                   } elseif (isset($_POST['vrfrejbtn'])) {
                      $id = htmlspecialchars($_GET['vrfid']);
@@ -1011,9 +1271,14 @@ if (window.innerWidth < 992) {
                         $stmt->bind_param("s", $id);
                         $stmt->execute();
                         $stmt->close();
-                        echo "<script>alert('Reservation rejected successfully!');</script>";
+                        echo "<script>
+                                 alert('Reservation rejected');
+                                 window.history.back();
+                              </script>";
                      } else {
-                        echo "<script>alert('Error updating status.');</script>";
+                        echo "<script>
+                                 alert('Error updating status.');
+                              </script>";
                      }
                   }
                }
@@ -1054,11 +1319,11 @@ if (window.innerWidth < 992) {
             if ($resultvrf->num_rows > 0) {
                while($rowvrf = $resultvrf->fetch_assoc()) {
                   ?>
-                     <a href="GSO.php?papp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
+                     <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
                      if (isset($_GET['vrfid'])) {
                         include 'config.php';
-                        $updatevrf = "UPDATE vrftb SET $status='Clicked' WHERE id = ?";
+                        $updatevrf = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
                         $stmt = $conn->prepare($updatevrf);
                         if ($stmt) {
                            $stmt->bind_param("s", $_GET['vrfid']);
@@ -1114,22 +1379,23 @@ if (window.innerWidth < 992) {
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?papp=a" class="closepopup">×</a>
+                              <a href="GSO.php?rapp=a" class="closepopup">×</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
                                  <span id="csab">Colegio San Agustin-Biñan</span>
                                  <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                                  <span id="vrf">VEHICLE RESERVATION FORM</span>
-                                 <span>
-                                    <span id="fid">Form ID:</span>
-                                    <?php
-                                       include 'config.php';
-                                       $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
-                                       $resultvrfid = $conn->query($selectvrfid);
-                                       $resultvrfid->num_rows > 0;
-                                       $rowvrfid = $resultvrfid->fetch_assoc();
-                                       echo $rowvrfid['id'];
-                                    ?>
+                                 <span id="fid">
+                                    <span id="fid">Form ID:
+                                       <?php
+                                          include 'config.php';
+                                          $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
+                                          $resultvrfid = $conn->query($selectvrfid);
+                                          $resultvrfid->num_rows > 0;
+                                          $rowvrfid = $resultvrfid->fetch_assoc();
+                                          echo $rowvrfid['id'];
+                                       ?>
+                                    </span>
                                  </span>
                               </span>
                               <div class="vrf-details">
@@ -1161,11 +1427,63 @@ if (window.innerWidth < 992) {
                                        <label for="budgetNo">BUDGET No.:</label>
                                     </div>
                                     <div class="input-container">
-                                       <input type="text" name="vrfvehicle" value="<?php echo $rowvrfid['vehicle'] ?>" id="vehicleUsed" required readonly>
+                                       <?php
+                                          if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                          {
+                                             ?>
+                                                <a href="#vrespopup">      
+                                             <?php
+                                          }
+                                       ?>
+                                          <input type="text" name="vrfvehicle" value="<?php 
+                                          $plate_number = $rowvrfid['vehicle']; 
+                                          $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
+                                          $resultvehicle = $conn->query($selectvehicle);
+                                          if ($resultvehicle->num_rows > 0) {
+                                             $rowvehicle = $resultvehicle->fetch_assoc();
+                                             echo $rowvehicle['brand']." ".$rowvehicle['model'];
+                                          } else {
+                                             echo $rowvrfid['vehicle'];
+                                          }
+                                          ?>" placeholder=" " id="vehicleUsed" readonly>
+                                       <?php
+                                          if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                          {
+                                             ?>
+                                                </a>     
+                                             <?php
+                                          }
+                                       ?>
                                        <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                                     </div>
                                     <div class="input-container">
-                                       <input type="text" name="vrfdriver" value="<?php echo $rowvrfid['driver'] ?>" id="driver" required readonly>
+                                       <?php
+                                          if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                          {
+                                             ?>
+                                                <a href="#vrespopup">      
+                                             <?php
+                                          }
+                                       ?>
+                                          <input type="text" name="vrfdriver" value="<?php 
+                                          $employeeid = $rowvrfid['driver'];
+                                          $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
+                                          $resultdriver = $conn->query($selectdriver);
+                                          if ($resultdriver->num_rows > 0) {
+                                             $rowdriver = $resultdriver->fetch_assoc();
+                                             echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname'];
+                                          } else {
+                                             echo $rowvrfid['driver'];
+                                          }
+                                          ?>" id="driver" readonly>
+                                       <?php
+                                          if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                          {
+                                             ?>
+                                                </a>     
+                                             <?php
+                                          }
+                                       ?>
                                        <label for="driver">DRIVER:</label>
                                     </div>
                                  </div>
@@ -1215,27 +1533,79 @@ if (window.innerWidth < 992) {
                                  </div>   
                                  <span class="address" style="margin-top:-1.8vw">
                                     <span style="text-align:center">TRANSPORTATION COST</span>
-                                    <?php
-                                       if($_SESSION['role'] == "Accountant")
-                                       {
-                                          ?>
-                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
-                                          <?php
+                                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
+                                    <div class="input-container">   
+                                       <?php
+                                          if($rowvrf['total_cost'] == 0.00)
+                                          {
+                                             ?>
+                                                <a href="#vrespopup">      
+                                             <?php
+                                          }
+                                       ?>
+                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                       <?php
+                                          if($rowvrf['total_cost'] == 0.00)
+                                          {
+                                             ?>
+                                                </a>      
+                                             <?php
+                                          }
+                                       ?>
+                                       <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                       <div>
+                                          <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
+                                       </div>
+                                    </div>
+                                    <script>
+                                       function updatePesoVisibility() {
+                                          if (document.activeElement === input || input.checkValidity()) {
+                                             pesoSign.style.visibility = "visible";
+                                          } else {
+                                             pesoSign.style.visibility = "hidden";
+                                          }
                                        }
-                                       else
-                                       {
-                                          ?>
-                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
-                                          <?php
-                                       }
-                                    ?>
+
+                                       input.addEventListener("input", function () {
+                                          const value = this.value;
+                                          if (value.includes('.')) {
+                                             const [whole, decimal = ''] = value.split('.');
+                                             if (decimal.length > 2) {
+                                                this.value = `${whole}.${decimal.slice(0, 2)}`;
+                                             }
+                                          }
+                                          updatePesoVisibility();
+                                       });
+
+                                       input.addEventListener("focus", updatePesoVisibility);
+                                       input.addEventListener("blur", updatePesoVisibility);
+                                    </script>
                                     <div class="subbtn-container">
-                                       <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
-                                       <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                       <a style="transform:translate(0,1vw)" href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
                                     </div>
                                  </span>
                               </div>
                            </form>
+                           <script>
+                              // On DOM load, check each field and toggle .has-content if it has a value
+                              document.addEventListener('DOMContentLoaded', function() {
+                              var fields = document.querySelectorAll('.input-container input, .input-container select');
+                              function updateField(el) {
+                                 if (el.value.trim() !== '') {
+                                    el.classList.add('has-content');
+                                 } else {
+                                    el.classList.remove('has-content');
+                                 }
+                              }
+                              fields.forEach(function(field) {
+                                 // Initial check on page load
+                                 updateField(field);
+                                 // On user input or change, update class
+                                 field.addEventListener('input', function() { updateField(field); });
+                                 field.addEventListener('change', function() { updateField(field); });
+                              });
+                              });
+                           </script>
                         </div>
                      </div>
                   <?php
@@ -1247,7 +1617,329 @@ if (window.innerWidth < 992) {
    function cancelledRequests()
    {
       ?>
-         
+         <input class="search" type="text" id="search" placeholder="Search reservation">
+         <div class="maintitle">
+            <h1>Reservation Approved</h1>
+            <p>New</p>
+         </div>
+         <div class="whitespace"></div>
+         <div class="whitespace2"></div>
+         <?php
+            if($_SESSION['role']=='Secretary')
+            {
+               $status='gsoassistant_status';
+            }
+            elseif($_SESSION['role']=='Immediate Head')
+            {
+               $status='immediatehead_status';
+            }
+            elseif($_SESSION['role']=='Director')
+            {
+               $status='gsodirector_status';
+            }
+            else if($_SESSION['role']=='Accountant')
+            {
+               $status='accounting_status';
+            }
+            include 'config.php';
+            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
+            $resultvrf = $conn->query($selectvrf);
+            if ($resultvrf->num_rows > 0) {
+               while($rowvrf = $resultvrf->fetch_assoc()) {
+                  ?>
+                     <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
+                  <?php
+                     if (isset($_GET['vrfid'])) {
+                        include 'config.php';
+                        $updatevrf = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
+                        $stmt = $conn->prepare($updatevrf);
+                        if ($stmt) {
+                           $stmt->bind_param("s", $_GET['vrfid']);
+                           $stmt->execute();
+                           $stmt->close();
+                        }
+                     }
+                     if($rowvrf[$status] != "Clicked")
+                     { 
+                        ?> <div class="info-box"> <?php 
+                     }
+                     else
+                     { 
+                        ?> <div class="info-box" style="background-color:#eeeeee;"> <?php 
+                     }
+                        ?>
+                           <div class="pending">
+                              <?php
+                                 if($rowvrf[$status] == "Pending")
+                                 {
+                                    echo '<div class="circle"></div>';
+                                 }
+                              ?>
+                              <span class="time">1 hour ago</span>
+                           </div>
+                           <div class="info-heading">
+                              <img src="uploads/Maynard.png" alt="Profile">
+                              <span class="info-heading-text">
+                                 <span class="name"><?php echo $rowvrf['name'] ?></span>
+                                 <span class="department"><?php echo $rowvrf['department'] ?></span>
+                                 <span class="date"><?php echo "Date: ".date("m/d/Y", strtotime($rowvrf['date_filed']));?></span>
+                              </span>
+                           </div>
+                           <div class="info-details">
+                              <div>
+                                 <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
+                                 <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
+                                 <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
+                              </div>
+                              <div>
+                                 <div><div class="title">Departure Date:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("F j, Y"); ?></div></div>
+                                 <div><div class="title">Departure Time:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("g:iA"); ?></div></div>
+                                 <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                              </div>
+                              <div>
+                                 <div><div class="title">Driver:</div><div class="dikoalam"><?php echo $rowvrf['driver']; ?></div></div>
+                                 <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
+                                 <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
+                              </div>
+                           </div>
+                        </div>
+                     </a>
+                     <div id="vrespopup">
+                        <div class="vres">
+                           <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
+                              <a href="GSO.php?rapp=a" class="closepopup">×</a>
+                              <img src="PNG/CSA_Logo.png" alt="">
+                              <span class="header">
+                                 <span id="csab">Colegio San Agustin-Biñan</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                                 <span id="vrf">VEHICLE RESERVATION FORM</span>
+                                 <span id="fid">
+                                    <span id="fid">Form ID:
+                                       <?php
+                                          include 'config.php';
+                                          $selectvrfid = "SELECT * FROM vrftb WHERE id = '".$_GET['vrfid']."'";
+                                          $resultvrfid = $conn->query($selectvrfid);
+                                          $resultvrfid->num_rows > 0;
+                                          $rowvrfid = $resultvrfid->fetch_assoc();
+                                          echo $rowvrfid['id'];
+                                       ?>
+                                    </span>
+                                 </span>
+                              </span>
+                              <div class="vrf-details">
+                                 <div class="vrf-details-column">
+                                    <div class="input-container">
+                                       <input name="vrfname" value="<?php echo $rowvrfid['name'] ?>" type="text" id="name" required readonly>
+                                       <label for="name">NAME:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfdepartment" value="<?php echo $rowvrfid['department'] ?>" type="text"  id="department" required readonly>
+                                       <label for="department">DEPARTMENT:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required readonly>
+                                       <label for="activity">ACTIVITY:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input type="text" name="vrfpurpose" value="<?php echo $rowvrfid['purpose'] ?>" id="purpose" required readonly>
+                                       <label for="purpose">PURPOSE:</label>
+                                    </div>
+                                 </div>
+                                 <div class="vrf-details-column">
+                                    <div class="input-container">
+                                       <input name="vrfdate_filed" type="date" value="<?php echo $rowvrfid['date_filed']; ?>" id="dateFiled" required readonly>
+                                       <label for="dateFiled">DATE FILED:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <input name="vrfbudget_no" type="number" id="budgetNo" required readonly value="<?php echo $rowvrfid['budget_no']; ?>">
+                                       <label for="budgetNo">BUDGET No.:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <?php
+                                          if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                          {
+                                             ?>
+                                                <a href="#vrespopup">      
+                                             <?php
+                                          }
+                                       ?>
+                                          <input type="text" name="vrfvehicle" value="<?php 
+                                          $plate_number = $rowvrfid['vehicle']; 
+                                          $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
+                                          $resultvehicle = $conn->query($selectvehicle);
+                                          if ($resultvehicle->num_rows > 0) {
+                                             $rowvehicle = $resultvehicle->fetch_assoc();
+                                             echo $rowvehicle['brand']." ".$rowvehicle['model'];
+                                          } else {
+                                             echo $rowvrfid['vehicle'];
+                                          }
+                                          ?>" placeholder=" " id="vehicleUsed" readonly>
+                                       <?php
+                                          if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                          {
+                                             ?>
+                                                </a>     
+                                             <?php
+                                          }
+                                       ?>
+                                       <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                                    </div>
+                                    <div class="input-container">
+                                       <?php
+                                          if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                          {
+                                             ?>
+                                                <a href="#vrespopup">      
+                                             <?php
+                                          }
+                                       ?>
+                                          <input type="text" name="vrfdriver" value="<?php 
+                                          $employeeid = $rowvrfid['driver'];
+                                          $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
+                                          $resultdriver = $conn->query($selectdriver);
+                                          if ($resultdriver->num_rows > 0) {
+                                             $rowdriver = $resultdriver->fetch_assoc();
+                                             echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname'];
+                                          } else {
+                                             echo $rowvrfid['driver'];
+                                          }
+                                          ?>" id="driver" readonly>
+                                       <?php
+                                          if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
+                                          {
+                                             ?>
+                                                </a>     
+                                             <?php
+                                          }
+                                       ?>
+                                       <label for="driver">DRIVER:</label>
+                                    </div>
+                                 </div>
+                              </div>
+                              <span class="address">
+                                 <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
+                                 <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
+                              </span>
+                              <div class="vrf-details" style="margin-top:1vw;">
+                                 <div class="input-container">
+                                    <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
+                                    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                                    <div class="passenger-container">
+                                       <span>NAME OF PASSENGER/S</span>
+                                       <div id="passengerList">
+                                          <?php
+                                             if ($rowvrfid['passenger_attachment'] == null) {
+                                                $selectpassenger = "SELECT * FROM passengerstb WHERE vrfid = '".$_GET['vrfid']."'";
+                                                $resultpassenger = $conn->query($selectpassenger);
+                                                if ($resultpassenger->num_rows > 0) {
+                                                   $passenger_number = 1;
+                                                   while($rowpassenger = $resultpassenger->fetch_assoc()) {
+                                                      ?>
+                                                         <div class="input-container" style="position:relative;">
+                                                            <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
+                                                            <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                         </div>
+                                                      <?php
+                                                      $passenger_number++;
+                                                   }
+                                                }
+                                             } else {
+                                                ?>
+                                                   <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <label for="passengerCount">PASSENGER NAMES</label>
+                                                   </div>
+
+                                                <?php
+                                             }
+                                          ?>
+                                       </div>
+                                    </div>
+                                    
+                                 </div>   
+                                 <span class="address" style="margin-top:-1.8vw">
+                                    <span style="text-align:center">TRANSPORTATION COST</span>
+                                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
+                                    <div class="input-container">   
+                                       <?php
+                                          if($rowvrf['total_cost'] == 0.00)
+                                          {
+                                             ?>
+                                                <a href="#vrespopup">      
+                                             <?php
+                                          }
+                                       ?>
+                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                       <?php
+                                          if($rowvrf['total_cost'] == 0.00)
+                                          {
+                                             ?>
+                                                </a>      
+                                             <?php
+                                          }
+                                       ?>
+                                       <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                       <div>
+                                          <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
+                                       </div>
+                                    </div>
+                                    <script>
+                                       function updatePesoVisibility() {
+                                          if (document.activeElement === input || input.checkValidity()) {
+                                             pesoSign.style.visibility = "visible";
+                                          } else {
+                                             pesoSign.style.visibility = "hidden";
+                                          }
+                                       }
+
+                                       input.addEventListener("input", function () {
+                                          const value = this.value;
+                                          if (value.includes('.')) {
+                                             const [whole, decimal = ''] = value.split('.');
+                                             if (decimal.length > 2) {
+                                                this.value = `${whole}.${decimal.slice(0, 2)}`;
+                                             }
+                                          }
+                                          updatePesoVisibility();
+                                       });
+
+                                       input.addEventListener("focus", updatePesoVisibility);
+                                       input.addEventListener("blur", updatePesoVisibility);
+                                    </script>
+                                    <div class="subbtn-container">
+                                       <a style="transform:translate(0,1vw)" href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                    </div>
+                                 </span>
+                              </div>
+                           </form>
+                           <script>
+                              // On DOM load, check each field and toggle .has-content if it has a value
+                              document.addEventListener('DOMContentLoaded', function() {
+                              var fields = document.querySelectorAll('.input-container input, .input-container select');
+                              function updateField(el) {
+                                 if (el.value.trim() !== '') {
+                                    el.classList.add('has-content');
+                                 } else {
+                                    el.classList.remove('has-content');
+                                 }
+                              }
+                              fields.forEach(function(field) {
+                                 // Initial check on page load
+                                 updateField(field);
+                                 // On user input or change, update class
+                                 field.addEventListener('input', function() { updateField(field); });
+                                 field.addEventListener('change', function() { updateField(field); });
+                              });
+                              });
+                           </script>
+                        </div>
+                     </div>
+                  <?php
+               }
+            }
+         ?>
       <?php
    }
    function maintenanceChecklist()

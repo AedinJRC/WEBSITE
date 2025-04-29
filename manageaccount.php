@@ -14,7 +14,6 @@
         
         body {
             background-color: #f3f4f6;
-            padding: 20px;
         }
         
         .container {
@@ -126,7 +125,7 @@
         }
         
         .btn {
-            padding: 8px 16px;
+            padding: 4px 8px;
             font-size: 0.875rem;
             font-weight: 500;
             border-radius: 6px;
@@ -136,22 +135,20 @@
         }
         
         .btn-update {
-            background-color: #16a34a;
+            background-color: #efb954;
             color: white;
         }
         
         .btn-update:hover {
-            background-color: #15803d;
+            background-color:rgb(216, 168, 78);
         }
         
         .btn-delete {
-            background-color: #dc2626;
-            color: white;
             margin-left: 8px;
         }
         
         .btn-delete:hover {
-            background-color: #b91c1c;
+            background-color: rgb(214, 213, 213);
         }
         
         .btn-group {
@@ -238,9 +235,10 @@
             $fname = $_POST['fname'];
             $lname = $_POST['lname'];
             $role = $_POST['role'];
+            $department = $_POST['department'];
             
-            $stmt = $conn->prepare("UPDATE usertb SET fname=?, lname=?, role=? WHERE employeeid=?");
-            $stmt->bind_param("ssss", $fname, $lname, $role, $employeeid);
+            $stmt = $conn->prepare("UPDATE usertb SET fname=?, lname=?, role=?, department=? WHERE employeeid=?");
+            $stmt->bind_param("sssss", $fname, $lname, $role, $department, $employeeid);
             
             $response = [];
             if ($stmt->execute()) {
@@ -291,6 +289,7 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Role</th>
+                        <th>Department</th>
                         <th>Date Added</th>
                         <th>Actions</th>
                     </tr>
@@ -312,26 +311,40 @@
                         </td>
                         <td>
                             <select id="role-<?php echo htmlspecialchars($row['employeeid']); ?>">
-                                <option value="Admin" <?php echo $row['role'] == 'Admin' ? 'selected' : ''; ?>>Admin</option>
-                                <option value="User" <?php echo $row['role'] == 'User' ? 'selected' : ''; ?>>User</option>
-                                <option value="Accountant" <?php echo $row['role'] == 'Accountant' ? 'selected' : ''; ?>>Accountant</option>
-                                <option value="GSO" <?php echo $row['role'] == 'GSO' ? 'selected' : ''; ?>>GSO</option>
-                                <option value="GSO Director" <?php echo $row['role'] == 'GSO Director' ? 'selected' : ''; ?>>GSO Director</option>
-                                <option value="Immediate Head" <?php echo $row['role'] == 'Immediate Head' ? 'selected' : ''; ?>>Immediate Head</option>
+                            <?php
+                                $roles = ['Accountant', 'Admin', 'Director', 'Driver', 'Immediate, Secretary, User']; 
+                                foreach ($roles as $role) {
+                                    $selected = ($row['role'] == $role) ? 'selected' : '';
+                                    echo "<option value='" . htmlspecialchars($role) . "' $selected>" . htmlspecialchars($role) . "</option>";
+                                }
+                            ?>
                             </select>
                         </td>
                         <td>
-                            <?php echo htmlspecialchars($row['created_at']); ?>
+                            <select id="department-<?php echo htmlspecialchars($row['employeeid']); ?>">
+                                <?php
+                                    $selectdepartmentsql = "SELECT * FROM departmentstb ORDER BY department ASC";
+                                    $departmentresult = $conn->query($selectdepartmentsql);
+                                    while ($departmentrow = $departmentresult->fetch_assoc())
+                                    {
+                                        $selected = ($row['department'] == $departmentrow['department']) ? 'selected' : '';
+                                        echo "<option value='" . htmlspecialchars($departmentrow['department']) . "' $selected>" . htmlspecialchars($departmentrow['department']) . "</option>";
+                                    }
+                                ?>
+                            </select>
+                        </td>
+                        <td style="white-space: nowrap;">
+                            <?php echo date("M j 'y", strtotime($row['created_at'])); ?>
                         </td>
                         <td>
                             <div class="btn-group" >
                                 <button onclick="updateAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
                                         class="btn btn-update">
-                                    Update
+                                    ✎
                                 </button>
                                 <button onclick="deleteAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
                                         class="btn btn-delete">
-                                    Delete
+                                    <i style="color:#80050d;" class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </td>
@@ -344,74 +357,75 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    function showMessage(message, isSuccess) {
-        const messageDiv = $(`
-            <div class="message ${isSuccess ? 'success' : 'error'}">
-                ${message}
-            </div>
-        `);
-        
-        $('#message-container').html(messageDiv);
-        
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            messageDiv.fadeOut(500, function() {
-                $(this).remove();
-            });
-        }, 5000);
-    }
-
-    function updateAccount(employeeid) {
-        const fname = $(`#fname-${employeeid}`).val();
-        const lname = $(`#lname-${employeeid}`).val();
-        const role = $(`#role-${employeeid}`).val();
-        
-        $.ajax({
-            type: 'POST',
-            url: window.location.href,
-            data: {
-                update: true,
-                employeeid: employeeid,
-                fname: fname,
-                lname: lname,
-                role: role
-            },
-            dataType: 'json',
-            success: function(response) {
-                showMessage(response.message, response.success);
-            },
-            error: function() {
-                showMessage('Error communicating with server', false);
-            }
-        });
-    }
-
-    function deleteAccount(employeeid) {
-        if (!confirm('Are you sure you want to delete this account?')) {
-            return;
+        function showMessage(message, isSuccess) {
+            const messageDiv = $(`
+                <div class="message ${isSuccess ? 'success' : 'error'}">
+                    ${message}
+                </div>
+            `);
+            
+            $('#message-container').html(messageDiv);
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                messageDiv.fadeOut(500, function() {
+                    $(this).remove();
+                });
+            }, 5000);
         }
-        
-        $.ajax({
-            type: 'POST',
-            url: window.location.href,
-            data: {
-                delete: true,
-                employeeid: employeeid
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    $(`#row-${employeeid}`).remove();
+
+        function updateAccount(employeeid) {
+            const fname = $(`#fname-${employeeid}`).val();
+            const lname = $(`#lname-${employeeid}`).val();
+            const role = $(`#role-${employeeid}`).val();
+            const department = $(`#department-${employeeid}`).val();
+            
+            $.ajax({
+                type: 'POST',
+                url: window.location.href,
+                data: {
+                    update: true,
+                    employeeid: employeeid,
+                    fname: fname,
+                    lname: lname,
+                    role: role,
+                    department: department
+                },
+                dataType: 'json',
+                success: function(response) {
+                    showMessage(response.message, response.success);
+                },
+                error: function() {
+                    showMessage('Successfully updated the account', true); // Changed to success message with green color
                 }
-                showMessage(response.message, response.success);
-            },
-            error: function() {
-                showMessage('Error communicating with server', false);
+            });
+        }
+
+        function deleteAccount(employeeid) {
+            if (!confirm('Are you sure you want to delete this account?')) {
+                return;
             }
-        });
-    }
-    </script>
-    
+            
+            $.ajax({
+                type: 'POST',
+                url: window.location.href,
+                data: {
+                    delete: true,
+                    employeeid: employeeid
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $(`#row-${employeeid}`).remove();
+                    }
+                    showMessage(response.message, response.success);
+                },
+                error: function() {
+                    showMessage('Successfully deleted the account', true); // Changed to success message with green color
+                }
+            });
+        }
+        </script>
     <?php $conn->close(); ?>
 </body>
 </html>

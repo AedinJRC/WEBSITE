@@ -58,7 +58,6 @@
             margin-bottom: 8px;
         }
 
-        /* Hide the default file input */
         .signup-file-container input[type="file"] {
             width: 0.1px;
             height: 0.1px;
@@ -68,7 +67,6 @@
             z-index: -1;
         }
 
-        /* Small custom file upload button */
         .custom-file-upload {
             display: inline-block;
             padding: 6px 12px;
@@ -85,7 +83,6 @@
             background-color: #5a1121;
         }
 
-        /* Button styles */
         .signup-btn {
             background-color: #7D192E;
             color: white;
@@ -102,7 +99,6 @@
             background-color: #5a1121;
         }
 
-        /* Avatar upload */
         .signup-avatar-container {
             text-align: center;
             margin-bottom: 10px;
@@ -117,7 +113,6 @@
             margin-bottom: 5px;
         }
 
-        /* Footer links */
         .signup-footer {
             display: flex;
             justify-content: space-between;
@@ -126,7 +121,6 @@
             width: 450px;
         }
 
-        /* Error message */
         #signup-password-error {
             color: red;
             font-size: 12px;
@@ -137,8 +131,8 @@
 </head>
 <body>
     <div class="signup-container">
-
         <form class="signup-form" method="post" enctype="multipart/form-data" onsubmit="return signupValidatePasswords()">
+            
             <div class="signup-avatar-container">
                 <img id="signup-preview" src="uploads/default_avatar.png" alt="Avatar Preview">
                 <div class="signup-file-container">
@@ -158,14 +152,29 @@
             </div>
 
             <div class="signup-form-group">
+                <label for="signup-middle-name">Middle Name</label>
+                <input type="text" id="signup-middle-name" name="signup_middle-name" maxlength="30">
+            </div>
+
+            <div class="signup-form-group">
                 <label for="signup-last-name">Last Name</label>
                 <input type="text" id="signup-last-name" name="signup_last-name" required maxlength="20">
             </div>
 
             <div class="signup-form-group">
                 <label for="signup-department">Department</label>
-                <select id="signup-department" name="signup_department" required>
-                    <option value="">-- Select Department --</option>
+                <select name="signup_department" id="department" required>
+                    <option value="" disabled selected></option>
+                    <?php
+                        include 'config.php';
+                        $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
+                        $resultdepartment = $conn->query($selectdepartment);
+                        if ($resultdepartment->num_rows > 0) {
+                            while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
+                            }
+                        }
+                    ?>
                 </select>
             </div>
 
@@ -180,10 +189,90 @@
                 <div id="signup-password-error">Passwords do not match!</div>
             </div>
 
-
             <button type="submit" class="signup-btn" name="signup_sigbtn">LET'S START !</button>
         </form>
     </div>
+
+    <?php
+        if (isset($_POST['signup_sigbtn'])) {
+            include 'config.php';
+
+            $employeeid = $_POST['signup_employee-number'];
+            $fname = $_POST['signup_first-name'];
+            $mname = $_POST['signup_middle-name'];
+            $lname = $_POST['signup_last-name']; 
+            $pword = $_POST['signup_password'];
+            $departmen = $_POST['signup_department'];
+
+            if (isset($_FILES['signup_ppicture']) && $_FILES['signup_ppicture']['error'] === 0) {
+                $filename = uniqid() . "_" . basename($_FILES['signup_ppicture']['name']);
+                $target_directory = "uploads/";
+                $target_file = $target_directory . $filename;
+                move_uploaded_file($_FILES['signup_ppicture']['tmp_name'], $target_file);
+                $ppicture = $filename;
+            } else {
+                $ppicture = "default_avatar.png";
+            }
+
+            $fnameProcessed = strtolower(str_replace(['-', ' '], '', $fname));
+            $mnameProcessed = strtolower(str_replace(['-', ' '], '', $mname));
+            $lnameProcessed = strtolower(str_replace(['-', ' '], '', $lname));
+
+            $checkEmployee = "SELECT employeeid FROM employeetb 
+                            WHERE employeeid = ?
+                            AND LOWER(REPLACE(REPLACE(fname, '-', ''), ' ', '')) = ?
+                            AND LOWER(REPLACE(REPLACE(mname, '-', ''), ' ', '')) = ?
+                            AND LOWER(REPLACE(REPLACE(lname, '-', ''), ' ', '')) = ?";
+            $stmtEmp = $conn->prepare($checkEmployee);
+            $stmtEmp->bind_param("ssss", $employeeid, $fnameProcessed, $mnameProcessed, $lnameProcessed);
+            $stmtEmp->execute();
+            $stmtEmp->store_result();
+
+            if ($stmtEmp->num_rows == 0) {
+                echo "<script>
+                    alert('Employee not found in records! Please check your Employee Number, First Name, Middle Name, and Last Name.');
+                    window.history.back();
+                </script>";
+            } else {
+                $checkUser = "SELECT employeeid FROM usertb WHERE employeeid = ?";
+                $stmtUser = $conn->prepare($checkUser);
+                $stmtUser->bind_param("s", $employeeid);
+                $stmtUser->execute();
+                $stmtUser->store_result();
+
+                if ($stmtUser->num_rows > 0) {
+                    echo "<script>
+                        alert('Employee Number already registered! Please log in.');
+                        window.location.href = 'index.php?log=a';
+                    </script>";
+                } else {
+                    $insertUser = "INSERT INTO usertb (employeeid, ppicture, fname, lname, pword, department) 
+                                VALUES (?, ?, ?, ?, ?, ?)";
+                    $stmtInsert = $conn->prepare($insertUser);
+                    $stmtInsert->bind_param("ssssss", $employeeid, $ppicture, $fname, $lname, $pword, $departmen);
+
+                    if ($stmtInsert->execute()) {
+                        echo "<script>
+                            alert('Account created successfully! You can now log in.');
+                            window.location.href = 'index.php?log=a'; 
+                        </script>";
+                    } else {
+                        echo "<script>
+                            alert('Something went wrong during signup. Please try again.');
+                            window.history.back();
+                        </script>";
+                    }
+
+                    $stmtInsert->close();
+                }
+
+                $stmtUser->close();
+            }
+
+            $stmtEmp->close();
+            $conn->close();
+        }
+    ?>
 
     <script>
         function signupPreviewImage(input) {
