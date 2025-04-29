@@ -109,6 +109,35 @@
       <script type="text/javascript" src="app.js" defer></script>
    </head>
 <body>
+
+<div id="burger-container"></div>
+
+<script>
+if (window.innerWidth < 992) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'burger.php', true);
+    xhr.onload = function() {
+        if (this.status == 200) {
+            var container = document.getElementById('burger-container');
+            container.innerHTML = this.responseText;
+
+            // Run the scripts manually
+            var scripts = container.querySelectorAll('script');
+            scripts.forEach(function(script) {
+                var newScript = document.createElement('script');
+                if (script.src) {
+                    newScript.src = script.src; // external script
+                } else {
+                    newScript.textContent = script.textContent; // inline script
+                }
+                document.body.appendChild(newScript);
+            });
+        }
+    };
+    xhr.send();
+}
+</script>
+
    <nav class="sidebar active">
       <button onclick="toggleSidebar()" id="logo">
          <img src="PNG/GSO_Logo.png" alt="">
