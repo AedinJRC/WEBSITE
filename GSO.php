@@ -222,6 +222,7 @@ if (window.innerWidth < 992) {
                      <ul class="dropdown-container">
                         <div>
                            <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                           <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
                         </div>
                      </ul>
                   </li>
@@ -281,6 +282,8 @@ if (window.innerWidth < 992) {
          manageDepartment();
          elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
          summaryReport();
+         elseif(isset($_GET["mrep"]) and !empty($_GET["mrep"]))
+         maintenanceReport();
          else
          home();
       ?>
@@ -403,7 +406,31 @@ if (window.innerWidth < 992) {
                            else
                            {
                               ?>
-                                <a href="#vehiclepopup"><input style="cursor: pointer;" name="vrfvehicle" type="text" id="vehicleUsed" readonly></a>
+                                 <select name="vrfvehicle" id="vehicleUsed" required>
+                                    <option value="" disabled selected></option>
+                                 </select>
+                                 <script>
+                                 const vehicles = [
+                                    <?php
+                                    include("config.php");
+                                    $selectvehicle = "SELECT * FROM carstb";
+                                    $resultvehicle = $conn->query($selectvehicle);
+                                    $vehicleArray = [];
+
+                                    if ($resultvehicle->num_rows > 0) {
+                                       while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                                          $plate_number = $rowvehicle['plate_number'];
+                                          $brand = addslashes($rowvehicle['brand']);
+                                          $model = addslashes($rowvehicle['model']);
+
+                                          $vehicleArray[] = "{ plate_number: \"$plate_number\", brand: \"$brand\", model: \"$model\" }";
+                                       }
+                                    }
+
+                                    echo implode(",\n", $vehicleArray);
+                                    ?>
+                                 ];
+                              </script>
                               <?php
                            }
                         ?>
@@ -627,6 +654,54 @@ if (window.innerWidth < 992) {
                   </span>
                </div>
             </form>
+            <script>
+            // Map plate number last digit to coding day
+            function getCodingDay(plateNumber) {
+               const lastDigit = plateNumber.trim().slice(-1);
+               switch (lastDigit) {
+                  case '1':
+                  case '2':
+                        return 'Monday';
+                  case '3':
+                  case '4':
+                        return 'Tuesday';
+                  case '5':
+                  case '6':
+                        return 'Wednesday';
+                  case '7':
+                  case '8':
+                        return 'Thursday';
+                  case '9':
+                  case '0':
+                        return 'Friday';
+                  default:
+                        return 'Invalid';
+               }
+            }
+
+            // Listen to departureDate changes
+            document.getElementById('departureDate').addEventListener('change', function() {
+               const selectedDate = this.value;
+               const selectedDay = new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long' });
+
+               const vehicleSelect = document.getElementById('vehicleUsed');
+
+               // Clear existing options
+               vehicleSelect.innerHTML = '<option value="" disabled selected></option>';
+
+               // Loop through vehicles and add only allowed ones
+               vehicles.forEach(vehicle => {
+                  const codingDay = getCodingDay(vehicle.plate_number);
+
+                  if (codingDay !== selectedDay) {
+                        const option = document.createElement('option');
+                        option.value = vehicle.plate_number;
+                        option.textContent = vehicle.brand + " " + vehicle.model;
+                        vehicleSelect.appendChild(option);
+                  }
+               });
+            });
+            </script>
             <?php
                include 'config.php';
                if (isset( $_POST['vrfsubbtn'])) {
@@ -754,20 +829,6 @@ if (window.innerWidth < 992) {
                }
             ?>
          </div>
-         <div id="vehiclepopup">
-            <div class="popupcontainer">
-               <a href="#">&times;</a>
-               <div class="popupcontent">
-                  <div class="popupheader">
-                     <h2>Choose Vehicle</h2>
-                  </div>
-                  <div class="popupbody">
-                     <div class="vehicle-list">
-                        
-                     </div>
-                  </div>
-            </div>
-         </div>
       <?php
    }
    function vehicleSchedules()
@@ -860,7 +921,22 @@ if (window.innerWidth < 992) {
                                     echo '<div class="circle"></div>';
                                  }
                               ?>
-                              <span class="time">1 hour ago</span>
+                              <span class="time">
+                                 <?php
+                                    $date = new DateTime($rowvrf['updated_at']);
+                                    $currentDate = new DateTime();
+                                    $interval = $date->diff($currentDate);
+                                    if ($interval->d > 0) {
+                                       echo $interval->d . " day" . ($interval->d > 1 ? "s" : "") . " ago";
+                                    } elseif ($interval->h > 0) {
+                                       echo $interval->h . " hour" . ($interval->h > 1 ? "s" : "") . " ago";
+                                    } elseif ($interval->i > 0) {
+                                       echo $interval->i . " minute" . ($interval->i > 1 ? "s" : "") . " ago";
+                                    } else {
+                                       echo "Just now";
+                                    }
+                                 ?>
+                              </span>
                            </div>
                            <div class="info-heading">
                               <img src="uploads/Maynard.png" alt="Profile">
@@ -1289,28 +1365,35 @@ if (window.innerWidth < 992) {
          <input class="search" type="text" id="search" placeholder="Search reservation">
          <div class="maintitle">
             <h1>Reservation Approved</h1>
-            <p>New</p>
+            <?php
+               if($_SESSION['role']=='Secretary')
+               {
+                  $status='gsoassistant_status';
+               }
+               elseif($_SESSION['role']=='Immediate Head')
+               {
+                  $status='immediatehead_status';
+               }
+               elseif($_SESSION['role']=='Director')
+               {
+                  $status='gsodirector_status';
+               }
+               else if($_SESSION['role']=='Accountant')
+               {
+                  $status='accounting_status';
+               }
+               include 'config.php';
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
+               $resultvrf = $conn->query($selectvrf);
+               if ($resultvrf->num_rows > 0) {
+                  $rowvrf = $resultvrf->fetch_assoc();
+                  echo '<p>New</p>';
+               }
+            ?>
          </div>
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
-            if($_SESSION['role']=='Secretary')
-            {
-               $status='gsoassistant_status';
-            }
-            elseif($_SESSION['role']=='Immediate Head')
-            {
-               $status='immediatehead_status';
-            }
-            elseif($_SESSION['role']=='Director')
-            {
-               $status='gsodirector_status';
-            }
-            else if($_SESSION['role']=='Accountant')
-            {
-               $status='accounting_status';
-            }
-            include 'config.php';
             $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
@@ -1344,7 +1427,22 @@ if (window.innerWidth < 992) {
                                     echo '<div class="circle"></div>';
                                  }
                               ?>
-                              <span class="time">1 hour ago</span>
+                              <span class="time">
+                                 <?php
+                                    $date = new DateTime($rowvrf['updated_at']);
+                                    $currentDate = new DateTime();
+                                    $interval = $date->diff($currentDate);
+                                    if ($interval->d > 0) {
+                                       echo $interval->d . " day" . ($interval->d > 1 ? "s" : "") . " ago";
+                                    } elseif ($interval->h > 0) {
+                                       echo $interval->h . " hour" . ($interval->h > 1 ? "s" : "") . " ago";
+                                    } elseif ($interval->i > 0) {
+                                       echo $interval->i . " minute" . ($interval->i > 1 ? "s" : "") . " ago";
+                                    } else {
+                                       echo "Just now";
+                                    }
+                                 ?>
+                              </span>
                            </div>
                            <div class="info-heading">
                               <img src="uploads/Maynard.png" alt="Profile">
@@ -1616,35 +1714,42 @@ if (window.innerWidth < 992) {
       ?>
          <input class="search" type="text" id="search" placeholder="Search reservation">
          <div class="maintitle">
-            <h1>Reservation Approved</h1>
-            <p>New</p>
+            <h1>Cancelled Requests</h1>
+            <?php
+               if($_SESSION['role']=='Secretary')
+               {
+                  $status='gsoassistant_status';
+               }
+               elseif($_SESSION['role']=='Immediate Head')
+               {
+                  $status='immediatehead_status';
+               }
+               elseif($_SESSION['role']=='Director')
+               {
+                  $status='gsodirector_status';
+               }
+               else if($_SESSION['role']=='Accountant')
+               {
+                  $status='accounting_status';
+               }
+               include 'config.php';
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND (gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected') ORDER BY date_filed DESC, id DESC";
+               $resultvrf = $conn->query($selectvrf);
+               if ($resultvrf->num_rows > 0) {
+                  $rowvrf = $resultvrf->fetch_assoc();
+                  echo '<p>New</p>';
+               }
+            ?>
          </div>
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
-            if($_SESSION['role']=='Secretary')
-            {
-               $status='gsoassistant_status';
-            }
-            elseif($_SESSION['role']=='Immediate Head')
-            {
-               $status='immediatehead_status';
-            }
-            elseif($_SESSION['role']=='Director')
-            {
-               $status='gsodirector_status';
-            }
-            else if($_SESSION['role']=='Accountant')
-            {
-               $status='accounting_status';
-            }
-            include 'config.php';
-            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
+            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
                while($rowvrf = $resultvrf->fetch_assoc()) {
                   ?>
-                     <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
+                     <a href="GSO.php?creq=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
                      if (isset($_GET['vrfid'])) {
                         include 'config.php';
@@ -1672,7 +1777,22 @@ if (window.innerWidth < 992) {
                                     echo '<div class="circle"></div>';
                                  }
                               ?>
-                              <span class="time">1 hour ago</span>
+                              <span class="time">
+                                 <?php
+                                    $date = new DateTime($rowvrf['updated_at']);
+                                    $now = new DateTime();
+                                    $interval = $now->diff($date);
+                                    if ($interval->d > 0) {
+                                       echo $interval->d . ' day' . ($interval->d > 1 ? 's' : '') . ' ago';
+                                    } elseif ($interval->h > 0) {
+                                       echo $interval->h . ' hour' . ($interval->h > 1 ? 's' : '') . ' ago';
+                                    } elseif ($interval->i > 0) {
+                                       echo $interval->i . ' minute' . ($interval->i > 1 ? 's' : '') . ' ago';
+                                    } else {
+                                       echo 'Just now';
+                                    }
+                                 ?>
+                              </span>
                            </div>
                            <div class="info-heading">
                               <img src="uploads/Maynard.png" alt="Profile">
@@ -1704,7 +1824,7 @@ if (window.innerWidth < 992) {
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?rapp=a" class="closepopup">×</a>
+                              <a href="GSO.php?creq=a" class="closepopup">×</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
                                  <span id="csab">Colegio San Agustin-Biñan</span>
@@ -1958,5 +2078,9 @@ if (window.innerWidth < 992) {
       ?>
          
       <?php
+   }
+   function maintenanceReport()
+   {
+      include 'maintenanceReport.php';
    }
 ?>
