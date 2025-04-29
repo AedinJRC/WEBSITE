@@ -33,7 +33,7 @@ main
       justify-content: center;
       align-items: center;
       height: 100%;
-      margin-top: -1.5vw;
+      margin-top: 30px;
       form.vehicle-reservation-form
       {
          padding: 1.5vw;
@@ -399,8 +399,8 @@ main
             .input-container {
                position: relative;
              }
-             .input-container input,
-             .input-container select {
+            .input-container input,
+            .input-container select {
                font-size: 0.9vw;
                padding: 0.4vw;
                width: 18vw;
@@ -409,8 +409,8 @@ main
                outline: none;
                appearance: none; /* Removes default browser styles */
                background-color: white;
-             }
-             .input-container label {
+            }
+            .input-container label {
                position: absolute;
                left: 0.5vw;
                top: 50%;
@@ -421,24 +421,24 @@ main
                letter-spacing: .15vw;
                font-weight: bold;
                pointer-events: none;
-             }
-             /* Float the label up when input is focused or has content */
-             .input-container input:focus + label,
-             .input-container input.has-content + label,
-             .input-container select:focus + label,
-             .input-container select.has-content + label {
+            }
+            /* Float the label up when input is focused or has content */
+            .input-container input:focus + label,
+            .input-container input.has-content + label,
+            .input-container select:focus + label,
+            .input-container select.has-content + label {
                top: 0;
                font-size: 0.75vw;
                color: black;
                background: white;
                padding: 0 0.3vw;
              }
-             .input-container input:focus,
-.input-container input.has-content,
-.input-container select:focus,
-.input-container select.has-content {
-  border-color: maroon;
-}
+            .input-container input:focus,
+            .input-container input.has-content,
+            .input-container select:focus,
+            .input-container select.has-content {
+            border-color: maroon;
+            }
             .input-container label
             {
                position: absolute;
@@ -452,6 +452,15 @@ main
                font-weight: bold;
                pointer-events: none;
             }
+            label#pesoSign {
+               visibility: hidden;
+               position: absolute;
+               font-weight: 100;
+               color: black;
+               transform: translateY(-0.5vw);
+               background-color: transparent;
+               font-size: 1vw;
+            }         
          }
       }
    }
