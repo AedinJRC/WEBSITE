@@ -914,17 +914,21 @@ if (window.innerWidth < 992) {
                               ?>
                               <span class="time">
                                  <?php
-                                    $date = new DateTime($rowvrf['updated_at']);
-                                    $currentDate = new DateTime();
-                                    $interval = $date->diff($currentDate);
-                                    if ($interval->d > 0) {
-                                       echo $interval->d . " day" . ($interval->d > 1 ? "s" : "") . " ago";
-                                    } elseif ($interval->h > 0) {
-                                       echo $interval->h . " hour" . ($interval->h > 1 ? "s" : "") . " ago";
-                                    } elseif ($interval->i > 0) {
-                                       echo $interval->i . " minute" . ($interval->i > 1 ? "s" : "") . " ago";
+                                    $updated_at = strtotime($rowvrf['updated_at']);
+                                    $now = time();
+                                    $interval = $now - $updated_at;
+                                    
+                                    if ($interval < 60) {
+                                        echo 'Just now';
+                                    } elseif ($interval < 3600) {
+                                        $minutes = floor($interval / 60);
+                                        echo $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+                                    } elseif ($interval < 86400) {
+                                        $hours = floor($interval / 3600);
+                                        echo $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
                                     } else {
-                                       echo "Just now";
+                                        $days = floor($interval / 86400);
+                                        echo $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
                                     }
                                  ?>
                               </span>
@@ -1420,17 +1424,21 @@ if (window.innerWidth < 992) {
                               ?>
                               <span class="time">
                                  <?php
-                                    $date = new DateTime($rowvrf['updated_at']);
-                                    $currentDate = new DateTime();
-                                    $interval = $date->diff($currentDate);
-                                    if ($interval->d > 0) {
-                                       echo $interval->d . " day" . ($interval->d > 1 ? "s" : "") . " ago";
-                                    } elseif ($interval->h > 0) {
-                                       echo $interval->h . " hour" . ($interval->h > 1 ? "s" : "") . " ago";
-                                    } elseif ($interval->i > 0) {
-                                       echo $interval->i . " minute" . ($interval->i > 1 ? "s" : "") . " ago";
+                                    $updated_at = strtotime($rowvrf['updated_at']);
+                                    $now = time();
+                                    $interval = $now - $updated_at;
+                                    
+                                    if ($interval < 60) {
+                                        echo 'Just now';
+                                    } elseif ($interval < 3600) {
+                                        $minutes = floor($interval / 60);
+                                        echo $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+                                    } elseif ($interval < 86400) {
+                                        $hours = floor($interval / 3600);
+                                        echo $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
                                     } else {
-                                       echo "Just now";
+                                        $days = floor($interval / 86400);
+                                        echo $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
                                     }
                                  ?>
                               </span>
@@ -1770,19 +1778,46 @@ if (window.innerWidth < 992) {
                               ?>
                               <span class="time">
                                  <?php
-                                    $date = new DateTime($rowvrf['updated_at']);
-                                    $now = new DateTime();
-                                    $interval = $now->diff($date);
-                                    if ($interval->d > 0) {
-                                       echo $interval->d . ' day' . ($interval->d > 1 ? 's' : '') . ' ago';
-                                    } elseif ($interval->h > 0) {
-                                       echo $interval->h . ' hour' . ($interval->h > 1 ? 's' : '') . ' ago';
-                                    } elseif ($interval->i > 0) {
-                                       echo $interval->i . ' minute' . ($interval->i > 1 ? 's' : '') . ' ago';
+                                    $updated_at = strtotime($rowvrf['updated_at']);
+                                    $now = time();
+                                    $interval = $now - $updated_at;
+                                    
+                                    if ($interval < 60) {
+                                        echo 'Just now';
+                                    } elseif ($interval < 3600) {
+                                        $minutes = floor($interval / 60);
+                                        echo $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+                                    } elseif ($interval < 86400) {
+                                        $hours = floor($interval / 3600);
+                                        echo $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
                                     } else {
-                                       echo 'Just now';
+                                        $days = floor($interval / 86400);
+                                        echo $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
                                     }
                                  ?>
+                              </span>
+                              <span class="rejected">
+                                 <span>Rejected By:</span>
+                                 <span>
+                                    <?php
+                                       if($rowvrf['gsoassistant_status'] == "Rejected")
+                                       {
+                                          echo "GSO Secretary";
+                                       }
+                                       elseif($rowvrf['immediatehead_status'] == "Rejected")
+                                       {
+                                          echo "Immediate Head";
+                                       }
+                                       elseif($rowvrf['gsodirector_status'] == "Rejected")
+                                       {
+                                          echo "GSO Director";
+                                       }
+                                       elseif($rowvrf['accounting_status'] == "Rejected")
+                                       {
+                                          echo "Accounting";
+                                       }
+                                    ?>
+                                 </span>
                               </span>
                            </div>
                            <div class="info-heading">
