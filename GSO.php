@@ -114,28 +114,25 @@
 
 <script>
 if (window.innerWidth < 992) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'burger.php', true);
-    xhr.onload = function() {
-        if (this.status == 200) {
-            var container = document.getElementById('burger-container');
-            container.innerHTML = this.responseText;
+    fetch('burger.php')
+    .then(response => response.text())
+    .then(data => {
+        var container = document.getElementById('burger-container');
+        container.innerHTML = data;
 
-            // Run the scripts manually
-            var scripts = container.querySelectorAll('script');
-            scripts.forEach(function(script) {
-                var newScript = document.createElement('script');
-                if (script.src) {
-                    newScript.src = script.src; // external script
-                } else {
-                    newScript.textContent = script.textContent; // inline script
-                }
-                document.body.appendChild(newScript);
-            });
-        }
-    };
-    xhr.send();
+        var scripts = container.querySelectorAll('script');
+        scripts.forEach(function(script) {
+            var newScript = document.createElement('script');
+            if (script.src) {
+                newScript.src = script.src;
+            } else {
+                newScript.textContent = script.textContent;
+            }
+            document.body.appendChild(newScript);
+        });
+    });
 }
+
 </script>
 
    <nav class="sidebar active">
