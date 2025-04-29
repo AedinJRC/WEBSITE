@@ -39,7 +39,7 @@ CREATE TABLE `carstb` (
 
 /*Data for the table `carstb` */
 
-insert  into `carstb`(`plate_number`,`color`,`brand`,`model`,`year_model`,`body_type`,`transmission`,`image`,`created_at`,`registration_from`,`registration_to`,`capacity`,`registration_schedule`) values ('DAM 6747','White','Toyota','Rush',2019,'SUV','Manual','uploads/TOYOTA_RUSH.png','2025-04-03 09:34:55','2025-06-01','2025-07-27',90,'0000-00-00'),('DAV 8382','White','Isuzu','Travis',2021,'Sedan','Manual','uploads/ISUZU_TRAVIS.png','2025-04-03 09:46:20','2025-01-01','2025-02-16',15,'0000-00-00'),('FAD 5799','White','Toyota','Innova',2011,'Sedan','Automatic','uploads/TOYOTA_INNOVA.png','2025-04-03 09:29:53','2025-08-01','2025-09-28',8,'0000-00-00'),('NED 1154','White','Nissan','Urvan',2019,'SUV','Manual','uploads/NISSAN_URVAN.png','2025-04-22 05:54:10','2025-03-01','2025-04-13',30,'0000-00-00'),('TII 979','White','Toyota','Coaster',2011,'Sedan','Manual','uploads/TOYOTA_COASTER.png','2025-04-22 08:00:22','2025-08-01','2025-09-21',40,'0000-00-00'),('TQV 581','White','Toyota','Grandia',2012,'SUV','Manual','uploads/TOYOTA_GRANDIA.png','2025-04-22 05:33:58','2025-12-01','2026-01-18',30,'0000-00-00'),('WEO 163','Black','Honda','Civic',2013,'Sedan','Manual','uploads/HONDA_CIVIC_2013.png','2025-04-03 09:24:29','2025-02-01','2025-03-16',5,'0000-00-00'),('ZTY 362','Red and Gold','Hino','Bus',2009,'Truck','Manual','uploads/HINO_BUS.png','2025-04-22 06:00:41','2025-01-01','2025-02-09',50,'0000-00-00');
+insert  into `carstb`(`plate_number`,`color`,`brand`,`model`,`year_model`,`body_type`,`transmission`,`image`,`created_at`,`registration_from`,`registration_to`,`capacity`,`registration_schedule`) values ('DAM 6747','White','Toyota','Rush',2019,'SUV','Manual','uploads/TOYOTA_RUSH.png','2025-04-03 09:34:55','2025-06-01','2025-07-27',7,'0000-00-00'),('DAV 8382','White','Isuzu','Travis',2021,'Sedan','Manual','uploads/ISUZU_TRAVIS.png','2025-04-03 09:46:20','2025-01-01','2025-02-16',15,'0000-00-00'),('FAD 5799','White','Toyota','Innova',2011,'Sedan','Automatic','uploads/TOYOTA_INNOVA.png','2025-04-03 09:29:53','2025-08-01','2025-09-28',8,'0000-00-00'),('NED 1154','White','Nissan','Urvan',2019,'SUV','Manual','uploads/NISSAN_URVAN.png','2025-04-22 05:54:10','2025-03-01','2025-04-13',30,'0000-00-00'),('TII 979','White','Toyota','Coaster',2011,'Sedan','Manual','uploads/TOYOTA_COASTER.png','2025-04-22 08:00:22','2025-08-01','2025-09-21',40,'0000-00-00'),('TQV 581','White','Toyota','Grandia',2012,'SUV','Manual','uploads/TOYOTA_GRANDIA.png','2025-04-22 05:33:58','2025-12-01','2026-01-18',30,'0000-00-00'),('WEO 163','Black','Honda','Civic',2013,'Sedan','Manual','uploads/HONDA_CIVIC_2013.png','2025-04-03 09:24:29','2025-02-01','2025-03-16',5,'0000-00-00'),('ZTY 362','Red and Gold','Hino','Bus',2009,'Truck','Manual','uploads/HINO_BUS.png','2025-04-22 06:00:41','2025-01-01','2025-02-09',50,'0000-00-00');
 
 /*Table structure for table `departmentstb` */
 
@@ -61,13 +61,16 @@ insert  into `departmentstb`(`id`,`department`) values (5,'College'),(2,'Grade S
 DROP TABLE IF EXISTS `employeetb`;
 
 CREATE TABLE `employeetb` (
-  `employeeid_db` varchar(20) NOT NULL,
-  `fname_db` varchar(30) NOT NULL,
-  `lname_db` varchar(30) NOT NULL,
-  PRIMARY KEY (`employeeid_db`,`fname_db`,`lname_db`)
+  `employeeid` int(11) NOT NULL,
+  `lname` varchar(50) DEFAULT NULL,
+  `fname` varchar(50) DEFAULT NULL,
+  `mname` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`employeeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `employeetb` */
+
+insert  into `employeetb`(`employeeid`,`lname`,`fname`,`mname`) values (1001,'Dela Cruz','Maria','Luisa'),(1002,'Niño','Jee-Jean','Carlos'),(1003,'De los Santos','Andrea','Marie'),(1004,'Muñoz','José','Manuel'),(1005,'Peña','Carla','Beatriz'),(1006,'Dela Rosa','Miguel','Antonio'),(1007,'Ñiguez','Ana','Teresa'),(1008,'San Pedro','Roberto','Emilio'),(1009,'Dueñas','Lucia','Isabel'),(1010,'Del Mundo','Enrique','Tomas');
 
 /*Table structure for table `passengerstb` */
 
@@ -80,11 +83,11 @@ CREATE TABLE `passengerstb` (
   PRIMARY KEY (`id`),
   KEY `vrfid` (`vrfid`),
   CONSTRAINT `passengerstb_ibfk_1` FOREIGN KEY (`vrfid`) REFERENCES `vrftb` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `passengerstb` */
 
-insert  into `passengerstb`(`id`,`vrfid`,`passenger_name`) values (1,'2025-032502','Aawefawef'),(2,'2025-032502','hsghsergse'),(3,'2025-032504','Aedin'),(4,'2025-032504','Maynard'),(5,'2025-032504','Yanna'),(6,'2025-032505','Sara'),(7,'2025-032505','Wen'),(8,'2025-032505','Joshua'),(9,'2025-032505','Dinglasan'),(10,'2025-032505','Justine');
+insert  into `passengerstb`(`id`,`vrfid`,`passenger_name`) values (12,'2025-042801','Maynard'),(13,'2025-042801','Alyanna'),(14,'2025-042801','Aedin');
 
 /*Table structure for table `usertb` */
 
@@ -105,7 +108,7 @@ CREATE TABLE `usertb` (
 
 /*Data for the table `usertb` */
 
-insert  into `usertb`(`employeeid`,`ppicture`,`fname`,`lname`,`pword`,`role`,`department`,`created_at`,`updated_at`) values ('accounting','Joshua.jpg','Ms.','Cha','1234','Accountant','College','2025-03-24 00:00:00','2025-04-26 13:43:37'),('admin','default_avatar.png','AAVA','DVDRC','admin','Admin','College','2025-03-18 11:19:39','2025-04-26 13:43:42'),('dexther','Vote.jpg','Dexther','Abuan','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('director','fr.png','Noel','Cogasa','1234','Director','College','2025-03-24 00:00:00','2025-04-26 13:43:42'),('immediate','default_avatar.png','Rodel','Magin','1234','Immediate Head','College','2025-04-25 17:24:43','2025-04-26 13:43:42'),('leon','Vote.jpg','Leon','Mandigal','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('noel','Vote.jpg','Noel','Gutierrez','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('secretary','default_avatar.png','Angelu','Bautista','1234','Secretary','College','2025-04-25 17:33:50','2025-04-26 13:43:42'),('tanie','Vote.jpg','Tanie','Duran','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('user','Maynard.png','Maynard','Rodriguez','1234','User','College','2025-03-24 00:00:00','2025-04-26 13:43:42');
+insert  into `usertb`(`employeeid`,`ppicture`,`fname`,`lname`,`pword`,`role`,`department`,`created_at`,`updated_at`) values ('1004','default_avatar.png','Jose','Munoz','1234','User','College','2025-04-28 11:28:45','2025-04-28 11:28:45'),('222032','default_avatar.png','Aedin Jerome','Cabrales','1234','User','Preschool','2025-04-28 09:33:25','2025-04-28 10:26:16'),('accounting','Joshua.jpg','Ms.','Cha','1234','Accountant','College','2025-03-24 00:00:00','2025-04-26 13:43:37'),('admin','default_avatar.png','AAVA','DVDRC','admin','Admin','College','2025-03-18 11:19:39','2025-04-26 13:43:42'),('dexther','Vote.jpg','Dexther','Abuan','1234','Driver','Grade School','2025-03-21 00:00:00','2025-04-28 10:22:37'),('director','fr.png','Noel','Cogasa','1234','Director','College','2025-03-24 00:00:00','2025-04-26 13:43:42'),('immediate','default_avatar.png','Rodel','Magin','1234','Immediate Head','College','2025-04-25 17:24:43','2025-04-26 13:43:42'),('leon','Vote.jpg','Leon','Mandigal','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('noel','Vote.jpg','Noel','Gutierrez','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('secretary','default_avatar.png','Angelu','Bautista','1234','Secretary','College','2025-04-25 17:33:50','2025-04-26 13:43:42'),('tanie','Vote.jpg','Tanie','Duran','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('user','Maynard.png','Maynard','Rodriguez','1234','User','College','2025-03-24 00:00:00','2025-04-26 13:43:42');
 
 /*Table structure for table `vrftb` */
 
@@ -139,7 +142,7 @@ CREATE TABLE `vrftb` (
 
 /*Data for the table `vrftb` */
 
-insert  into `vrftb`(`id`,`name`,`department`,`activity`,`purpose`,`date_filed`,`budget_no`,`vehicle`,`driver`,`destination`,`departure`,`passenger_count`,`passenger_attachment`,`transportation_cost`,`total_cost`,`letter_attachment`,`created_at`,`updated_at`,`gsoassistant_status`,`immediatehead_status`,`gsodirector_status`,`accounting_status`) values ('2025-032101','Aedin Jerome','College','Recollection','School Related','2025-03-21','64815','Bus','dexther','Aefawf',NULL,50,'Letter to self.docx','ejfwafeaw','0.00','Letter to self.docx','2025-03-21 18:13:33','2025-04-26 11:14:54','Clicked','Pending','Pending','Clicked'),('2025-032120','Maynard','College','Retreat','School Related','2025-03-21','06548','Car','dexther','ASffawefawf',NULL,0,NULL,'Afweafa','0.00','Letter to self.docx','2025-03-21 18:28:34','2025-04-26 11:14:54','Approved','Pending','Pending','Pending'),('2025-032121','Aedin','College','Aewffaw','School Related','2025-03-21','2312','Van','dexther','feawfeawef',NULL,NULL,NULL,'awefawefawefa','0.00','Letter to self.docx','2025-03-21 18:53:47','2025-04-26 11:14:54','Clicked','Pending','Pending','Pending'),('2025-032421','aaewf','College','weafa','Official Business','2025-03-25','37','XYZ123','dexther','wfaweffwaef',NULL,NULL,NULL,'waefawefawfawfe','0.00','Letter to self.docx','2025-03-25 10:46:00','2025-04-26 11:14:54','Approved','Pending','Pending','Pending'),('2025-032422','Aedin','Junior High School','awefaw','School Related','2025-03-25','124124','EWAN21','dexther','AfeFewaf',NULL,NULL,NULL,'awefawefawefa','0.00','Letter to self.docx','2025-03-25 11:14:45','2025-04-26 11:14:54','Approved','Pending','Pending','Pending'),('2025-032501','Aedin','College','afeaewfewa','Official Business','2025-03-25','54725','EWAN21','noel','awhfeawf',NULL,NULL,NULL,'awfeawefawefawef','0.00','Letter to self.docx','2025-03-25 11:18:23','2025-04-26 11:14:54','Approved','Pending','Pending','Pending'),('2025-032502','Aedin','College','awfewaef','Official Business','2025-03-25','24684','EWAN21','leon','waefaefawefawe',NULL,NULL,NULL,'awefawefawefwaef','0.00','Letter to self.docx','2025-03-25 11:26:42','2025-04-26 11:14:54','Approved','Pending','Pending','Clicked'),('2025-032503','Aedin','College','awfewaef','Official Business','2025-03-25','24684','EWAN21','leon','waefaefawefawe','2025-03-25 06:00:00',NULL,NULL,'awefawefawefwaef','0.00','Letter to self.docx','2025-03-25 11:36:30','2025-04-26 11:14:54','Approved','Pending','Pending','Approved'),('2025-032504','Aedin','Grade School','awefawef','Official Business','2025-03-25','23124','EWAN21','dexther','weafafea','2025-03-25 06:00:00',3,NULL,'awefawefawef','0.00','Letter to self.docx','2025-03-25 11:39:53','2025-04-26 11:14:54','Approved','Clicked','Approved','Approved'),('2025-032505','AedinJRC','College','Recollection','School Related','2025-03-25','6846','EWAN21','tanie','afaewfwefwafeeawfeawef','2025-03-25 06:00:00',5,NULL,'awefawefawefawefawef','0.00','Letter to self.docx','2025-03-25 14:29:14','2025-04-26 11:14:54','Clicked','Approved','Approved','Approved');
+insert  into `vrftb`(`id`,`name`,`department`,`activity`,`purpose`,`date_filed`,`budget_no`,`vehicle`,`driver`,`destination`,`departure`,`passenger_count`,`passenger_attachment`,`transportation_cost`,`total_cost`,`letter_attachment`,`created_at`,`updated_at`,`gsoassistant_status`,`immediatehead_status`,`gsodirector_status`,`accounting_status`) values ('2025-042801','Jose Munoz','College','Recollection','School Related','2025-04-28','05124','DAM 6747','dexther','Tagaytay','2025-05-05 06:00:00',3,NULL,'Gas\r\n550\r\nTubig \r\n250\r\nKuryente \r\n750.50','1550.50','TLComp-introTL.pdf','2025-04-28 13:18:11','2025-04-29 08:17:06','Approved','Approved','Approved','Approved');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
