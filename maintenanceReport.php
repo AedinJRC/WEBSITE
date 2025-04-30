@@ -86,7 +86,6 @@ body {
     flex-direction: column;
     gap: 15px;
     margin-top: 20px;
-    align-items: left;
 }
 
 .vehicle-item {
@@ -110,12 +109,14 @@ body {
 
 .vehicle-info {
     flex: 1;
+    text-align: left; /* Added to align vehicle details to the left */
 }
 
 .vehicle-item h3 {
     color: var(--dark-color);
     margin-bottom: 5px;
     font-size: 1.2rem;
+    text-align: left; /* Added to align vehicle name to the left */
 }
 
 .vehicle-details {
@@ -124,6 +125,7 @@ body {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+    justify-content: flex-start; /* Changed to align details to the left */
 }
 
 .vehicle-details span {
