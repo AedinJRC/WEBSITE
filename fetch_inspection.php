@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 // Get plate number from request
 $plate_number = $_GET['plate_number'] ?? '';
 
-// Define checklist items (should match the items in your checklist form)
+// Define checklist items
 $checklist_items = [
     1 => "Engine oil level and condition",
     2 => "Coolant level",
@@ -38,21 +38,31 @@ $vehicle_result = $vehicle_stmt->get_result();
 $vehicle = $vehicle_result->fetch_assoc();
 $vehicle_stmt->close();
 
-// Get checklist data for this vehicle
-$checklist_sql = "SELECT check_id, status, checked_at 
-                  FROM vehicle_checklists 
-                  WHERE plate_number = ? 
-                  ORDER BY checked_at DESC";
+// Get checklist data - including inspected_by
+$checklist_sql = "SELECT v1.check_id, v1.status, v1.checked_at, v1.inspected_by 
+                  FROM vehicle_checklists v1
+                  INNER JOIN (
+                      SELECT check_id, MAX(checked_at) as latest_check
+                      FROM vehicle_checklists
+                      WHERE plate_number = ?
+                      GROUP BY check_id
+                  ) v2 ON v1.check_id = v2.check_id AND v1.checked_at = v2.latest_check
+                  WHERE v1.plate_number = ?";
 $checklist_stmt = $conn->prepare($checklist_sql);
-$checklist_stmt->bind_param("s", $plate_number);
+$checklist_stmt->bind_param("ss", $plate_number, $plate_number);
 $checklist_stmt->execute();
 $checklist_result = $checklist_stmt->get_result();
 
-// Organize checklist data by check_id (latest status for each item)
+// Organize checklist data
 $checklist_data = [];
+$inspector_name = '';
 while($row = $checklist_result->fetch_assoc()) {
     if (!isset($checklist_data[$row['check_id']])) {
         $checklist_data[$row['check_id']] = $row;
+        // Get the inspector name from the first record (they should all be the same for a given inspection)
+        if (empty($inspector_name)) {
+            $inspector_name = $row['inspected_by'];
+        }
     }
 }
 $checklist_stmt->close();
@@ -75,32 +85,36 @@ $recent_stmt->close();
     color: #333;
     max-width: 800px;
     margin: 0 auto;
+    padding: 20px;
 }
 
 .vehicle-header {
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid #eee;
-    text-align: center;
+    text-align: left;
 }
 
 .vehicle-header h2 {
     color: #2c3e50;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .vehicle-details {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 20px;
     margin-bottom: 10px;
     font-size: 14px;
     flex-wrap: wrap;
+    text-align: center;
 }
 
 .detail-label {
     font-weight: 600;
     color: #7f8c8d;
+    text-align: center;
 }
 
 .inspection-info {
@@ -115,6 +129,7 @@ $recent_stmt->close();
     border-collapse: collapse;
     margin-top: 10px;
     font-size: 14px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .inspection-table th {
@@ -155,22 +170,26 @@ $recent_stmt->close();
         flex-direction: column;
         gap: 5px;
     }
+    
+    .inspection-table {
+        font-size: 13px;
+    }
+    
+    .inspection-table th, 
+    .inspection-table td {
+        padding: 8px;
+    }
 }
 </style>
 
 <div class="inspection-report">
     <div class="vehicle-header">
         <h2><?php echo htmlspecialchars($vehicle['brand'] . ' ' . $vehicle['model']); ?></h2>
-        <div class="vehicle-details">
-            <div><span class="detail-label">Plate:</span> <?php echo htmlspecialchars($vehicle['plate_number']); ?></div>
-            <div><span class="detail-label">Year:</span> <?php echo htmlspecialchars($vehicle['year_model']); ?></div>
-            <div><span class="detail-label">Color:</span> <?php echo htmlspecialchars($vehicle['color']); ?></div>
-        </div>
-        
-        <?php if ($recent_inspection['last_inspection']): ?>
+
+        <?php if ($recent_inspection['last_inspection'] && !empty($inspector_name)): ?>
             <div class="inspection-info">
-                <span class="detail-label">Last Inspection:</span> 
-                <?php echo date('M d, Y h:i A', strtotime($recent_inspection['last_inspection'])); ?>
+                <div><span class="detail-label">Last Inspection:</span> <?php echo date('M d, Y h:i A', strtotime($recent_inspection['last_inspection'])); ?></div>
+                <div><span class="detail-label">Inspected By:</span> <?php echo htmlspecialchars($inspector_name); ?></div>
             </div>
         <?php endif; ?>
     </div>
@@ -189,7 +208,7 @@ $recent_stmt->close();
                     <td class="<?php 
                         if (isset($checklist_data[$id])) {
                             $status = $checklist_data[$id]['status'];
-                            if ($status == 'Good' || $status == 'Yes') {
+                            if ($status == 'Good') {
                                 echo 'status-good';
                             } elseif ($status == 'Fair') {
                                 echo 'status-fair';
@@ -200,12 +219,7 @@ $recent_stmt->close();
                     ?>">
                         <?php 
                         if (isset($checklist_data[$id])) {
-                            $status = $checklist_data[$id]['status'];
-                            if ($status == 'Yes') {
-                                echo 'Good';
-                            } else {
-                                echo htmlspecialchars($status);
-                            }
+                            echo htmlspecialchars($checklist_data[$id]['status']);
                         } else {
                             echo 'Not checked';
                         }

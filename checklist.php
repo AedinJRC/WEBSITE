@@ -20,14 +20,15 @@ $isError = false;
 // Handle form submission
 if(isset($_POST["save_checklist"])) {
     $plate_number = $_POST["plate_number"];
+    $inspected_by = $_SESSION["fname"] . " " . $_SESSION["lname"];
     
     // Save checklist items
     foreach($_POST['checks'] as $check_id => $status) {
         $sql = "INSERT INTO vehicle_checklists 
-                (plate_number, check_id, status) 
-                VALUES (?, ?, ?)";
+                (inspected_by, plate_number, check_id, status) 
+                VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sis", $plate_number, $check_id, $status);
+        $stmt->bind_param("ssis", $inspected_by,$plate_number, $check_id, $status);
         
         if(!$stmt->execute()) {
             $isError = true;
