@@ -146,8 +146,122 @@ nav .openMenu i {
     color: var(--maroonColor);
   }
 
-  /* Mobile Styles */
-  @media (max-width: 800px) {
+ 
+
+  .logo_burger {
+  display: flex;
+  align-items: center;
+}
+
+.logo_burger img {
+  width: 40px; /* adjust size ng logo */
+  margin-right: 10px;
+}
+
+.logo_burger a {
+  color: var(--maroonColor);
+  font-size: 20px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Profile Section */
+#logout {
+  display: flex;
+  align-items: center;
+}
+
+#profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+#profile-text {
+  color: white;
+}
+
+#name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#role {
+  font-size: 14px;
+}
+
+#logout-button button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#logout-img {
+  width: 20px;
+  height: 20px;
+}
+
+
+/* Add this to your existing CSS */
+#logout-mobile {
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  background: var(--light-gray);
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+nav .mainMenu.show #logout-mobile {
+  display: flex; /* Show when the mobile menu is open */
+  align-items: center;
+}
+
+#logout-mobile {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+}
+
+#profile {
+  width: 100px; /* increase size */
+  height: 100px;
+  border-radius: 50%;
+  display: block;
+  margin: 20px auto; /* centers it horizontally and adds space around */
+  object-fit: cover; /* keeps image aspect ratio and fills the box */
+}
+
+#profile-text {
+  color: var(--maroonColor);
+}
+
+#name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#role {
+  font-size: 14px;
+}
+
+#logout-button button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#logout-img {
+  width: 20px;
+  height: 20px;
+}
+
+ /* Mobile Styles */
+ @media (max-width: 800px) {
     nav .mainMenu {
       flex-direction: column;
       position: fixed;
@@ -264,118 +378,6 @@ nav .openMenu i {
     }
   }
 
-  .logo_burger {
-  display: flex;
-  align-items: center;
-}
-
-.logo_burger img {
-  width: 40px; /* adjust size ng logo */
-  margin-right: 10px;
-}
-
-.logo_burger a {
-  color: var(--maroonColor);
-  font-size: 20px;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-/* Profile Section */
-#logout {
-  display: flex;
-  align-items: center;
-}
-
-#profile {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-#profile-text {
-  color: white;
-}
-
-#name {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-#role {
-  font-size: 14px;
-}
-
-#logout-button button {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-#logout-img {
-  width: 20px;
-  height: 20px;
-}
-
-
-/* Add this to your existing CSS */
-#logout-mobile {
-  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 10px;
-  background: var(--light-gray);
-  margin-top: 10px;
-  border-radius: 5px;
-}
-
-nav .mainMenu.show #logout-mobile {
-  display: flex; /* Show when the mobile menu is open */
-  align-items: center;
-}
-
-#logout-mobile {
-  display: flex;
-  align-items: center;
-  margin-top: 15px;
-}
-
-#profile {
-  width: 100px; /* increase size */
-  height: 100px;
-  border-radius: 50%;
-  display: block;
-  margin: 20px auto; /* centers it horizontally and adds space around */
-  object-fit: cover; /* keeps image aspect ratio and fills the box */
-}
-
-#profile-text {
-  color: var(--maroonColor);
-}
-
-#name {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-#role {
-  font-size: 14px;
-}
-
-#logout-button button {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-#logout-img {
-  width: 20px;
-  height: 20px;
-}
-
 /* Mobile Styles */
 @media (max-width: 800px) {
   nav .mainMenu {
@@ -410,6 +412,132 @@ nav .mainMenu.show #logout-mobile {
   }
 }
 
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  nav {
+    height: 60px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  nav .openMenu {
+    display: block;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--maroonColor);
+  }
+
+  nav .mainMenu {
+    flex-direction: column;
+    position: fixed;
+    background: var(--light-gray);
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding-top: 100px;
+    transition: top 0.3s ease;
+    z-index: 100;
+  }
+
+  nav .mainMenu.show {
+    top: 0;
+  }
+
+  nav .mainMenu li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+  }
+
+  ul.dropdown-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+  }
+
+  nav .mainMenu li a,
+  nav .mainMenu li button.dropdown-btn {
+    justify-content: center;
+    width: auto;
+    text-align: center;
+    font-size: 18px;
+    padding: 12px 20px;
+    color: black;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  nav .mainMenu li a:hover,
+  nav .mainMenu li button.dropdown-btn:hover {
+    color: var(--maroonColor);
+    background: white;
+  }
+
+  nav .closeMenu {
+    display: block !important; /* Force the close button to show */
+    font-size: 2rem;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    color: var(--maroonColor);
+    z-index: 110; /* Ensure it's above other items */
+  }
+
+  #profile {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 10px auto;
+    display: block;
+  }
+
+  #profile-text {
+    color: var(--maroonColor);
+    text-align: center;
+  }
+
+  #name,
+  #role {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .icons {
+    gap: 15px;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  #logout-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  main {
+    padding-top: 70px;
+  }
+}
+
+
+
   </style>
 </head>
 
@@ -442,7 +570,6 @@ nav .mainMenu.show #logout-mobile {
       <ul class="dropdown-container">
         <li><a href="GSO.php?vres=a">Vehicle Reservation Form</a></li>
         <li><a href="GSO.php?vsch=a">Vehicle Schedules</a></li>
-        <li><a href="GSO.php?dsch=a">Driver Schedules</a></li>
       </ul>
     </li>
 
@@ -476,6 +603,7 @@ nav .mainMenu.show #logout-mobile {
       <button class="dropdown-btn">Report <i class="fa fa-caret-down"></i></button>
       <ul class="dropdown-container">
         <li><a href="GSO.php?srep=a">Summary Report</a></li>
+        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
       </ul>
     </li>
 

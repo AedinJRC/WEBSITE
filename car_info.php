@@ -37,6 +37,7 @@ $total_cars = $result->num_rows;
     margin: 0;
     padding: 0;
     text-align: center;
+    height: 100vh;
 }
 
 :root {

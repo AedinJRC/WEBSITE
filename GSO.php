@@ -158,9 +158,7 @@ if (window.innerWidth < 992) {
             </button>
             <ul class="dropdown-container">
                <div>
-                  <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
                   <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                  <li><a href="GSO.php?dsch=a"><span>Driver Schedules</span></a></li>
                </div>
             </ul>
          </li>
@@ -229,19 +227,81 @@ if (window.innerWidth < 992) {
                <?php
             }
          ?>
+
+
+
+
       </ul>
-      <div id="logout">
-         <img id=profile src="uploads/<?php echo $_SESSION['ppicture']; ?>" alt="<?php echo $_SESSION['ppicture']; ?>">
-         <div id="profile-text">
-            <span id="name"><?php echo $_SESSION['lname']."\t".$_SESSION['fname']; ?></span>
-            <span id="role"><?php echo $_SESSION['role'] ?></span>
-         </div>
-         <a href="index.php">
-            <button>
-               <img id=logout-img src="PNG/Logout.png" alt="Logout">
-            </button>
-         </a>
-      </div>
+
+      <?php
+      include 'config.php'; // Your DB connection
+
+      if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['ppicture'])) {
+          if ($_FILES['ppicture']['error'] === 0) {
+              $filename = uniqid() . "_" . basename($_FILES['ppicture']['name']);
+              $target_directory = "uploads/";
+              $target_file = $target_directory . $filename;
+      
+              if (move_uploaded_file($_FILES['ppicture']['tmp_name'], $target_file)) {
+                  $employeeid = $_SESSION['employeeid']; // Assumes employee ID is stored in session
+      
+                  // Update picture in database
+                  $updateQuery = "UPDATE usertb SET ppicture = ? WHERE employeeid = ?";
+                  $stmt = $conn->prepare($updateQuery);
+                  $stmt->bind_param("ss", $filename, $employeeid);
+      
+                  if ($stmt->execute()) {
+                      $_SESSION['ppicture'] = $filename; // Update session with new filename
+                  } else {
+                      echo "<script>alert('Failed to update profile picture in the database.');</script>";
+                  }
+      
+                  $stmt->close();
+              } else {
+                  echo "<script>alert('Failed to upload image file.');</script>";
+              }
+          } else {
+              echo "<script>alert('Error uploading file.');</script>";
+          }
+      
+          $conn->close();
+      }
+      ?>
+<div id="logout">
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+        <!-- Profile Picture -->
+        <img id="ppicture" 
+             src="uploads/<?php echo $_SESSION['ppicture']; ?>" 
+             alt="Profile Picture"
+            style="cursor: pointer; width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;"
+             title="Click to change profile picture">
+
+        <!-- Hidden File Input -->
+        <input type="file" name="ppicture" id="ppictureInput" accept="image/*" style="display: none;"
+               onchange="document.getElementById('uploadForm').submit();">
+    </form>
+
+    <script>
+        document.getElementById("ppicture").addEventListener("click", function(event) {
+            event.preventDefault();
+            let confirmChange = confirm("Do you want to change your profile picture?");
+            if (confirmChange) {
+                document.getElementById("ppictureInput").click();
+            }
+        });
+    </script>
+
+    <div id="profile-text">
+        <span id="name"><?php echo $_SESSION['lname']." ".$_SESSION['fname']; ?></span>
+        <span id="role"><?php echo $_SESSION['role']; ?></span>
+    </div>
+
+    <a href="index.php">
+        <button type="button">
+            <img id="logout-img" src="PNG/Logout.png" alt="Logout">
+        </button>
+    </a>
+</div>
    </nav>
    <?php
       if(isset($_GET["papp"]) and !empty($_GET["papp"]))
