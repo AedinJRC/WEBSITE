@@ -2,18 +2,18 @@
    date_default_timezone_set('Asia/Manila');
    session_start();
    ob_start();
-   if($_SESSION['role'] == null) 
-   {
-      header("Location: logout.php"); 
+   if ($_SESSION['role'] == null) {
+      header("Location: logout.php");
+      exit();
    }
-   if ($_SESSION['role'] != 'Secretary') 
-   {
-      $inactive = 3600; // 3600 Seconds = 1 Hour
-      if(isset($_SESSION['timeout']) ) {
+   if ($_SESSION['role'] != 'Secretary') {
+      $inactive = 3600; // 1 hour
+      if (isset($_SESSION['timeout'])) {
          $session_life = time() - $_SESSION['timeout'];
-         if($session_life > $inactive) { 
-            session_destroy(); 
-            header("Location: logout.php"); 
+         if ($session_life > $inactive) {
+               session_destroy();
+               header("Location: logout.php");
+               exit();
          }
       }
       $_SESSION['timeout'] = time();
@@ -293,6 +293,24 @@ if (window.innerWidth < 992) {
          home();
       ?>
    </main>
+   <script>
+      let timer;
+
+      const inactivityTime = 3000; // 30seconds in milliseconds
+
+      function resetTimer() {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+         location.reload(); // Refreshes the page (triggers PHP session check)
+      }, inactivityTime);
+      }
+
+      window.onload = resetTimer;
+      document.onmousemove = resetTimer;
+      document.onkeypress = resetTimer;
+      document.onscroll = resetTimer;
+      document.onclick = resetTimer;
+   </script>
 </body>
 </html>
 <?php
@@ -791,20 +809,22 @@ if (window.innerWidth < 992) {
                                  }
                               }
                               // Select the count of passengers for the given vrfid
-                              $countpassenger = "SELECT COUNT(*) AS passenger_count FROM passengerstb WHERE vrfid = ?";
-                              $stmt = $conn->prepare($countpassenger);
-                              $stmt->bind_param("s", $id);
-                              $stmt->execute();
-                              $resultcountpassenger = $stmt->get_result();
-                              $rowcountpassenger = $resultcountpassenger->fetch_assoc();
+                              if (!isset($_POST['vrfpassenger_count'])) {
+                                 $countpassenger = "SELECT COUNT(*) AS passenger_count FROM passengerstb WHERE vrfid = ?";
+                                 $stmt = $conn->prepare($countpassenger);
+                                 $stmt->bind_param("s", $id);
+                                 $stmt->execute();
+                                 $resultcountpassenger = $stmt->get_result();
+                                 $rowcountpassenger = $resultcountpassenger->fetch_assoc();
 
-                              // Store passenger count
-                              $passenger_count = $rowcountpassenger['passenger_count'];
+                                 // Store passenger count
+                                 $passenger_count = $rowcountpassenger['passenger_count'];
 
-                              // Update the vrftb table with the passenger count
-                              $stmt = $conn->prepare("UPDATE vrftb SET passenger_count = ? WHERE id = ?");
-                              $stmt->bind_param("is", $passenger_count, $id);
-                              $stmt->execute();
+                                 // Update the vrftb table with the passenger count
+                                 $stmt = $conn->prepare("UPDATE vrftb SET passenger_count = ? WHERE id = ?");
+                                 $stmt->bind_param("is", $passenger_count, $id);
+                                 $stmt->execute();
+                              }
 
                               // Success message and redirection
                               echo "<script>
@@ -896,7 +916,7 @@ if (window.innerWidth < 992) {
                   <?php
                      if (isset($_GET['vrfid'])) {
                         include 'config.php';
-                        $updatevrf = "UPDATE vrftb SET $status='Clicked' WHERE id = ?";
+                        $updatevrf = "UPDATE vrftb SET $status='Clicked', updated_at = updated_at WHERE id = ?";
                         $stmt = $conn->prepare($updatevrf);
                         if ($stmt) {
                            $stmt->bind_param("s", $_GET['vrfid']);
@@ -961,8 +981,24 @@ if (window.innerWidth < 992) {
                                  <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
                               </div>
                               <div>
-                                 <div><div class="title">Driver:</div><div class="dikoalam"><?php echo $rowvrf['driver']; ?></div></div>
-                                 <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
+                                 <div><div class="title">Driver:</div><div class="dikoalam">
+                                    <?php 
+                                       $employeeid = $rowvrf['driver'];
+                                       $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
+                                       $resultdriver = $conn->query($selectdriver);
+                                       if ($resultdriver->num_rows > 0) {
+                                          $rowdriver = $resultdriver->fetch_assoc();
+                                          echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname'];
+                                       } else {
+                                          echo $rowvrf['driver'];
+                                       } 
+                                    ?>
+                                 </div></div>
+                                 <div><div class="title">Vehicle to be used:</div><div class="dikoalam">
+                                    <?php 
+                                       echo $rowvrf['vehicle']; 
+                                    ?>
+                                 </div></div>
                                  <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
                               </div>
                            </div>
@@ -1765,6 +1801,29 @@ if (window.innerWidth < 992) {
                                  }
                               ?>
                               <span class="time">
+                                 <span class="rejected">
+                                    <span>Rejected By:</span>
+                                    <span class="rejected-by">
+                                       <?php
+                                          if($rowvrf['gsoassistant_status'] == "Rejected")
+                                          {
+                                             echo "GSO Secretary";
+                                          }
+                                          elseif($rowvrf['immediatehead_status'] == "Rejected")
+                                          {
+                                             echo "Immediate Head";
+                                          }
+                                          elseif($rowvrf['gsodirector_status'] == "Rejected")
+                                          {
+                                             echo "GSO Director";
+                                          }
+                                          elseif($rowvrf['accounting_status'] == "Rejected")
+                                          {
+                                             echo "Accounting";
+                                          }
+                                       ?>
+                                    </span>
+                                 </span>
                                  <?php
                                     $updated_at = strtotime($rowvrf['updated_at']);
                                     $now = time();
@@ -1783,29 +1842,6 @@ if (window.innerWidth < 992) {
                                         echo $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
                                     }
                                  ?>
-                              </span>
-                              <span class="rejected">
-                                 <span>Rejected By:</span>
-                                 <span>
-                                    <?php
-                                       if($rowvrf['gsoassistant_status'] == "Rejected")
-                                       {
-                                          echo "GSO Secretary";
-                                       }
-                                       elseif($rowvrf['immediatehead_status'] == "Rejected")
-                                       {
-                                          echo "Immediate Head";
-                                       }
-                                       elseif($rowvrf['gsodirector_status'] == "Rejected")
-                                       {
-                                          echo "GSO Director";
-                                       }
-                                       elseif($rowvrf['accounting_status'] == "Rejected")
-                                       {
-                                          echo "Accounting";
-                                       }
-                                    ?>
-                                 </span>
                               </span>
                            </div>
                            <div class="info-heading">
