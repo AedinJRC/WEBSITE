@@ -566,26 +566,27 @@ main
          gap: 0.5vw;
          right: 7vw;
          margin-top: 0.5vw;
-      }
-      span.time
-      {
-         font-size: 0.95vw;
-         letter-spacing: 2px;
-         font-weight: bold;
-      }
-      span.rejected
-      {
-         font-size: 0.95vw;
-         letter-spacing: 2px;
-         font-weight: bold;
-         color: red;
-      }
-      div.circle
-      {
-         height: 0.95vw;
-         width: 0.95vw;
-         border-radius: 100%;
-         background-color: var(--yellow);
+         span.time
+         {
+            font-size: 0.95vw;
+            letter-spacing: 2px;
+            font-weight: bold;
+            transform: translateY(1.2vw);
+         }
+         span.rejected
+         {
+            font-size: 0.95vw;
+            white-space: nowrap;
+            letter-spacing: 2px;
+            font-weight: 100;
+         }
+         div.circle
+         {
+            height: 0.95vw;
+            width: 0.95vw;
+            border-radius: 100%;
+            background-color: var(--yellow);
+         }
       }
       div.info-details 
       {

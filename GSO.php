@@ -1,15 +1,23 @@
 <?php
+   date_default_timezone_set('Asia/Manila');
    session_start();
    ob_start();
-   $inactive = 3600; // 3600 Seconds = 1 Hour
-   if(isset($_SESSION['timeout']) ) {
-      $session_life = time() - $_SESSION['timeout'];
-      if($session_life > $inactive) { 
-         session_destroy(); 
-         header("Location: logout.php"); 
-      }
+   if($_SESSION['role'] == null) 
+   {
+      header("Location: logout.php"); 
    }
-   $_SESSION['timeout'] = time();
+   if ($_SESSION['role'] != 'Secretary') 
+   {
+      $inactive = 3600; // 3600 Seconds = 1 Hour
+      if(isset($_SESSION['timeout']) ) {
+         $session_life = time() - $_SESSION['timeout'];
+         if($session_life > $inactive) { 
+            session_destroy(); 
+            header("Location: logout.php"); 
+         }
+      }
+      $_SESSION['timeout'] = time();
+   }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1396,16 +1404,6 @@ if (window.innerWidth < 992) {
                   ?>
                      <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if (isset($_GET['vrfid'])) {
-                        include 'config.php';
-                        $updatevrf = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
-                        $stmt = $conn->prepare($updatevrf);
-                        if ($stmt) {
-                           $stmt->bind_param("s", $_GET['vrfid']);
-                           $stmt->execute();
-                           $stmt->close();
-                        }
-                     }
                      if($rowvrf[$status] != "Clicked")
                      { 
                         ?> <div class="info-box"> <?php 
@@ -1750,16 +1748,6 @@ if (window.innerWidth < 992) {
                   ?>
                      <a href="GSO.php?creq=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if (isset($_GET['vrfid'])) {
-                        include 'config.php';
-                        $updatevrf = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
-                        $stmt = $conn->prepare($updatevrf);
-                        if ($stmt) {
-                           $stmt->bind_param("s", $_GET['vrfid']);
-                           $stmt->execute();
-                           $stmt->close();
-                        }
-                     }
                      if($rowvrf[$status] != "Clicked")
                      { 
                         ?> <div class="info-box"> <?php 
