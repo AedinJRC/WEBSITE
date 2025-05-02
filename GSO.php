@@ -357,7 +357,7 @@ if (window.innerWidth < 992) {
    <script>
       let timer;
 
-      const inactivityTime = 3000; // 30seconds in milliseconds
+      const inactivityTime = 3000; // 30 seconds in milliseconds
 
       function resetTimer() {
       clearTimeout(timer);
@@ -368,9 +368,10 @@ if (window.innerWidth < 992) {
 
       window.onload = resetTimer;
       document.onmousemove = resetTimer;
-      document.onkeypress = resetTimer;
+      document.onkeydown = resetTimer; // Use keydown instead of keypress
       document.onscroll = resetTimer;
       document.onclick = resetTimer;
+
    </script>
 </body>
 </html>
@@ -1558,7 +1559,19 @@ if (window.innerWidth < 992) {
                                  <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
                               </div>
                               <div>
-                                 <div><div class="title">Driver:</div><div class="dikoalam"><?php echo $rowvrf['driver']; ?></div></div>
+                                 <div><div class="title">Driver:</div><div class="dikoalam">
+                                    <?php 
+                                       $employeeid = $rowvrf['driver'];
+                                       $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
+                                       $resultdriver = $conn->query($selectdriver);
+                                       if ($resultdriver->num_rows > 0) {
+                                          $rowdriver = $resultdriver->fetch_assoc();
+                                          echo $rowdriver['fname']." ".$rowdriver['lname'];
+                                       } else {
+                                          echo $rowvrf['driver'];
+                                       } 
+                                    ?>
+                                 </div></div>
                                  <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
                                  <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
                               </div>
