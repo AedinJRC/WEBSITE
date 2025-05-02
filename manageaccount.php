@@ -31,6 +31,7 @@
             font-weight: 700;
             color: #1f2937;
             margin-bottom: 24px;
+            text-align: center;
         }
         
         #message-container {
