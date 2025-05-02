@@ -2207,9 +2207,9 @@ if (window.innerWidth < 992) {
    }
    function summaryReport()
    {
-      ?>
-         
-      <?php
+     
+         include 'summary_rep.php';
+  
    }
    function maintenanceReport()
    {

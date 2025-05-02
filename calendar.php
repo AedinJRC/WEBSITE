@@ -48,7 +48,7 @@ function generateRandomColor() {
             background-color: #f7f7f7;
             margin: 0;
             padding: 0;
-            height: 100vh;
+         
         }
 
         :root {
