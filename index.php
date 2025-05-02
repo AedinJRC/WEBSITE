@@ -41,23 +41,18 @@ body {
     height: 100vh;
 }
 
-.vh_2 {
-    height: 100vh;
-}
 
-
-.navbar {
-    position: fixed; /* Fix navbar at the top */
-    top: 0;
-    left: 0;
+.navbar { 
+    position: fixed;
     width: 100%;
     background: white;
-    padding: 15px 20px;
-    border: 2px solid #80050d;
-    border-radius: 0; /* Remove border radius to make it full-width */
+    padding: 1vh 1vh; /* 15px 20px */
+    border: 0.3vh solid #80050d;
+    border-radius: 0;
     z-index: 1000;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); /* Add a shadow for better visibility */
+    box-shadow: 0 0.28vh 1.4vh rgba(0, 0, 0, 0.1); /* 2px 10px */
 }
+
 .navdiv {
     display: flex;
     align-items: center;
@@ -71,14 +66,14 @@ body {
 }
 
 .logo img {
-    width: 65px;
+    width: 9.1vh; /* 65px */
     height: auto;
-    margin-right: 10px;
-    margin-left: 20px;
+    margin-right: 1.4vh; /* 10px */
+    margin-left: 2.8vh; /* 20px */
 }
 
 .logo a {
-    font-size: 29px;
+    font-size: 4.1vh; /* 29px */
     font-weight: 600;
     color: #80050d;
 }
@@ -86,13 +81,13 @@ body {
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 20px;
+    gap: 2.8vh; /* 20px */
     justify-content: center;
 }
 
 .nav-links li a {
     color: black;
-    font-size: 16px;
+    font-size: 1.8vh; /* 16px */
     font-weight: bold;
     transition: color 0.3s ease;
 }
@@ -101,11 +96,15 @@ body {
     color: #80050d;
 }
 
+.nav-actions {
+    text-align: center;
+}
+
 .nav-actions button {
     border: none;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 0 20px;
+    border-radius: 1.4vh; /* 10px */
+    padding: 1.4vh; /* 10px */
+    margin: 0 2.8vh; /* 0 20px */
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -117,7 +116,7 @@ body {
 
 .nav-actions a {
     color: #80050d;
-    font-size: 15px;
+    font-size: 1.8vh; /* 15px */
     font-weight: bold;
     transition: color 0.3s ease;
 }
@@ -128,15 +127,15 @@ body {
 
 .nav-actions button.signup {
     background-color: #80050d;
-    border: 3px solid #80050d;
-    padding: 10px;
+    border: 0.42vh solid #80050d; /* 3px */
+    padding: 1vh; /* 10px */
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.nav-actions a button.signup  {
+.nav-actions a button.signup {
     color: #efb954;
-    font-size: 15px;
+    font-size: 1.8vh; /* 15px */
     font-weight: bold;
     text-decoration: none;
 }
@@ -145,7 +144,7 @@ body {
     background-color: #efb954;
 }
 
-.nav-actions a button.signup:hover  {
+.nav-actions a button.signup:hover {
     color: #80050d;
 }
 
@@ -162,6 +161,12 @@ body {
 
 /* Responsive Navbar */
 @media (max-width: 768px) {
+    
+    .navbar {
+    padding: 5px 2px; /* Smaller padding */
+    font-size: 10px;    /* Optional: reduce font size */
+  }
+
     .nav-links {
         flex-direction: column;
         display: none;
@@ -184,9 +189,20 @@ body {
         align-items: flex-start;
     }
 
-    .nav-actions {
-        display: none;
-    }
+   
+  .nav-actions {
+    display: none;
+
+  }
+
+  .nav-actions a {
+    margin: 5px 0;
+  }
+
+  .nav-actions .signup {
+    margin-left: 0; /* Ensure no left offset */
+  }
+
 
     .nav-actions.show {
         display: flex;
@@ -198,74 +214,65 @@ body {
     }
 
     button {
-        width: 80%;
-        text-align: center;
+        width: 100%
+        
     }
 }
 
 
 
 /* Header Section */
-.header {
+.header { 
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 70vh;
-    margin-top: 20px;
-    border-radius: 10px;
+    height: 65vh; /* Height already in vh */
+    margin-top: 2vh; /* Adjusted margin to vh */
+    border-radius: 1.5vh; /* Converted border radius to vh */
     overflow: hidden;
 }
 
 .left-section {
     display: flex;
     align-items: center;
-    gap: 45px;
-    padding: 15px;
+    gap: 3vw; /* Converted gap to vw for better proportional spacing */
+    padding: 2vh; /* Converted padding to vh */
     background-color: #f9f9f9;
     color: #80050d;
 }
 
 .red-bar {
-    width: 30px;
-    height: 400px;
-    border-radius: 10px;
+    width: 1.5vw; /* Converted width to vw for responsiveness */
+    height: 45vh; /* Converted height to vh */
+    border-radius: 1.5vh; /* Converted border radius to vh */
     background-color: #80050d;
-    margin-left: 80px;
+    margin-left: 5vw; /* Adjusted margin to vw */
 }
 
 .text-section {
-    max-width: 600px;
-}
-
-@media (max-width: 1366px) {
-    .text-section h1 {
-        font-size: 65px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-}
-
-@media (min-width: 1367px) {
-    .text-section h1 {
-        font-size: 80px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+    max-width: 35vw; /* Converted max-width to vw */
 }
 
 .text-section span {
-    font-size: 14px;
+    font-size: 2vh; /* Converted font size to vh */
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.3vh; /* Adjusted letter-spacing to vh */
     color: gray;
+}
+
+.text-section .title {
+    font-size: 9.5vh; /* Converted font size to vh */
+    color: #80050d;
+    font-weight: bold;
+    
 }
 
 
 /* Main Container */
 .main-container {
-    width: calc(100% - 100px);
+    width: 100%;
     max-width: 1700px;
-    margin: 0 auto 0 100px;
-    padding: 20px;
+    margin: 0 auto;
+    padding: 0 20px
 }
 .right-section {
     display: flex;
@@ -274,39 +281,30 @@ body {
     align-items: center;
     background-color: #f9f9f9;
 }
-@media (max-width: 1366px) {
-    .right-section img {
-        max-width: 300px;
-        border-radius: 50%;
-        transition: 0.3s;
-    }
+
+.right-section img {
+    width: 25vw; /* Adjusted width to be 10% of viewport width */
+    height: auto; /* Maintains the aspect ratio of the logo */
 }
 
-@media (min-width: 1367px) {
-    .right-section img {
-        max-width: 400px;
-        border-radius: 50%;
-        transition: 0.3s;
-    }
-}
 /* Five Logo Section */
 .five_logo {
     display: flex;
     justify-content: space-around;
     align-items: center;
     background-color: #fff;
-    padding: 5px;
-    margin-top: 20px;
-    border: 2px solid #80050d;
-    border-radius: 10px;
+    padding: 0.65vh; /* 5px ≈ 0.65vh on a 768px height screen */
+    margin-top: 2.6vh; /* 20px ≈ 2.6vh */
+    border: 0.26vh solid #80050d; /* 2px ≈ 0.26vh */
+    border-radius: 1.3vh; /* 10px ≈ 1.3vh */
 }
 
 .five_logo img {
-    max-width: 80px;
+    max-width: 10.4vh; /* 80px ≈ 10.4vh */
     height: auto;
-    border: 1px solid #80050d;
-    border-radius: 50%;
-    padding: 5px;
+    border: 0.13vh solid #80050d; /* 1px ≈ 0.13vh */
+    border-radius: 6.5vh; /* 50% remains unchanged as it's relative */
+    padding: 0.65vh; /* 5px ≈ 0.65vh */
 }
 
 @media (max-width: 768px) {
@@ -318,6 +316,7 @@ body {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        justify-content: center;
     }
     .five_logo {
         padding: 10px;
@@ -354,8 +353,11 @@ body {
         margin: 0 auto;
     }
 
-    .text-section h1 {
+    .text-section .title {
         font-size: 50px;
+        display: flex;
+        text-align: center;
+        justify-content: center;
     }
 
     .text-section span {
@@ -373,85 +375,87 @@ body {
     }
 }
 
+
+
 /* ___________________________________*/
 .vh_2 {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 2vh;
 }
 
 /* Box container */
 .box1 {
     background: white;
-    padding: 30px 40px;
-    border: 3px solid #efb954;
-    border-radius: 35px;
-    width: 90%; /* Adjust width dynamically */
-    max-width: 1500px;
-    height: auto; /* Allow height to adjust dynamically */
+    padding: 2.5vh 3vh; /* reduced padding */
+    border: 0.4vh solid #efb954;
+    border-radius: 2.5vh;
+    width: 90%;
+    max-width: 120vh; /* smaller max width */
+    height: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Allow stacking on smaller screens */
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 1.5vh; /* smaller gap */
 }
 
 /* Introduce Section */
 .introduce {
     flex: 1;
-    max-width: 700px;
+    max-width: 60vh;
     text-align: left;
 }
 
 .introduce h1 {
-    font-size: clamp(40px, 6vw, 70px); /* Responsive font scaling */
+    font-size: clamp(3.5vh, 5vw, 6vh); /* smaller font */
     font-weight: bold;
     color: #80050d;
-    margin-left: 5%;
+    margin-left: 4%;
 }
 
 .introduce h2 {
-    font-size: clamp(20px, 2vw, 34px);
+    font-size: clamp(1.8vh, 2vw, 3.2vh); /* smaller font */
     color: #333;
-    line-height: 1.5;
-    max-width: 600px;
-    padding-top: 10px;
-    margin-left: 5%;
+    line-height: 1.4;
+    max-width: 55vh;
+    padding-top: 1vh;
+    margin-left: 4%;
 }
 
 /* Image Section */
 .intro_pic {
     flex-shrink: 0;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
-    width: 40%;
+    width: 35%; /* slightly narrower */
 }
 
 .intro_pic img {
     width: 100%;
-    max-width: 450px;
+    max-width: 50vh; /* smaller image */
     height: auto;
-    margin-right: 5%;
+    margin-right: 4%;
 }
 
 /* Button Container */
 .intro_butt_container {
-    margin-top: 40px;
-    margin-left: 5%;
+    margin-top: 3vh;
+    margin-left: 4%;
 }
 
 /* Button styles */
 .intro_butt {
     background-color: #80050d;
-    border: #efb954 3px solid;
-    padding: 15px 30px;
-    font-size: 18px;
+    border: #efb954 0.2vh solid;
+    padding: 1.2vh 1.6vh; /* smaller button size */
+    font-size: 1.5vh; /* smaller font */
     font-weight: bold;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 1vh;
     display: inline-block;
     text-align: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -464,7 +468,7 @@ body {
 
 .intro_butt:hover {
     background-color: white;
-    border: #80050d 3px solid;
+    border: #80050d 0.2vh solid;
     transform: scale(1.05);
 }
 
@@ -472,39 +476,6 @@ body {
     color: #80050d;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 1024px) {
-    .box1 {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 20px;
-    }
-
-    .introduce {
-        max-width: 100%;
-    }
-
-    .introduce h1,
-    .introduce h2 {
-        margin-left: 0;
-    }
-
-    .intro_pic {
-        width: 80%;
-        justify-content: center;
-        margin-right: 0;
-    }
-
-    .intro_pic img {
-        max-width: 300px;
-    }
-
-    .intro_butt_container {
-        margin-left: 0;
-        text-align: center;
-    }
-}
 
 @media (max-width: 768px) {
     .box1 {
@@ -555,25 +526,29 @@ body {
 }
 
 /* _____________________________________ */
-.create_acc { 
-    width: 100%;
+.create_acc {  
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 }
 
+.create_pic img {
+    max-width: 25vh; /* Smaller image */
+    height: auto;
+}
 .box2 {
     background: white;
-    padding: 70px 80px; /* More padding for a larger feel */
-    border: 5px solid #efb954; /* Thicker border for emphasis */
-    border-radius: 40px;
-    width: 95%; /* Takes almost full width */
-    max-width: 1200px; /* Significantly increased width */
-    min-height: 600px; /* Taller box */
-    display: flex;
-    align-items: center;
+    padding: 4vh 4.5vh;
+    border: 0.4vh solid #efb954;
+    border-radius: 2.5vh;
+    width: 95%;
+    max-width: 120vh; /* 700px ≈ 93.5vh */
+    min-height: 60vh;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Image Section */
@@ -581,36 +556,31 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+  
 }
 
-.create_pic img {
-    width: 100%;
-    max-width: 250px; /* Adjust logo size */
-    height: auto;
-}
 
 /* Heading */
 .create_acc h1 {
-    font-size: clamp(20px, 4vw, 50px); /* Responsive font size */
+    font-size: clamp(2vh, 3vw, 4.5vh); /* Smaller font */
     font-weight: bold;
     color: #80050d;
-    margin: 10px 0;
+    margin: 1vh 0;
 }
 
 .create_butt_container {
-    margin-top: 80px;
+    margin-top: 4.5vh; /* Less vertical space */
 }
 
 .line {
-    width: 35%; /* Controls the width of the line */
+    width: 150%;
     border: 0;
-    border-top: 3px solid rgba(110, 103, 91, 0.4);
-    margin: 20px 0; /* Adds space above and below the line */
+    border-top: 0.3vh solid rgba(110, 103, 91, 0.4); /* Thinner line */
+    margin: 1.5vh 0;
 }
 
 /* Responsive Styles */
-@media (max-width: 1200px) {
+@media (max-width: 1500px) {
     .box2 {
         padding: 50px 60px; /* Adjust padding for smaller screens */
     }
@@ -679,68 +649,61 @@ body {
 
 /* _____________________________________ */
 .csa_down {
-    max-width: 100px;
+    max-width: 8vh;
     height: auto;
     display: block;
-    margin: 0 auto 1rem;
+    margin: 0 auto 1vh;
 }
 
-/* Responsive container */
 .container_land {
-    max-width: 1500px;
+    max-width: 130vh;
     margin: auto;
-    padding: 5rem 2rem;
+    padding: 3vh 1vh;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
-    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    flex-wrap: wrap;
 }
 
-/* Footer styles */
 footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     background-color: #f9f9f9;
-    padding: 1rem;
+    padding: 2vh;
     color: #333;
-    border-top: 3px solid var(--maroonColor);
-    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    border-top: 0.2vh solid var(--maroonColor);
+    font-size: clamp(1.2vh, 1.5vw, 2vh);
 }
 
-/* Footer column responsiveness */
 footer .column {
     flex: 1;
-    min-width: 250px; /* Adjusted to avoid shrinking too much */
+    min-width: 25vh;
     text-align: left;
-    padding: 10px;
+    padding: 1vh;
 }
 
-/* Center first column */
 footer .column:first-child {
     text-align: center;
-    flex: 1.5;
+    flex: 1.2;
 }
 
-/* Social media icons */
 footer .column .socials {
     display: flex;
     justify-content: center;
-    gap: 0.8rem;
-    margin-top: 1rem;
-    flex-wrap: wrap; /* Allows better wrapping on smaller screens */
+    gap: 1.2vh;
+    margin-top: 1.6vh;
+    flex-wrap: wrap;
 }
 
 footer .column .socials a {
     color: black;
-    border: 1px solid var(--maroonColor);
-    padding: 10px;
-    font-size: clamp(1rem, 2vw, 1.25rem);
+    border: 0.1vh solid var(--maroonColor);
+    padding: 1vh;
+    font-size: 1.8vh;
     border-radius: 50%;
-    transition: all 0.3s ease;
-    width: 40px;
-    height: 40px;
+    width: 4.5vh;
+    height: 4.5vh;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -752,37 +715,33 @@ footer .column .socials a:hover {
     background-color: var(--yellowColor);
 }
 
-/* Footer column headings */
 footer .column h4 {
     color: var(--maroonColor);
-    margin-bottom: 1rem;
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    margin-bottom: 1.2vh;
+    font-size: clamp(1.4vh, 2vw, 2vh);
     font-weight: 600;
 }
 
-/* Footer links */
 footer .column > a {
     display: block;
     color: #666;
     text-decoration: none;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1vh;
     transition: all 0.3s ease;
-    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-size: clamp(1.3vh, 1.8vw, 1.6vh);
 }
 
 footer .column > a:hover {
     color: var(--yellowColor);
 }
 
-/* Copyright Section */
 .copyright {
     text-align: center;
-    font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+    font-size: clamp(1.2vh, 1.2vw, 1.5vh);
     color: #aaa;
-    margin-top: 1rem;
+    margin-top: 2vh;
     width: 100%;
 }
-
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
     .container_land {
@@ -843,39 +802,38 @@ footer .column > a:hover {
     display: flex;
     justify-content: center; 
     align-items: center; 
-    padding: 20px; /* Prevents elements from touching screen edges */
-    box-sizing: border-box;
+    padding: 20px; 
 }
 
-.GSO_ins {
+.GSO_ins { 
     display: flex;
     justify-content: center;
     align-items: center; 
     width: 100%; 
-    padding: 10px;
-    margin-top: 30vh; /* Adjust dynamically based on viewport height */
-    flex-wrap: wrap; /* Allows items to adjust in smaller screens */
+    padding: 1vh;
+    margin-top: 40vh; /* Already using vh */
+    flex-wrap: wrap;
 }
 
 .GSO_ins img {
-    max-width: 100%; /* Ensures image scales properly */
+    max-width: 100%;
     height: auto;
     display: block; 
-    border: 5px solid #efb954; /* Thicker border for emphasis */
-    border-radius: 40px;
-    padding: 20px;
-    max-height: 500px; /* Prevents the image from being too large */
+    border: 0.5vh solid #efb954;
+    border-radius: 4vh;
+    padding: 2vh;
+    max-height: 50vh;
 }
 
 .box4 {
-    padding: 5vw; /* Makes padding responsive */
+    padding: 5vw;
     width: 90%; 
-    max-width: 1200px; 
-    min-height: auto; /* Allows flexibility */
+    max-width: 1200px;
+    min-height: auto;
     display: flex;
     align-items: center;
     text-align: center;
-    flex-wrap: wrap; /* Allows items to stack if needed */
+    flex-wrap: wrap;
 }
 
 /* Media Queries for different screen sizes */
@@ -1166,9 +1124,9 @@ footer .column > a:hover {
                 <div class="left-section">
                     <div class="red-bar"></div>
                     <div class="text-section">
-                        <span>Vehicle Reservation and Monitoring System</span>
-                        <h1>General Services Office</h1>
-                    </div>
+    <span>Vehicle Reservation and Monitoring System</span>
+    <div class="title">General Services Office</div>
+</div>
                 </div>
                 <div class="right-section">
                     <img src="PNG/GSO Logo.png" alt="Logo">
@@ -1193,8 +1151,8 @@ footer .column > a:hover {
                 <div class="introduce">
                     <h1>Introducing Good Solution</h1>
                     <h2>An online, for CSA-Biñan employees to manage their school vehicle reservation.</h2>
-                    <div class="intro_butt_container">
-                        <button class="intro_butt"><a href="#">Try now</a></button>
+                    <div class="create_butt_container">
+                        <button class="intro_butt"><a href="index.php?sig=a">Sign up now</a></button>
                     </div>
                 </div>
                 <div class="intro_pic">

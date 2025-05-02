@@ -48,6 +48,7 @@ function generateRandomColor() {
             background-color: #f7f7f7;
             margin: 0;
             padding: 0;
+            height: 100vh;
         }
 
         :root {
@@ -258,6 +259,39 @@ function generateRandomColor() {
 .vehicle-reservation-form {
     max-height: 70vh; 
 }
+.center-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .request-btn-callendar {
+    display: inline-block;
+    width: 320px;
+    padding: 15px 20px;
+    background-color: transparent;
+    color: var(--maroonColor);
+    border: solid 2px var(--maroonColor);
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.request-btn-callendar:hover {
+    background-color: transparent;
+    color: var(--maroonColor);
+    border: solid 2px var(--yellowColor);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    transform: scale(1.05);
+}
+
+        li {
+            list-style-type: none;
+        }
 
     </style>
 </head>
@@ -331,6 +365,13 @@ function generateRandomColor() {
         }
         ?>
     </div>
+  
+</div>
+
+<div class="center-container">
+    <li>
+        <a href="GSO.php?vres=a" class="request-btn-callendar">Vehicle Reservation Form</a>
+    </li>
 </div>
 
 <div id="vrespopup" style="justify-content: center; align-items: center;">
