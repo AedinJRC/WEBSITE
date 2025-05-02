@@ -34,7 +34,10 @@ html {
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f1f0f0;
+    background-image: url('PNG/Background.png');
+    background-repeat: no-repeat;       /* Prevents tiling */
+    background-size: cover;             /* Scales image to cover entire background */
+    background-position: center center; /* Centers the image */
 }
 
 .vh_1 {
@@ -236,7 +239,6 @@ body {
     align-items: center;
     gap: 3vw; /* Converted gap to vw for better proportional spacing */
     padding: 2vh; /* Converted padding to vh */
-    background-color: #f9f9f9;
     color: #80050d;
 }
 
@@ -279,7 +281,6 @@ body {
     justify-content: flex-end;
     padding-right: 100px;
     align-items: center;
-    background-color: #f9f9f9;
 }
 
 .right-section img {
@@ -1124,9 +1125,9 @@ footer .column > a:hover {
                 <div class="left-section">
                     <div class="red-bar"></div>
                     <div class="text-section">
-    <span>Vehicle Reservation and Monitoring System</span>
-    <div class="title">General Services Office</div>
-</div>
+                    <span>Vehicle Reservation and Monitoring System</span>
+                    <div class="title">General Services Office</div>
+                </div>
                 </div>
                 <div class="right-section">
                     <img src="PNG/GSO Logo.png" alt="Logo">
