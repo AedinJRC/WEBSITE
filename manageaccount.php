@@ -9,7 +9,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
@@ -230,8 +229,6 @@
                 box-sizing: border-box;
                 color: var(--maroon);
                 padding: 4px 8px;
-                padding-top: 3px;
-                padding-bottom: 5px;
                 border-radius: 6px;
                 font-size: 0.875rem;
                 font-weight: 500;
