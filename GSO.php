@@ -281,7 +281,7 @@ if (window.innerWidth < 992) {
         <img id="ppicture" 
              src="uploads/<?php echo $_SESSION['ppicture']; ?>" 
              alt="Profile Picture"
-            style="cursor: pointer; width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;"
+             style="cursor: pointer; width: 10.67vh; height: 10.67vh; object-fit: cover; border-radius: 50%; border: 0.27vh solid #ccc;"
              title="Click to change profile picture">
 
         <!-- Hidden File Input -->
@@ -2199,9 +2199,9 @@ if (window.innerWidth < 992) {
    }
    function summaryReport()
    {
-      ?>
-         
-      <?php
+     
+         include 'summary_rep.php';
+  
    }
    function maintenanceReport()
    {
