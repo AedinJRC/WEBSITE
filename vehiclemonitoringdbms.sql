@@ -87,27 +87,29 @@ CREATE TABLE `departmentstb` (
   `department` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `department` (`department`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `departmentstb` */
 
-insert  into `departmentstb`(`id`,`department`) values (5,'College'),(2,'Grade School'),(3,'Junior High School'),(1,'Preschool'),(4,'Senior High School');
+insert  into `departmentstb`(`id`,`department`) values (2,'Grade School'),(3,'Junior High School'),(1,'Preschool'),(4,'Senior High School');
 
 /*Table structure for table `employeetb` */
 
 DROP TABLE IF EXISTS `employeetb`;
 
 CREATE TABLE `employeetb` (
-  `employeeid` int(11) NOT NULL,
+  `employeeid` varchar(50) NOT NULL,
   `lname` varchar(50) DEFAULT NULL,
   `fname` varchar(50) DEFAULT NULL,
   `mname` varchar(50) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`employeeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `employeetb` */
 
-insert  into `employeetb`(`employeeid`,`lname`,`fname`,`mname`) values (1001,'Dela Cruz','Maria','Luisa'),(1002,'Niño','Jee-Jean','Carlos'),(1003,'De los Santos','Andrea','Marie'),(1004,'Muñoz','José','Manuel'),(1005,'Peña','Carla','Beatriz'),(1006,'Dela Rosa','Miguel','Antonio'),(1007,'Ñiguez','Ana','Teresa'),(1008,'San Pedro','Roberto','Emilio'),(1009,'Dueñas','Lucia','Isabel'),(1010,'Del Mundo','Enrique','Tomas');
+insert  into `employeetb`(`employeeid`,`lname`,`fname`,`mname`,`created_at`,`updated_at`) values ('1001','García','Juan Carlos','Martínez','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1002','Rodríguez','María Fernanda','López','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1003','Sánchez','José Antonio','Rivera','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1004','Morales','Ana Sofía','Delgado','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1005','Herrera','Luis Miguel','Vargas','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1006','Torres','Camila Isabel','Romero','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1007','Castro','Diego Alejandro','Rojas','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1008','Vargas','Laura Gabriela','Mendoza','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1009','Ruiz','Carlos Eduardo','Navarro','2025-05-02 17:03:52','2025-05-02 17:03:52'),('1010','Delgado','Daniela Mariana','Paredes','2025-05-02 17:03:52','2025-05-02 17:03:52');
 
 /*Table structure for table `passengerstb` */
 
@@ -145,7 +147,7 @@ CREATE TABLE `usertb` (
 
 /*Data for the table `usertb` */
 
-insert  into `usertb`(`employeeid`,`ppicture`,`fname`,`lname`,`pword`,`role`,`department`,`created_at`,`updated_at`) values ('1004','default_avatar.png','Jose','Munoz','1234','User','College','2025-04-28 11:28:45','2025-04-28 11:28:45'),('222032','default_avatar.png','Aedin Jerome','Cabrales','1234','User','Preschool','2025-04-28 09:33:25','2025-04-28 10:26:16'),('accounting','Joshua.jpg','Ms.','Cha','1234','Accountant','College','2025-03-24 00:00:00','2025-04-26 13:43:37'),('admin','default_avatar.png','AAVA','DVDRC','admin','Admin','College','2025-03-18 11:19:39','2025-04-26 13:43:42'),('dexther','Vote.jpg','Dexther','Abuan','1234','Driver','Grade School','2025-03-21 00:00:00','2025-04-28 10:22:37'),('director','fr.png','Noel','Cogasa','1234','Director','College','2025-03-24 00:00:00','2025-04-26 13:43:42'),('immediate','default_avatar.png','Rodel','Magin','1234','Immediate Head','College','2025-04-25 17:24:43','2025-04-26 13:43:42'),('leon','Vote.jpg','Leon','Mandigal','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('noel','Vote.jpg','Noel','Gutierrez','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('secretary','default_avatar.png','Angelu','Bautista','1234','Secretary','College','2025-04-25 17:33:50','2025-04-26 13:43:42'),('tanie','Vote.jpg','Tanie','Duran','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('user','Maynard.png','Maynard','Rodriguez','1234','User','College','2025-03-24 00:00:00','2025-04-26 13:43:42');
+insert  into `usertb`(`employeeid`,`ppicture`,`fname`,`lname`,`pword`,`role`,`department`,`created_at`,`updated_at`) values ('1003','default_avatar.png','Jose Antonio','Sanchez','1234','User','Grade School','2025-05-02 16:52:25','2025-05-02 16:52:25'),('1004','default_avatar.png','Jose','Munoz','1234','User','College','2025-04-28 11:28:45','2025-04-28 11:28:45'),('222032','default_avatar.png','Aedin Jerome','Cabrales','1234','User','Preschool','2025-04-28 09:33:25','2025-04-28 10:26:16'),('accounting','Joshua.jpg','Ms.','Cha','1234','Accountant','College','2025-03-24 00:00:00','2025-04-26 13:43:37'),('admin','default_avatar.png','AAVA','DVDRC','admin','Admin','College','2025-03-18 11:19:39','2025-04-26 13:43:42'),('dexther','Vote.jpg','Dexther','Abuan','1234','Driver','Grade School','2025-03-21 00:00:00','2025-05-02 14:59:21'),('director','fr.png','Noel','Cogasa','1234','Director','College','2025-03-24 00:00:00','2025-04-26 13:43:42'),('immediate','default_avatar.png','Rodel','Magin','1234','Immediate Head','College','2025-04-25 17:24:43','2025-04-26 13:43:42'),('leon','Vote.jpg','Leon','Mandigal','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('noel','Vote.jpg','Noel','Gutierrez','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('secretary','default_avatar.png','Angelu','Bautista','1234','Secretary','College','2025-04-25 17:33:50','2025-04-26 13:43:42'),('tanie','Vote.jpg','Tanie','Duran','1234','Driver','College','2025-03-21 00:00:00','2025-04-26 13:43:42'),('user','Maynard.png','Maynard','Rodriguez','1234','User','College','2025-03-24 00:00:00','2025-04-26 13:43:42');
 
 /*Table structure for table `vehicle_checklists` */
 
@@ -161,11 +163,11 @@ CREATE TABLE `vehicle_checklists` (
   PRIMARY KEY (`id`),
   KEY `plate_number` (`plate_number`),
   CONSTRAINT `vehicle_checklists_ibfk_1` FOREIGN KEY (`plate_number`) REFERENCES `carstb` (`plate_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `vehicle_checklists` */
 
-insert  into `vehicle_checklists`(`id`,`inspected_by`,`plate_number`,`check_id`,`status`,`checked_at`) values (91,'AAVA DVDRC','WEO 163',1,'Good','2025-04-30 13:42:46'),(92,'AAVA DVDRC','WEO 163',2,'Fair','2025-04-30 13:42:46'),(93,'AAVA DVDRC','WEO 163',3,'Fair','2025-04-30 13:42:46'),(94,'AAVA DVDRC','WEO 163',4,'Good','2025-04-30 13:42:46'),(95,'AAVA DVDRC','WEO 163',5,'Good','2025-04-30 13:42:46'),(96,'AAVA DVDRC','WEO 163',6,'Good','2025-04-30 13:42:46'),(97,'AAVA DVDRC','WEO 163',7,'Good','2025-04-30 13:42:46'),(98,'AAVA DVDRC','WEO 163',8,'Good','2025-04-30 13:42:46'),(99,'AAVA DVDRC','WEO 163',9,'Good','2025-04-30 13:42:46'),(100,'AAVA DVDRC','WEO 163',10,'Good','2025-04-30 13:42:46');
+insert  into `vehicle_checklists`(`id`,`inspected_by`,`plate_number`,`check_id`,`status`,`checked_at`) values (91,'AAVA DVDRC','WEO 163',1,'Good','2025-04-30 13:42:46'),(92,'AAVA DVDRC','WEO 163',2,'Fair','2025-04-30 13:42:46'),(93,'AAVA DVDRC','WEO 163',3,'Fair','2025-04-30 13:42:46'),(94,'AAVA DVDRC','WEO 163',4,'Good','2025-04-30 13:42:46'),(95,'AAVA DVDRC','WEO 163',5,'Good','2025-04-30 13:42:46'),(96,'AAVA DVDRC','WEO 163',6,'Good','2025-04-30 13:42:46'),(97,'AAVA DVDRC','WEO 163',7,'Good','2025-04-30 13:42:46'),(98,'AAVA DVDRC','WEO 163',8,'Good','2025-04-30 13:42:46'),(99,'AAVA DVDRC','WEO 163',9,'Good','2025-04-30 13:42:46'),(100,'AAVA DVDRC','WEO 163',10,'Good','2025-04-30 13:42:46'),(101,'AAVA DVDRC','NED 1154',1,'Good','2025-05-02 14:42:49'),(102,'AAVA DVDRC','NED 1154',2,'Fair','2025-05-02 14:42:49'),(103,'AAVA DVDRC','NED 1154',3,'Fair','2025-05-02 14:42:49'),(104,'AAVA DVDRC','NED 1154',4,'Bad','2025-05-02 14:42:49'),(105,'AAVA DVDRC','NED 1154',5,'Bad','2025-05-02 14:42:49'),(106,'AAVA DVDRC','NED 1154',6,'Fair','2025-05-02 14:42:49'),(107,'AAVA DVDRC','NED 1154',7,'Fair','2025-05-02 14:42:49'),(108,'AAVA DVDRC','NED 1154',8,'Good','2025-05-02 14:42:49'),(109,'AAVA DVDRC','NED 1154',9,'Good','2025-05-02 14:42:49'),(110,'AAVA DVDRC','NED 1154',10,'Fair','2025-05-02 14:42:49');
 
 /*Table structure for table `vrftb` */
 
@@ -190,16 +192,16 @@ CREATE TABLE `vrftb` (
   `letter_attachment` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `gsoassistant_status` enum('Pending','Clicked','Rejected','Approved') DEFAULT 'Pending',
-  `immediatehead_status` enum('Pending','Clicked','Rejected','Approved') DEFAULT 'Pending',
-  `gsodirector_status` enum('Pending','Clicked','Rejected','Approved') DEFAULT 'Pending',
-  `accounting_status` enum('Pending','Clicked','Rejected','Approved') DEFAULT 'Pending',
+  `gsoassistant_status` enum('Pending','Seen','Rejected','Approved') DEFAULT 'Pending',
+  `immediatehead_status` enum('Pending','Seen','Rejected','Approved') DEFAULT 'Pending',
+  `gsodirector_status` enum('Pending','Seen','Rejected','Approved') DEFAULT 'Pending',
+  `accounting_status` enum('Pending','Seen','Rejected','Approved') DEFAULT 'Pending',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `vrftb` */
 
-insert  into `vrftb`(`id`,`name`,`department`,`activity`,`purpose`,`date_filed`,`budget_no`,`vehicle`,`driver`,`destination`,`departure`,`passenger_count`,`passenger_attachment`,`transportation_cost`,`total_cost`,`letter_attachment`,`created_at`,`updated_at`,`gsoassistant_status`,`immediatehead_status`,`gsodirector_status`,`accounting_status`) values ('2025-042801','Jose Munoz','College','Recollection','School Related','2025-04-28','05124','DAM 6747','dexther','Tagaytay','2025-05-05 06:00:00',3,NULL,'Gas\r\n550\r\nTubig \r\n250\r\nKuryente \r\n750.50','1550.50','TLComp-introTL.pdf','2025-04-28 13:18:11','2025-04-29 08:17:06','Approved','Approved','Approved','Approved');
+insert  into `vrftb`(`id`,`name`,`department`,`activity`,`purpose`,`date_filed`,`budget_no`,`vehicle`,`driver`,`destination`,`departure`,`passenger_count`,`passenger_attachment`,`transportation_cost`,`total_cost`,`letter_attachment`,`created_at`,`updated_at`,`gsoassistant_status`,`immediatehead_status`,`gsodirector_status`,`accounting_status`) values ('2025-042801','Jose Munoz','College','Recollection','School Related','2025-04-28','05124','DAM 6747','dexther','Tagaytay','2025-05-05 06:00:00',3,NULL,'Gas\r\n550\r\nTubig \r\n250\r\nKuryente \r\n750.50','1550.50','TLComp-introTL.pdf','2025-04-28 13:18:11','2025-04-29 08:17:06','Approved','Approved','Approved','Approved'),('2025-043001','Jose Munoz','College','College Night','School Related','2025-04-30','05167',NULL,NULL,'Manila','2025-05-07 06:00:00',20,'Letter to self.docx','','0.00','Letter to self.docx','2025-04-30 16:14:20','2025-04-30 16:14:20','Pending','','Pending','Pending');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -278,10 +278,10 @@ if (window.innerWidth < 992) {
 <div id="logout">
     <form id="uploadForm" method="POST" enctype="multipart/form-data">
         <!-- Profile Picture -->
-        <img id="ppicture" 
+        <img id="picture" 
              src="uploads/<?php echo $_SESSION['ppicture']; ?>" 
              alt="Profile Picture"
-             style="cursor: pointer; width: 10.67vh; height: 10.67vh; object-fit: cover; border-radius: 50%; border: 0.27vh solid #ccc;"
+            style="cursor: pointer; width: 5vw; height: 5vw; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;"
              title="Click to change profile picture">
 
         <!-- Hidden File Input -->
@@ -290,7 +290,7 @@ if (window.innerWidth < 992) {
     </form>
 
     <script>
-        document.getElementById("ppicture").addEventListener("click", function(event) {
+        document.getElementById("picture").addEventListener("click", function(event) {
             event.preventDefault();
             let confirmChange = confirm("Do you want to change your profile picture?");
             if (confirmChange) {
@@ -357,7 +357,7 @@ if (window.innerWidth < 992) {
    <script>
       let timer;
 
-      const inactivityTime = 3000; // 30 seconds in milliseconds
+      const inactivityTime = 6000;
 
       function resetTimer() {
       clearTimeout(timer);
@@ -582,7 +582,7 @@ if (window.innerWidth < 992) {
                            const addButton = document.getElementById("addButton");
                            const attachmentButton = document.getElementById("attachmentButton");
 
-                           // Hide "USE ATTACHMENT" button when "+" button is clicked
+                           // Hide "USE ATTACHMENT" button when "+" button is Seen
                            attachmentButton.style.display = "none";
 
                            // Get all current passenger entries
@@ -942,32 +942,40 @@ if (window.innerWidth < 992) {
          <input class="search" type="text" id="search" placeholder="Search reservation">
          <div class="maintitle">
             <h1>Pending Approval</h1>
-            <p>New</p>
+            <?php
+               if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+               {
+                  $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                  $status="gsoassistant_status";
+               }
+               elseif($_SESSION['role']=='Immediate Head')
+               {
+                  $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                  $status="immediatehead_status";
+               }
+               elseif($_SESSION['role']=='Director')
+               {
+                  $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                  $status="gsodirector_status";
+               }
+               else if($_SESSION['role']=='Accountant')
+               {
+                  $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                  $status="accounting_status";
+               }
+               include 'config.php';
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status='Approved' ORDER BY date_filed DESC, id DESC";
+               $resultvrf = $conn->query($selectvrf);
+               if ($resultvrf->num_rows > 0) {
+                  $rowvrf = $resultvrf->fetch_assoc();
+                  echo '<p>New</p>';
+               }
+            ?>
          </div>
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
-            if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
-            {
-               $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Clicked')";
-               $status="gsoassistant_status";
-            }
-            elseif($_SESSION['role']=='Immediate Head')
-            {
-               $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Clicked'))";
-               $status="immediatehead_status";
-            }
-            elseif($_SESSION['role']=='Director')
-            {
-               $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Clicked')";
-               $status="gsodirector_status";
-            }
-            else if($_SESSION['role']=='Accountant')
-            {
-               $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Clicked')";
-
-               $status="accounting_status";
-            }
             include 'config.php';
             $selectvrf = "SELECT * FROM vrftb WHERE $status2 ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
@@ -978,7 +986,7 @@ if (window.innerWidth < 992) {
                   <?php
                      if (isset($_GET['vrfid'])) {
                         include 'config.php';
-                        $updatevrf = "UPDATE vrftb SET $status='Clicked', updated_at = updated_at WHERE id = ?";
+                        $updatevrf = "UPDATE vrftb SET $status='Seen', updated_at = updated_at WHERE id = ?";
                         $stmt = $conn->prepare($updatevrf);
                         if ($stmt) {
                            $stmt->bind_param("s", $_GET['vrfid']);
@@ -986,7 +994,7 @@ if (window.innerWidth < 992) {
                            $stmt->close();
                         }
                      }
-                     if($rowvrf[$status] != "Clicked")
+                     if($rowvrf[$status] != "Seen")
                      { 
                         ?> <div class="info-box"> <?php 
                      }
@@ -1502,7 +1510,7 @@ if (window.innerWidth < 992) {
                   ?>
                      <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if($rowvrf[$status] != "Clicked")
+                     if($rowvrf[$status] != "Seen")
                      { 
                         ?> <div class="info-box"> <?php 
                      }
@@ -1858,7 +1866,7 @@ if (window.innerWidth < 992) {
                   ?>
                      <a href="GSO.php?creq=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if($rowvrf[$status] != "Clicked")
+                     if($rowvrf[$status] != "Seen")
                      { 
                         ?> <div class="info-box"> <?php 
                      }

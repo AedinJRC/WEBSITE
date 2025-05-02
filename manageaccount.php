@@ -24,6 +24,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             padding: 24px;
+            position: relative;
         }
         
         h2 {
@@ -31,6 +32,7 @@
             font-weight: 700;
             color: #1f2937;
             margin-bottom: 24px;
+            text-align: center;
         }
         
         #message-container {
@@ -60,7 +62,7 @@
         }
         
         thead {
-            background-color: #b91c1c;
+            background-color: var(--maroon);
         }
         
         th {
@@ -207,10 +209,340 @@
                 font-size: 0.75rem;
             }
         }
+
+        .excel-form {
+            
+            position: absolute;
+            display: flex;
+            padding-right: 50px;
+            width: 100%;
+            justify-content: right;
+            align-items: center;
+            button.change img {
+                transform: translateY(2px);
+                width: 25px;
+                height: 25px;
+            }
+            button.excel-button {
+                margin-left: 3px;
+                width: 110px;
+                background-color: #efb954;
+                box-sizing: border-box;
+                color: var(--maroon);
+                padding: 4px 8px;
+                padding-top: 3px;
+                padding-bottom: 5px;
+                border-radius: 6px;
+                font-size: 0.875rem;
+                font-weight: 500;
+                border: 3px solid var(--maroon);
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+            button.excel-button:hover {
+                background-color: var(--maroon);
+                color: white;
+            }
+            button#import-btn {
+                display: none;
+            }
+            button.change {
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+                margin-left: 2px;
+            }
+        }
+        #employeepopup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            .employeepopup {
+                height: 80%;
+                width: 80%;
+                overflow: auto;
+                background-color: white;
+                border-radius: 8px;
+                max-width: 800px;
+            }
+            table {
+                margin: 0;
+                
+                border-radius: 8px;
+            }
+        }
+        #employeepopup:target {
+            display: flex;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
+        <form action="" method="post" class="excel-form" enctype="multipart/form-data" id="employee-form">
+            <span class="excel-label">Employee Records:</span>
+            <input type="file" name="excel_file" id="excel-file" accept=".xlsx,.xls,.csv" style="display: none;">
+            <button id="download-btn" class="excel-button" name="viewcurrent" type="button">View Current</button>
+            <button id="import-btn" class="excel-button" name="importcsv" type="button">Import CSV</button>
+            <button id="change-btn" type="button" class="change">
+                <img src="PNG/Change.png" alt="">
+            </button>
+        </form>
+
+        <script>
+            const dwnldBtn = document.getElementById('download-btn');
+            const importBtn = document.getElementById('import-btn');
+            const changeBtn = document.getElementById('change-btn');
+            const fileInput = document.getElementById('excel-file');
+            const form = document.getElementById('employee-form');
+
+            // Toggle visible button
+            changeBtn.addEventListener('click', () => {
+                const isViewing = dwnldBtn.style.display !== 'none';
+
+                if (isViewing) {
+                    dwnldBtn.style.display = 'none';
+                    importBtn.style.display = 'inline-block';
+                } else {
+                    dwnldBtn.style.display = 'inline-block';
+                    importBtn.style.display = 'none';
+                }
+            });
+
+            // View Current button - redirect without form submission
+            dwnldBtn.addEventListener('click', () => {
+                window.location.href = '#employeepopup';
+            });
+
+            // Import CSV button - trigger file input
+            importBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Auto-submit the form when a file is chosen
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    // Validate file extension before submit
+                    const fileName = fileInput.files[0].name;
+                    const fileExt = fileName.split('.').pop().toLowerCase();
+                    
+                    if (fileExt !== 'csv') {
+                        alert('Please convert your file to CSV format first.\n\nIn Excel/Google Sheets:\n1. Open your file\n2. Click File → Save As\n3. Select "CSV (Comma delimited)"');
+                        return false;
+                    }
+                    
+                    form.submit();
+                }
+            });
+        </script>
+        <?php
+            include 'config.php';
+
+            // Set headers to ensure UTF-8 output
+            header('Content-Type: text/html; charset=UTF-8');
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (isset($_FILES['excel_file']) && $_FILES['excel_file']['error'] === UPLOAD_ERR_OK) {
+                    $fileName = $_FILES['excel_file']['name'];
+                    $fileTmp = $_FILES['excel_file']['tmp_name'];
+                    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+                    // Only allow CSV files
+                    if ($fileExt !== 'csv') {
+                        echo "<script>
+                            alert('Please convert your Excel file to CSV first.\\n\\nIn Excel/Google Sheets:\\n1. Open your file\\n2. Click File → Save As\\n3. Select \"CSV UTF-8 (Comma delimited)\"');
+                            window.history.back();
+                        </script>";
+                        exit();
+                    }
+
+                    // Check for file size limit (2MB)
+                    if ($_FILES['excel_file']['size'] > 2 * 1024 * 1024) {
+                        echo "<script>alert('File size exceeds 2MB limit.'); window.history.back();</script>";
+                        exit();
+                    }
+
+                    $deleteemployeesql = "DELETE FROM employeetb";
+                    if ($conn->query($deleteemployeesql) === TRUE) {
+                        // File upload successful
+                    } else {
+                        echo "<script>alert('Error deleting previous records: " . $conn->error . "'); window.history.back();</script>";
+                        exit();
+                    }
+
+                    // Create upload directory if it doesn't exist
+                    $uploadDir = __DIR__ . '/xlsx/';
+                    if (!is_dir($uploadDir)) {
+                        if (!mkdir($uploadDir, 0777, true)) {
+                            echo "<script>alert('Failed to create upload directory.'); window.history.back();</script>";
+                            exit();
+                        }
+                    }
+
+                    // Rename file with current date
+                    $currentDate = date('m-d-Y');
+                    $newFileName = "Employee($currentDate).csv";
+                    $destination = $uploadDir . $newFileName;
+
+                    // Convert file to UTF-8 if needed
+                    $fileContent = file_get_contents($fileTmp);
+                    $encoding = mb_detect_encoding($fileContent, 'UTF-8, ISO-8859-1', true);
+                    
+                    if ($encoding !== 'UTF-8') {
+                        $fileContent = mb_convert_encoding($fileContent, 'UTF-8', $encoding);
+                        file_put_contents($fileTmp, $fileContent);
+                    }
+
+                    if (!move_uploaded_file($fileTmp, $destination)) {
+                        echo "<script>alert('Failed to save uploaded file.'); window.history.back();</script>";
+                        exit();
+                    }
+
+                    try {
+                        $importedCount = importCSVtoDB($conn, $destination);
+                        echo "<script>
+                            alert('Successfully imported $importedCount employee records!');
+                            window.location.href = 'GSO.php?macc=a';
+                        </script>";
+                        exit();
+                    } catch (Exception $e) {
+                        // Clean error message for JavaScript
+                        $errorMsg = str_replace(["\r", "\n"], ' ', addslashes($e->getMessage()));
+                        echo "<script>
+                            alert('IMPORT FAILED: " . $errorMsg . "');
+                            window.history.back();
+                        </script>";
+                        exit();
+                    }
+                } else {
+                    $uploadError = $_FILES['excel_file']['error'] ?? 'Unknown error';
+                    echo "<script>
+                        alert('File upload error: " . getUploadError($uploadError) . "');
+                        window.history.back();
+                    </script>";
+                    exit();
+                }
+            }
+
+            /**
+             * Gets user-friendly upload error message
+             */
+            function getUploadError($errorCode) {
+                $errors = [
+                    UPLOAD_ERR_INI_SIZE => 'File is too large',
+                    UPLOAD_ERR_FORM_SIZE => 'File is too large',
+                    UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+                    UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+                    UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
+                    UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                    UPLOAD_ERR_EXTENSION => 'File upload stopped by extension'
+                ];
+                return $errors[$errorCode] ?? 'Unknown error';
+            }
+
+            /**
+             * Imports CSV data to employee database with validation (MySQLi version)
+             */
+            function importCSVtoDB($conn, $csvFile) {
+                $importedCount = 0;
+                $errors = [];
+                
+                // Turn off autocommit for transaction
+                $conn->autocommit(FALSE);
+                
+                try {
+                    $stmt = $conn->prepare("INSERT INTO employeetb (employeeid, lname, fname, mname) VALUES (?, ?, ?, ?)");
+                    if (!$stmt) {
+                        throw new Exception("Prepare failed: " . $conn->error);
+                    }
+
+                    // Open file with UTF-8 encoding
+                    if (($handle = fopen($csvFile, "r")) !== FALSE) {
+                        // Check for UTF-8 BOM and skip if present
+                        $bom = fread($handle, 3);
+                        if ($bom != "\xEF\xBB\xBF") {
+                            rewind($handle);
+                        }
+                        
+                        // Skip header row if exists
+                        fgetcsv($handle);
+                        
+                        $lineNumber = 1;
+                        while (($data = fgetcsv($handle)) !== FALSE) {
+                            $lineNumber++;
+                            
+                            // Skip empty rows
+                            if (empty(array_filter($data))) continue;
+                            
+                            // Prepare and validate data with UTF-8 support
+                            $mappedData = [
+                                mb_convert_encoding(trim($data[0]), 'UTF-8', 'auto'),  // employeeid
+                                mb_convert_encoding(trim($data[1]), 'UTF-8', 'auto'),  // lname
+                                isset($data[2]) ? mb_convert_encoding(trim($data[2]), 'UTF-8', 'auto') : '',  // fname
+                                isset($data[3]) ? mb_convert_encoding(trim($data[3]), 'UTF-8', 'auto') : ''   // mname
+                            ];
+                            
+                            // Validate required fields
+                            if (empty($mappedData[0])) {
+                                $errors[] = "Line $lineNumber: Missing employee ID";
+                                continue;
+                            }
+                            
+                            if (empty($mappedData[1])) {
+                                $errors[] = "Line $lineNumber: Missing last name";
+                                continue;
+                            }
+                            
+                            // Validate employee ID format
+                            if (!preg_match('/^\d+$/', $mappedData[0])) {
+                                $errors[] = "Line $lineNumber: Invalid employee ID format (must be numeric)";
+                                continue;
+                            }
+                            
+                            $stmt->bind_param("ssss", ...$mappedData);
+                            if (!$stmt->execute()) {
+                                if (strpos($stmt->error, 'Duplicate entry') !== false) {
+                                    $errors[] = "Line $lineNumber: Duplicate employee ID {$mappedData[0]}";
+                                } else {
+                                    $errors[] = "Line $lineNumber: Database error - " . $stmt->error;
+                                }
+                            } else {
+                                $importedCount++;
+                            }
+                        }
+                        
+                        fclose($handle);
+                        
+                        if (!empty($errors)) {
+                            $conn->rollback();
+                            throw new Exception(
+                                "Imported $importedCount records, but encountered errors:\n" . 
+                                implode("\n", array_slice($errors, 0, 5)) . 
+                                (count($errors) > 5 ? "\n...and " . (count($errors) - 5) . " more" : "")
+                            );
+                        }
+                        
+                        $conn->commit();
+                        return $importedCount;
+                    }
+                } catch (Exception $e) {
+                    $conn->rollback();
+                    throw $e;
+                } finally {
+                    $conn->autocommit(TRUE);
+                    if (isset($stmt)) $stmt->close();
+                }
+            }
+        ?>
+
+    
+
         <h2>Manage Accounts</h2>
         
         <div id="message-container"></div>
@@ -339,7 +671,7 @@
                         <td>
                             <div class="btn-group" >
                                 <button onclick="updateAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
-                                        class="btn btn-update">
+                                        class="btn btn-update" style="color: var(--maroon);">
                                     ✎
                                 </button>
                                 <button onclick="deleteAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
@@ -427,5 +759,33 @@
         }
         </script>
     <?php $conn->close(); ?>
+    <div onclick="window.history.back();"  id="employeepopup">
+        <div onclick="event.stopPropagation();" class="employeepopup">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Last Name</th>
+                        <th>First Name</th>
+                        <th>Middle Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    include 'config.php';
+                    $selectsql = "SELECT * FROM employeetb ORDER BY lname ASC";
+                    $result = $conn->query($selectsql);
+                    while ($row = $result->fetch_assoc()):
+                    ?>
+                    <tr id="row-<?php echo htmlspecialchars($row['employeeid']); ?>">
+                        <td><?php echo htmlspecialchars($row['employeeid']); ?></td>
+                        <td><?php echo htmlspecialchars($row['lname']); ?></td>
+                        <td><?php echo htmlspecialchars($row['fname']); ?></td>
+                        <td><?php echo htmlspecialchars($row['mname']); ?></td>
+                    </tr>
+                    <?php endwhile; ?>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
