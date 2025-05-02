@@ -290,7 +290,7 @@ if (window.innerWidth < 992) {
     </form>
 
     <script>
-        document.getElementById("ppicture").addEventListener("click", function(event) {
+        document.getElementById("picture").addEventListener("click", function(event) {
             event.preventDefault();
             let confirmChange = confirm("Do you want to change your profile picture?");
             if (confirmChange) {
