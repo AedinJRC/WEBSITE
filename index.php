@@ -262,10 +262,10 @@ body {
 }
 
 .text-section .title {
-    font-size: 9.5vh; /* Converted font size to vh */
+    font-size: 8vh; /* Converted font size to vh */
     color: #80050d;
     font-weight: bold;
-    
+    width: 130%;
 }
 
 
@@ -330,6 +330,9 @@ body {
         max-width: 50px; /* Even smaller image on mobile */
         padding: 5px;
     }
+    .text-section .title {
+        transform: translateX(-10%)
+    }
 }
 
 /* Responsive Header & Five Logo */
@@ -352,6 +355,7 @@ body {
         height: 10px;
         width: 80px;
         margin: 0 auto;
+        margin-bottom: -10px;
     }
 
     .text-section .title {
@@ -397,10 +401,10 @@ body {
     max-width: 120vh; /* smaller max width */
     height: auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.5vh; /* smaller gap */
+    gap: 10vh; /* smaller gap */
 }
 
 /* Introduce Section */
@@ -1125,9 +1129,9 @@ footer .column > a:hover {
                 <div class="left-section">
                     <div class="red-bar"></div>
                     <div class="text-section">
-                    <span>Vehicle Reservation and Monitoring System</span>
-                    <div class="title">General Services Office</div>
-                </div>
+                        <span>General Services Office</span>
+                        <div class="title">Vehicle Reservation and Monitoring System</div>
+                    </div>
                 </div>
                 <div class="right-section">
                     <img src="PNG/GSO Logo.png" alt="Logo">
@@ -1151,7 +1155,7 @@ footer .column > a:hover {
             <div class="box1">
                 <div class="introduce">
                     <h1>Introducing Good Solution</h1>
-                    <h2>An online, for CSA-Biñan employees to manage their school vehicle reservation.</h2>
+                    <h2>An online platform for CSA-Biñan employees to manage their school vehicle reservation.</h2>
                     <div class="create_butt_container">
                         <button class="intro_butt"><a href="index.php?sig=a">Sign up now</a></button>
                     </div>
