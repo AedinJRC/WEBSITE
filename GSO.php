@@ -382,8 +382,10 @@ if (window.innerWidth < 992) {
          include 'calendar.php';
       }
       else {
-         include 'calendar.php';
-      }
+         ?>
+            
+         <?php
+      }  
    }
    function vehicleReservationForm()
    {
@@ -965,7 +967,7 @@ if (window.innerWidth < 992) {
                   $status="accounting_status";
                }
                include 'config.php';
-               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status='Approved' ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status='Pending' ORDER BY date_filed DESC, id DESC";
                $resultvrf = $conn->query($selectvrf);
                if ($resultvrf->num_rows > 0) {
                   $rowvrf = $resultvrf->fetch_assoc();
