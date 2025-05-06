@@ -128,39 +128,74 @@
             display: none;
         }
 
-        /* Terms and Conditions Modal */
+                /* Terms and Conditions Modal */
+        /* Enhanced Terms and Conditions Modal */
         .terms-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.75);
             z-index: 1000;
             overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .terms-content {
-            background-color: #fff;
-            margin: 50px auto;
-            padding: 20px;
-            width: 80%;
-            max-width: 800px;
-            border-radius: 5px;
-            max-height: 80vh;
+            background-color: #ffffff;
+            margin: auto;
+            padding: 30px 25px;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
             overflow-y: auto;
         }
 
-        .terms-header {
-            text-align: center;
-            margin-bottom: 20px;
+        .terms-header h2 {
+            margin-bottom: 5px;
+            font-size: 24px;
             color: #7D192E;
+            text-align: center;
+        }
+
+        .terms-header p {
+            margin: 4px 0;
+            font-size: 14px;
+            color: #555;
         }
 
         .terms-body {
-            margin-bottom: 20px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #333;
             line-height: 1.6;
+        }
+
+        .terms-body h3 {
+            margin-top: 20px;
+            margin-bottom: 5px;
+            font-size: 16px;
+            color: #7D192E;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            flex-wrap: wrap;
+            text-align: left;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: #7D192E;
         }
 
         .terms-footer {
@@ -169,28 +204,20 @@
 
         .terms-btn {
             background-color: #7D192E;
-            color: white;
+            color: #ffffff;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 25px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
             margin: 0 10px;
+            transition: background-color 0.3s ease;
         }
 
         .terms-btn:hover {
             background-color: #5a1121;
         }
 
-        .terms-checkbox {
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .terms-checkbox input {
-            margin-right: 10px;
-        }
     </style>
 </head>
 <body>
@@ -267,70 +294,54 @@
                 <p><strong>Effective Date: <?php echo date('F j, Y'); ?></strong></p>
             </div>
             <div class="terms-body">
-                <p>By accessing and using the Vehicle Reservation and Monitoring System of Colegio San Agustin - Biñan (CSA-Biñan), you agree to comply with the following terms and conditions. These rules are established to ensure the safe, efficient, and accountable use of CSA-Biñan's official vehicles.</p>
-                
-                <h3>1. Eligibility</h3>
-                <ul>
-                    <li>The system is available to CSA-Biñan faculty, staff, administrators, and authorized students for official school-related functions only.</li>
-                    <li>Reservation requests must be made using your CSA-Biñan credentials.</li>
-                </ul>
-                
-                <h3>2. Proper Use of Vehicles</h3>
-                <ul>
-                    <li>Reserved vehicles must be used strictly for the stated purpose and destination.</li>
-                    <li>Personal use of school vehicles is strictly prohibited.</li>
-                    <li>Users must adhere to traffic laws, institutional policies, and safety regulations at all times.</li>
-                </ul>
-                
-                <h3>3. Reservation Process</h3>
-                <ul>
-                    <li>All reservations must be made through the official system at least [X] days in advance.</li>
-                    <li>Confirmation is subject to vehicle availability and approval by the Department of General Services.</li>
-                    <li>Users must accurately complete all required fields in the reservation form.</li>
-                </ul>
-                
-                <h3>4. Cancellations and No-Shows</h3>
-                <ul>
-                    <li>If plans change, users must cancel reservations at least 24 hours before the scheduled time.</li>
-                    <li>Unjustified no-shows may result in suspension of access to the system.</li>
-                </ul>
-                
-                <h3>5. Monitoring and Reporting</h3>
-                <ul>
-                    <li>Vehicles may be equipped with GPS tracking systems for safety and accountability.</li>
-                    <li>Users must submit a post-trip report if required, including any incidents, delays, or concerns during the trip.</li>
-                </ul>
-                
-                <h3>6. Damage, Accidents, and Liability</h3>
-                <ul>
-                    <li>Any accidents, damage, or irregularities must be reported immediately to the Department of General Services.</li>
-                    <li>Users may be held liable for damages caused by negligence or unauthorized use.</li>
-                </ul>
-                
-                <h3>7. Data Privacy</h3>
-                <ul>
-                    <li>Personal and trip-related information will be collected and used in accordance with our Privacy Policy.</li>
-                    <li>CSA-Biñan is committed to protecting your data under the Data Privacy Act of 2012.</li>
-                </ul>
-                
-                <h3>8. Violations and Sanctions</h3>
-                <p>Violation of these terms may result in:</p>
-                <ul>
-                    <li>Temporary or permanent suspension from the system</li>
-                    <li>Administrative sanctions under CSA-Biñan's employee/student code of conduct</li>
-                    <li>Possible legal action, depending on the severity of the violation</li>
-                </ul>
-                
-                <h3>9. Amendments</h3>
-                <p>CSA-Biñan reserves the right to update or modify these terms at any time. Users will be notified of changes via official channels.</p>
-                
-                <h3>10. Contact Information</h3>
-                <p>For concerns, clarifications, or reports, please contact:<br>
-                Department of General Services<br>
-                Colegio San Agustin - Biñan<br>
-                📧 [Insert Email Address]<br>
-                📞 [Insert Phone Number]</p>
-            </div>
+    <p>By accessing and using the Vehicle Reservation and Monitoring System of Colegio San Agustin - Biñan (CSA-Biñan), you agree to comply with the following terms and conditions. These rules are established to ensure the safe, efficient, and accountable use of CSA-Biñan's official vehicles.</p>
+    
+    <h3>1. Eligibility</h3>
+    <p>The system is available to CSA-Biñan faculty, staff, administrators, and authorized students for official school-related functions only.</p>
+    <p>Reservation requests must be made using your CSA-Biñan credentials.</p>
+    
+    <h3>2. Proper Use of Vehicles</h3>
+    <p>Reserved vehicles must be used strictly for the stated purpose and destination.</p>
+    <p>Personal use of school vehicles is strictly prohibited.</p>
+    <p>Users must adhere to traffic laws, institutional policies, and safety regulations at all times.</p>
+    
+    <h3>3. Reservation Process</h3>
+    <p>All reservations must be made through the official system at least [X] days in advance.</p>
+    <p>Confirmation is subject to vehicle availability and approval by the Department of General Services.</p>
+    <p>Users must accurately complete all required fields in the reservation form.</p>
+    
+    <h3>4. Cancellations and No-Shows</h3>
+    <p>If plans change, users must cancel reservations at least 24 hours before the scheduled time.</p>
+    <p>Unjustified no-shows may result in suspension of access to the system.</p>
+    
+    <h3>5. Monitoring and Reporting</h3>
+    <p>Vehicles may be equipped with GPS tracking systems for safety and accountability.</p>
+    <p>Users must submit a post-trip report if required, including any incidents, delays, or concerns during the trip.</p>
+    
+    <h3>6. Damage, Accidents, and Liability</h3>
+    <p>Any accidents, damage, or irregularities must be reported immediately to the Department of General Services.</p>
+    <p>Users may be held liable for damages caused by negligence or unauthorized use.</p>
+    
+    <h3>7. Data Privacy</h3>
+    <p>Personal and trip-related information will be collected and used in accordance with our Privacy Policy.</p>
+    <p>CSA-Biñan is committed to protecting your data under the Data Privacy Act of 2012.</p>
+    
+    <h3>8. Violations and Sanctions</h3>
+    <p>Violation of these terms may result in:</p>
+    <p>Temporary or permanent suspension from the system</p>
+    <p>Administrative sanctions under CSA-Biñan's employee/student code of conduct</p>
+    <p>Possible legal action, depending on the severity of the violation</p>
+    
+    <h3>9. Amendments</h3>
+    <p>CSA-Biñan reserves the right to update or modify these terms at any time. Users will be notified of changes via official channels.</p>
+    
+    <h3>10. Contact Information</h3>
+    <p>For concerns, clarifications, or reports, please contact:<br>
+    Department of General Services<br>
+    Colegio San Agustin - Biñan<br>
+    📧 [Insert Email Address]<br>
+    📞 [Insert Phone Number]</p>
+</div>
             <div class="terms-checkbox">
                 <input type="checkbox" id="termsAgree" required>
                 <label for="termsAgree">I have read and agree to the Terms and Conditions</label>
