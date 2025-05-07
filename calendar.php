@@ -25,13 +25,10 @@ if ($result->num_rows > 0) {
     }
 }
 
-function generateRandomColor() {
-    $hex = '#';
-    $characters = '0123456789ABCDEF';
-    for ($i = 0; $i < 6; $i++) {
-        $hex .= $characters[mt_rand(0, 15)];
-    }
-    return $hex;
+function generateColorFromString($string) {
+    $hash = md5($string); // create hash from string
+    $color = substr($hash, 0, 6); // use first 6 chars as color
+    return '#' . $color;
 }
 ?>
 
@@ -56,86 +53,86 @@ function generateRandomColor() {
             --yellowColor: #efb954;
         }
 
-        /* Calendar Container */
-        .calendar-container {
-            width: 90%;
-            max-width: 900px;
-            margin: 30px auto;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        /* Header - Month Navigation */
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .nav-buttons button {
-            background-color: var(--maroonColor);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 1.2rem;
-        }
-
-        .nav-buttons span {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .nav-buttons button:hover {
-            background-color: var(--yellowColor);
-        }
-
-        /* Calendar Grid */
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-gap: 10px;
-            text-align: center;
-        }
-
-        /* Calendar Days Header */
-        .calendar-header {
-            font-weight: bold;
-            background-color: var(--maroonColor);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        /* Calendar Day */
-        .calendar-day {
-    padding: 5px;
+      /* Calendar Container */ 
+.calendar-container {
+    width: 100%;
+    max-width: 100vh;
+    margin: 3vh auto;
     background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 1vh;
+    box-shadow: 0 0.2vh 1vh rgba(0, 0, 0, 0.1);
+    padding: 2vh;
+}
+
+/* Header - Month Navigation */
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2vh;
+}
+
+.nav-buttons button {
+    background-color: var(--maroonColor);
+    color: white;
+    border: none;
+    padding: 1vh 2vh;
+    cursor: pointer;
+    border-radius: 0.5vh;
+    font-size: 1.2rem;
+}
+
+.nav-buttons span {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.nav-buttons button:hover {
+    background-color: var(--yellowColor);
+}
+
+/* Calendar Grid */
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 1vh;
+    text-align: center;
+}
+
+/* Calendar Days Header */
+.calendar-header {
+    font-weight: bold;
+    background-color: var(--maroonColor);
+    color: white;
+    padding: 1vh;
+    border-radius: 0.5vh;
+}
+
+/* Calendar Day */
+.calendar-day {
+    padding: 0.5vh;
+    background-color: #fff;
+    border: 0.1vh solid #ddd;
+    border-radius: 0.5vh;
     cursor: pointer;
     position: relative;
-    min-height: 80px;
-    max-height: 120px; /* Optional: control height */
+    min-height: 8vh;
+    max-height: 12vh; /* Optional: control height */
     overflow-y: auto;   /* This allows scroll if content exceeds */
 }
 
-        .calendar-day:hover {
-            background-color: #f1f1f1;
-        }
+.calendar-day:hover {
+    background-color: #f1f1f1;
+}
 
-        .event {
+.event {
     display: block;
     background-color: #3498db;
     color: white;
-    padding: 2px 4px;
-    margin-top: 3px;
-    border-radius: 3px;
+    padding: 0.2vh 0.4vh;
+    margin-top: 0.3vh;
+    border-radius: 0.3vh;
     text-decoration: none;
     font-size: 0.65rem;
     white-space: nowrap;
@@ -143,63 +140,62 @@ function generateRandomColor() {
     text-overflow: ellipsis;
 }
 
+.event:hover {
+    background-color: #2980b9;
+}
 
-        .event:hover {
-            background-color: #2980b9;
-        }
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            justify-content: center;
-            align-items: center;
-        }
+.modal-content {
+    background-color: white;
+    padding: 3vh;
+    border-radius: 0.8vh;
+    max-width: 50vh;
+    width: 80%;
+    box-shadow: 0 0.4vh 2vh rgba(0, 0, 0, 0.1);
+}
 
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 80%;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
+.close {
+    font-size: 2.8vh;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    float: right;
+}
 
-        .close {
-            font-size: 28px;
-            font-weight: bold;
-            color: #aaa;
-            cursor: pointer;
-            float: right;
-        }
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-        }
+.modal h4 {
+    margin-top: 0;
+}
 
-        .modal h4 {
-            margin-top: 0;
-        }
+.modal p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
 
-        .modal p {
-            font-size: 1rem;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        #eventModal {
-            display: none;
-        }
-        #eventModal.active {
-            display: flex;
-        }
+#eventModal {
+    display: none;
+}
+#eventModal.active {
+    display: flex;
+}
 
         @media screen and (max-width: 768px) {
     .nav-buttons {
@@ -265,27 +261,27 @@ function generateRandomColor() {
             align-items: center;
         }
 
-        .request-btn-callendar {
+        .request-btn-callendar { 
     display: inline-block;
-    width: 320px;
-    padding: 15px 20px;
+    width: 32vh;
+    padding: 1.5vh 2vh;
     background-color: transparent;
     color: var(--maroonColor);
-    border: solid 2px var(--maroonColor);
+    border: solid 0.2vh var(--maroonColor);
     text-align: center;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 1.8vh;
     font-weight: 600;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 0.8vh;
+    box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
 }
 
 .request-btn-callendar:hover {
     background-color: transparent;
     color: var(--maroonColor);
-    border: solid 2px var(--yellowColor);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    border: solid 0.2vh var(--yellowColor);
+    box-shadow: 0 0.6vh 1.4vh rgba(0, 0, 0, 0.25);
     transform: scale(1.05);
 }
 
@@ -339,7 +335,7 @@ function generateRandomColor() {
             });
 
             foreach ($eventsOnDay as $event) {
-                $color = generateRandomColor();
+                $color = generateColorFromString($event['activity']); // or use $event['id'] or $event['name']
                 echo "<a href='#' 
                           class='event'
                           title='{$event['activity']}'

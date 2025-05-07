@@ -128,39 +128,74 @@
             display: none;
         }
 
-        /* Terms and Conditions Modal */
+                /* Terms and Conditions Modal */
+        /* Enhanced Terms and Conditions Modal */
         .terms-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.75);
             z-index: 1000;
             overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .terms-content {
-            background-color: #fff;
-            margin: 50px auto;
-            padding: 20px;
-            width: 80%;
-            max-width: 800px;
-            border-radius: 5px;
-            max-height: 80vh;
+            background-color: #ffffff;
+            margin: auto;
+            padding: 30px 25px;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
             overflow-y: auto;
         }
 
-        .terms-header {
-            text-align: center;
-            margin-bottom: 20px;
+        .terms-header h2 {
+            margin-bottom: 5px;
+            font-size: 24px;
             color: #7D192E;
+            text-align: center;
+        }
+
+        .terms-header p {
+            margin: 4px 0;
+            font-size: 14px;
+            color: #555;
         }
 
         .terms-body {
-            margin-bottom: 20px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #333;
             line-height: 1.6;
+        }
+
+        .terms-body h3 {
+            margin-top: 20px;
+            margin-bottom: 5px;
+            font-size: 16px;
+            color: #7D192E;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            flex-wrap: wrap;
+            text-align: left;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: #7D192E;
         }
 
         .terms-footer {
@@ -169,28 +204,20 @@
 
         .terms-btn {
             background-color: #7D192E;
-            color: white;
+            color: #ffffff;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 25px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
             margin: 0 10px;
+            transition: background-color 0.3s ease;
         }
 
         .terms-btn:hover {
             background-color: #5a1121;
         }
 
-        .terms-checkbox {
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .terms-checkbox input {
-            margin-right: 10px;
-        }
     </style>
 </head>
 <body>
@@ -262,44 +289,59 @@
     <div id="termsModal" class="terms-modal">
         <div class="terms-content">
             <div class="terms-header">
-                <h2>Terms and Conditions</h2>
+                <h2>Vehicle Reservation & Monitoring System Terms and Conditions</h2>
+                <p>Colegio San Agustin - Biñan<br>Department of General Services</p>
+                <p><strong>Effective Date: <?php echo date('F j, Y'); ?></strong></p>
             </div>
             <div class="terms-body">
-                <p><strong>Last Updated: <?php echo date('F j, Y'); ?></strong></p>
-                
-                <h3>1. Acceptance of Terms</h3>
-                <p>By creating an account, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our services.</p>
-                
-                <h3>2. Account Registration</h3>
-                <p>You must provide accurate and complete information when creating an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
-                
-                <h3>3. Privacy Policy</h3>
-                <p>Your personal information will be handled in accordance with our Privacy Policy. By registering, you consent to the collection, use, and sharing of your information as described in the Privacy Policy.</p>
-                
-                <h3>4. User Responsibilities</h3>
-                <p>You agree to use the service only for lawful purposes and in accordance with these Terms. You must not:</p>
-                <ul>
-                    <li>Violate any applicable laws or regulations</li>
-                    <li>Infringe upon the rights of others</li>
-                    <li>Interfere with or disrupt the service</li>
-                    <li>Attempt to gain unauthorized access to the system</li>
-                </ul>
-                
-                <h3>5. Intellectual Property</h3>
-                <p>All content and materials available through this service are the property of the company and are protected by intellectual property laws.</p>
-                
-                <h3>6. Termination</h3>
-                <p>We reserve the right to terminate or suspend your account at any time for violations of these Terms or for any other reason at our discretion.</p>
-                
-                <h3>7. Limitation of Liability</h3>
-                <p>The company shall not be liable for any indirect, incidental, special, or consequential damages resulting from your use of or inability to use the service.</p>
-                
-                <h3>8. Changes to Terms</h3>
-                <p>We may modify these Terms at any time. Your continued use of the service after such modifications constitutes your acceptance of the new Terms.</p>
-                
-                <h3>9. Governing Law</h3>
-                <p>These Terms shall be governed by and construed in accordance with the laws of the jurisdiction where the company is registered.</p>
-            </div>
+    <p>By accessing and using the Vehicle Reservation and Monitoring System of Colegio San Agustin - Biñan (CSA-Biñan), you agree to comply with the following terms and conditions. These rules are established to ensure the safe, efficient, and accountable use of CSA-Biñan's official vehicles.</p>
+    
+    <h3>1. Eligibility</h3>
+    <p>The system is available to CSA-Biñan faculty, staff, administrators, and authorized students for official school-related functions only.</p>
+    <p>Reservation requests must be made using your CSA-Biñan credentials.</p>
+    
+    <h3>2. Proper Use of Vehicles</h3>
+    <p>Reserved vehicles must be used strictly for the stated purpose and destination.</p>
+    <p>Personal use of school vehicles is strictly prohibited.</p>
+    <p>Users must adhere to traffic laws, institutional policies, and safety regulations at all times.</p>
+    
+    <h3>3. Reservation Process</h3>
+    <p>All reservations must be made through the official system at least [X] days in advance.</p>
+    <p>Confirmation is subject to vehicle availability and approval by the Department of General Services.</p>
+    <p>Users must accurately complete all required fields in the reservation form.</p>
+    
+    <h3>4. Cancellations and No-Shows</h3>
+    <p>If plans change, users must cancel reservations at least 24 hours before the scheduled time.</p>
+    <p>Unjustified no-shows may result in suspension of access to the system.</p>
+    
+    <h3>5. Monitoring and Reporting</h3>
+    <p>Vehicles may be equipped with GPS tracking systems for safety and accountability.</p>
+    <p>Users must submit a post-trip report if required, including any incidents, delays, or concerns during the trip.</p>
+    
+    <h3>6. Damage, Accidents, and Liability</h3>
+    <p>Any accidents, damage, or irregularities must be reported immediately to the Department of General Services.</p>
+    <p>Users may be held liable for damages caused by negligence or unauthorized use.</p>
+    
+    <h3>7. Data Privacy</h3>
+    <p>Personal and trip-related information will be collected and used in accordance with our Privacy Policy.</p>
+    <p>CSA-Biñan is committed to protecting your data under the Data Privacy Act of 2012.</p>
+    
+    <h3>8. Violations and Sanctions</h3>
+    <p>Violation of these terms may result in:</p>
+    <p>Temporary or permanent suspension from the system</p>
+    <p>Administrative sanctions under CSA-Biñan's employee/student code of conduct</p>
+    <p>Possible legal action, depending on the severity of the violation</p>
+    
+    <h3>9. Amendments</h3>
+    <p>CSA-Biñan reserves the right to update or modify these terms at any time. Users will be notified of changes via official channels.</p>
+    
+    <h3>10. Contact Information</h3>
+    <p>For concerns, clarifications, or reports, please contact:<br>
+    Department of General Services<br>
+    Colegio San Agustin - Biñan<br>
+    📧 [Insert Email Address]<br>
+    📞 [Insert Phone Number]</p>
+</div>
             <div class="terms-checkbox">
                 <input type="checkbox" id="termsAgree" required>
                 <label for="termsAgree">I have read and agree to the Terms and Conditions</label>
