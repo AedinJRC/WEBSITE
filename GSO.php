@@ -167,78 +167,64 @@ if (window.innerWidth < 992) {
             <ul class="dropdown-container">
                <div>
                   <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                  <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
                </div>
             </ul>
          </li>
-         <?php
-            if ($_SESSION['role'] != 'User') {
-               ?>
-                  <li>
-                     <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
-                        <img src="PNG/Pie.png" alt="Requests">
-                        <span>Requests</span>
-                        <img src="PNG/Down.png" alt="DropDown">
-                     </button>
-                     <ul class="dropdown-container">
-                        <div>
-                           <li><a href="GSO.php?papp=a"><span>Pending Approval</span></a></li>
-                           <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                           <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
-                        </div>
-                     </ul>
-                  </li>
-               <?php
-            }
-            if (in_array($_SESSION['role'], ['Secretary', 'Admin', 'Director'])) 
-            {
-               ?>
-                  <li>
-                     <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
-                        <img src="PNG/Vehicle.png" alt="Vehicle">
-                        <span>Vehicles</span>
-                        <img src="PNG/Down.png" alt="DropDown">
-                     </button>
-                     <ul class="dropdown-container">
-                        <div>
-                           <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
-                           <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                           <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
-                        </div>
-                     </ul>
-                  </li>
-                  <li>
-                     <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
-                        <img src="PNG/Account.png" alt="Report">
-                        <span>Accounts</span>
-                        <img src="PNG/Down.png" alt="DropDown">
-                     </button>
-                     <ul class="dropdown-container">
-                        <div>
-                           <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
-                           <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
-                        </div>
-                     </ul>
-                  </li>
-                  <li>
-                     <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
-                        <img src="PNG/File.png" alt="Report">
-                        <span>Report</span>
-                        <img src="PNG/Down.png" alt="DropDown">
-                     </button>
-                     <ul class="dropdown-container">
-                        <div>
-                           <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-                           <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
-                        </div>
-                     </ul>
-                  </li>
-               <?php
-            }
-         ?>
-
-
-
-
+         <li>
+            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+               <img src="PNG/Pie.png" alt="Requests">
+               <span>Requests</span>
+               <img src="PNG/Down.png" alt="DropDown">
+            </button>
+            <ul class="dropdown-container">
+               <div>
+                  <li><a href="GSO.php?papp=a"><span>Pending Approval</span></a></li>
+                  <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                  <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+               </div>
+            </ul>
+         </li>
+         <li>
+            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+               <img src="PNG/Vehicle.png" alt="Vehicle">
+               <span>Vehicles</span>
+               <img src="PNG/Down.png" alt="DropDown">
+            </button>
+            <ul class="dropdown-container">
+               <div>
+                  <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                  <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                  <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+               </div>
+            </ul>
+         </li>
+         <li>
+            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+               <img src="PNG/Account.png" alt="Report">
+               <span>Accounts</span>
+               <img src="PNG/Down.png" alt="DropDown">
+            </button>
+            <ul class="dropdown-container">
+               <div>
+                  <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                  <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+               </div>
+            </ul>
+         </li>
+         <li>
+            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+               <img src="PNG/File.png" alt="Report">
+               <span>Report</span>
+               <img src="PNG/Down.png" alt="DropDown">
+            </button>
+            <ul class="dropdown-container">
+               <div>
+                  <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                  <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+               </div>
+            </ul>
+         </li>
       </ul>
 
       <?php
@@ -357,13 +343,45 @@ if (window.innerWidth < 992) {
    <script>
       let timer;
 
-      const inactivityTime = 6000;
+      // Dynamically set inactivity time based on PHP session or GET parameters
+      const inactivityTime = <?php 
+         // Default inactivity time
+         if (isset($_GET["vsch"]) and !empty($_GET["vsch"])) {
+            $defaultTime = 3000; // 3 seconds for vehicle schedules
+         } elseif (isset($_GET["mveh"]) and !empty($_GET["mveh"])) {
+            $defaultTime = 60000; // 3 seconds for manage vehicle
+         } elseif (isset($_GET["aveh"]) and !empty($_GET["aveh"])) {
+            $defaultTime = 60000; // 3 seconds for manage vehicle
+         } elseif (isset($_GET["macc"]) and !empty($_GET["macc"])) {
+            $defaultTime = 60000; // 3 seconds for manage account
+         } elseif (isset($_GET["srep"]) and !empty($_GET["srep"])) {
+            $defaultTime = 6000; // 3 seconds for summary report
+         } elseif (isset($_GET["mrep"]) and !empty($_GET["mrep"])) {
+            $defaultTime = 3000; // 3 seconds for maintenance report
+         } elseif (isset($_GET["mche"]) and !empty($_GET["mche"])) {
+            $defaultTime = 60000; // 3 seconds for maintenance checklist
+         } elseif (isset($_GET["mdep"]) and !empty($_GET["mdep"])) {
+            $defaultTime = 60000; // 3 seconds for manage department
+         } elseif (isset($_GET["vres"]) and !empty($_GET["vres"])) {
+            $defaultTime = 60000; // 3 seconds for vehicle reservation form
+         } elseif (isset($_GET["rapp"]) and !empty($_GET["rapp"])) {
+            $defaultTime = 3000; // 3 seconds for reservation approved
+         } elseif (isset($_GET["creq"]) and !empty($_GET["creq"])) {
+            $defaultTime = 3000; // 3 seconds for cancelled requests
+         } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
+            $defaultTime = 3000; // 3 seconds for pending approval
+         } else {
+            $defaultTime = 3000;
+         }
+         
+         echo $defaultTime; // Output the inactivity time
+      ?>;
 
       function resetTimer() {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-         location.reload(); // Refreshes the page (triggers PHP session check)
-      }, inactivityTime);
+         clearTimeout(timer);
+         timer = setTimeout(() => {
+               location.reload(); // Refreshes the page (triggers PHP session check)
+         }, inactivityTime);
       }
 
       window.onload = resetTimer;
@@ -371,7 +389,6 @@ if (window.innerWidth < 992) {
       document.onkeydown = resetTimer; // Use keydown instead of keypress
       document.onscroll = resetTimer;
       document.onclick = resetTimer;
-
    </script>
 </body>
 </html>

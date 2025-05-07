@@ -394,7 +394,7 @@ body {
 /* Box container */
 .box1 {
     background: white;
-    padding: 2.5vh 3vh; /* reduced padding */
+    padding: 4vh 4.5vh; /* reduced padding */
     border: 0.4vh solid #efb954;
     border-radius: 2.5vh;
     width: 90%;
@@ -418,7 +418,7 @@ body {
     font-size: clamp(3.5vh, 5vw, 6vh); /* smaller font */
     font-weight: bold;
     color: #80050d;
-    margin-left: 4%;
+    
 }
 
 .introduce h2 {
@@ -427,7 +427,6 @@ body {
     line-height: 1.4;
     max-width: 55vh;
     padding-top: 1vh;
-    margin-left: 4%;
 }
 
 /* Image Section */
