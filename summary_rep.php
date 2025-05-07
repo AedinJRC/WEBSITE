@@ -190,7 +190,10 @@ $result = $conn->query($sql);
 <body>
 
 <div class="report-container">
-    <h1>Vehicle Monitoring Summary Report</h1>
+   <h1>Vehicle Monitoring Summary Report</h1>
+<p style="text-align:center; font-size: 2.3vh; color: #2c3e50; margin-bottom: 2vh;">
+    Total Reports: <?php echo $result->num_rows; ?>
+</p>
    <br>
 
    <div class="search-form">
@@ -234,8 +237,8 @@ $result = $conn->query($sql);
                 echo "<p><strong>Departure:</strong> ".$row["departure"]."</p>";
                 echo "<p><strong>Passenger Count:</strong> <span class='numeric'>".$row["passenger_count"]."</span></p>";
                 echo "<p><strong>Passenger Attachment:</strong> ".$row["passenger_attachment"]."</p>";
-                echo "<p><strong>Total Cost:</strong> <span class='numeric'>₱".number_format($row["total_cost"], 2)."</span></p>";
                 echo "<p><strong>Transportation Cost:</strong> ".$row["transportation_cost"]."</p>";
+                echo "<p><strong>Total Cost:</strong> <span class='numeric'>₱".number_format($row["total_cost"], 2)."</span></p>";
                 echo "<p><strong>Letter Attachment:</strong> ".$row["letter_attachment"]."</p>";
                 echo "<div class='status-group'>";
                 echo "<p><strong>Status:</strong> 
