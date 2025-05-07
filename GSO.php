@@ -357,13 +357,43 @@ if (window.innerWidth < 992) {
    <script>
       let timer;
 
-      const inactivityTime = 6000;
+      // Dynamically set inactivity time based on PHP session or GET parameters
+      const inactivityTime = <?php 
+         // Default inactivity time
+         if (isset($_GET["vsch"]) and !empty($_GET["vsch"])) {
+            $defaultTime = 3000; // 3 seconds for vehicle schedules
+         } elseif (isset($_GET["mveh"]) and !empty($_GET["mveh"])) {
+            $defaultTime = 3000; // 3 seconds for manage vehicle
+         } elseif (isset($_GET["macc"]) and !empty($_GET["macc"])) {
+            $defaultTime = 3000; // 3 seconds for manage account
+         } elseif (isset($_GET["srep"]) and !empty($_GET["srep"])) {
+            $defaultTime = 3000; // 3 seconds for summary report
+         } elseif (isset($_GET["mrep"]) and !empty($_GET["mrep"])) {
+            $defaultTime = 3000; // 3 seconds for maintenance report
+         } elseif (isset($_GET["mche"]) and !empty($_GET["mche"])) {
+            $defaultTime = 3000; // 3 seconds for maintenance checklist
+         } elseif (isset($_GET["mdep"]) and !empty($_GET["mdep"])) {
+            $defaultTime = 3000; // 3 seconds for manage department
+         } elseif (isset($_GET["vres"]) and !empty($_GET["vres"])) {
+            $defaultTime = 60000; // 3 seconds for vehicle reservation form
+         } elseif (isset($_GET["rapp"]) and !empty($_GET["rapp"])) {
+            $defaultTime = 3000; // 3 seconds for reservation approved
+         } elseif (isset($_GET["creq"]) and !empty($_GET["creq"])) {
+            $defaultTime = 3000; // 3 seconds for cancelled requests
+         } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
+            $defaultTime = 3000; // 3 seconds for pending approval
+         } else {
+            $defaultTime = 3000;
+         }
+         
+         echo $defaultTime; // Output the inactivity time
+      ?>;
 
       function resetTimer() {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-         location.reload(); // Refreshes the page (triggers PHP session check)
-      }, inactivityTime);
+         clearTimeout(timer);
+         timer = setTimeout(() => {
+               location.reload(); // Refreshes the page (triggers PHP session check)
+         }, inactivityTime);
       }
 
       window.onload = resetTimer;
@@ -371,7 +401,6 @@ if (window.innerWidth < 992) {
       document.onkeydown = resetTimer; // Use keydown instead of keypress
       document.onscroll = resetTimer;
       document.onclick = resetTimer;
-
    </script>
 </body>
 </html>
