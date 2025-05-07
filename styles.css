@@ -27,182 +27,165 @@ main
    width: 100%;
    padding: 7vw;
    padding-top: 3vw;
-   div.vres
-   {
+   div.vres {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100%;
-      margin-top: 1.5vw;
-      form.vehicle-reservation-form
-      {
-         padding: 1.5vw;
-         width: 60vw;
-         height: 44vw;
-         border: 0.3vw solid #555555;
-         border-radius: 2vw;
-         img
-         {
+      height: 100%; /* 2000px * 2/3 */
+      margin-top: 20px; /* 30px * 2/3 */
+      form.vehicle-reservation-form {
+         padding: 20px; /* 30px * 2/3 */
+         width: 800px; /* 1200px * 2/3 */
+         height: 586.67px; /* 880px * 2/3 */
+         border: 4px solid #555555; /* 6px * 2/3 */
+         border-radius: 26.67px; /* 40px * 2/3 */
+         img {
             position: absolute;
-            height: 5vw;
-            width: 5vw;
+            height: 66.67px; /* 100px * 2/3 */
+            width: 66.67px; /* 100px * 2/3 */
          }
-         span.header
-         {
+         span.header {
             display: flex;
             flex-direction: column;
             text-align: center;
             justify-content: center;
-            font-family: 'Times New Roman', Times, serif;  
-            gap: 0.3vw;
-            span#csab
-            {
-               font-size: 1.3vw;
+            font-family: 'Times New Roman', Times, serif;
+            gap: 4px; /* 6px * 2/3 */
+            span#csab {
+               font-size: 17.33px; /* 26px * 2/3 */
             }
-            span#swe
-            {
-               font-size: 1vw;
+            span#swe {
+               font-size: 13.33px; /* 20px * 2/3 */
             }
-            span#vrf
-            {
-               font-size: 1.4vw;
+            span#vrf {
+               font-size: 18.67px; /* 28px * 2/3 */
                font-weight: bold;
             }
-            span#fid
-            {
-               font-size: 0.9vw;
+            span#fid {
+               font-size: 12px; /* 18px * 2/3 */
             }
-            input
-            {
+            input {
                border: none; /* Remove border */
                background: transparent; /* Remove background */
-               font-size: 0.9vw;
+               font-size: 12px; /* 18px * 2/3 */
                font-family: 'Times New Roman', Times, serif;
                outline: none; /* Remove focus outline */
                pointer-events: none; /* Prevent user interaction */
                border-radius: 0;
                padding: 0;
-               width: 4.8vw;
+               width: 64px; /* 96px * 2/3 */
             }
          }
          .vrf-details {
-            font-size: 0.9vw;
-            margin: 0.5vw;
+            font-size: 12px; /* 18px * 2/3 */
+            margin: 6.67px; /* 10px * 2/3 */
             margin-bottom: 0;
             display: flex;
             justify-content: space-between;
          }
-        
+   
          .vrf-details-column {
             display: flex;
             flex-direction: column;
-            width: 18vw;
-            gap: 0.5vw;
+            width: 240px; /* 360px * 2/3 */
+            gap: 6.67px; /* 10px * 2/3 */
          }
-         
+   
          .input-container {
             position: relative;
             display: flex;
             flex-direction: column;
             font-family: 'Roboto', sans-serif;
-            div.passenger-container
-            {
-               margin-top: 0.5vw;
-               span
-               {
+            div.passenger-container {
+               margin-top: 6.67px; /* 10px * 2/3 */
+               span {
                   font-weight: bold;
-                  letter-spacing: 0.2vw;
+                  letter-spacing: 2.67px; /* 4px * 2/3 */
                   background-color: transparent;
                }
-               div#passengerList
-               {
-                  padding-top: 0.35vw;
+               div#passengerList {
+                  padding-top: 4.67px; /* 7px * 2/3 */
                   display: flex;
                   flex-direction: column;
-                  gap:0.2vw;
-                  height: 11.2vw;
+                  gap: 2.67px; /* 4px * 2/3 */
+                  height: 149.33px; /* 224px * 2/3 */
                   overflow-y: auto;
                   overflow-x: hidden;
                   scrollbar-width: thin;
-                  input::placeholder 
-                  {
+                  input::placeholder {
                      font-style: normal;
                      font-weight: bold;
-                     letter-spacing: 0.2vw;
+                     letter-spacing: 2.67px; /* 4px * 2/3 */
                   }
-                  button
-                  {
+                  button {
                      background-color: transparent;
                      border: 0;
                      cursor: pointer;
                      text-align: left;
                      font-weight: bold;
-                     font-size: 1.8vw;
+                     font-size: 24px; /* 36px * 2/3 */
                      font-family: 'Quicksand';
                   }
-                  button:hover
-                  {
+                  button:hover {
                      color: var(--maroon);
                      font-weight: bold;
                      transition: 0.3s;
                   }
-                  button#attachmentButton
-                  {
-                     transform: translateX(1.2vw);
-                     margin-top: 0.3vw;
+                  button#attachmentButton {
+                     transform: translateX(16px); /* 24px * 2/3 */
+                     margin-top: 4px; /* 6px * 2/3 */
                      font-family: 'Roboto', sans-serif;
-                     font-size: 0.9vw;
-                     img
-                     {
-                        height: 1vw;
-                        width: 1vw;
-                        transform: translateX(-1.2vw);
+                     font-size: 12px; /* 18px * 2/3 */
+                     img {
+                        height: 13.33px; /* 20px * 2/3 */
+                        width: 13.33px; /* 20px * 2/3 */
+                        transform: translateX(-16px); /* 24px * 2/3 */
                      }
                   }
                }
-            }  
-         }   
+            }
+         }
          .input-container input,
          .input-container select {
-            font-size: 0.9vw;
-            padding: 0.4vw;
-            width: 18vw;
-            border: 0.1vw solid #555555;
-            border-radius: 0.5vw;
+            font-size: 12px; /* 18px * 2/3 */
+            padding: 5.33px; /* 8px * 2/3 */
+            width: 240px; /* 360px * 2/3 */
+            border: 1.33px solid #555555; /* 2px * 2/3 */
+            border-radius: 6.67px; /* 10px * 2/3 */
             outline: none;
             appearance: none; /* Removes default browser styles */
             background-color: white;
          }
-      
+   
          .input-container label {
             position: absolute;
-            left: 0.5vw;
+            left: 6.67px; /* 10px * 2/3 */
             top: 50%;
             transform: translateY(-50%);
             transition: all 0.3s ease;
-            font-size: 0.95vw;
+            font-size: 12.67px; /* 19px * 2/3 */
             color: #777;
-            letter-spacing: .15vw;
+            letter-spacing: 2px; /* 3px * 2/3 */
             font-weight: bold;
             pointer-events: none;
          }
-         
+   
          .input-container input:focus,
          .input-container input:valid,
          .input-container select:focus,
          .input-container select:valid {
-               border-color: var(--maroon);
+            border-color: var(--maroon);
          }
-         
+   
          .input-container input:focus ~ label,
          .input-container input:valid ~ label,
          .input-container select:focus ~ label,
          .input-container select:valid ~ label {
             top: 0;
-            font-size: 0.75vw;
+            font-size: 10px; /* 15px * 2/3 */
             color: black;
             background: white;
-            padding: 0 0.3vw;
+            padding: 0 4px; /* 6px * 2/3 */
          }
          .input-container input[type="date"]:not(:placeholder-shown) ~ label,
          .input-container input[type="date"]:focus ~ label,
@@ -211,156 +194,142 @@ main
          .input-container input[type="datetime-local"]:not(:placeholder-shown) ~ label,
          .input-container input[type="datetime-local"]:focus ~ label {
             top: 0;
-            font-size: 0.75vw;
+            font-size: 10px; /* 15px * 2/3 */
             color: black;
             background: white;
-            padding: 0 0.3vw;
+            padding: 0 4px; /* 6px * 2/3 */
          }
-         span.address
-         {
+         span.address {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            padding: 0.8vw;
-            span 
-            {
+            padding: 10.67px; /* 16px * 2/3 */
+            span {
+               width: 500px;
                font-weight: bold;
-               font-size: 0.9vw;
-               letter-spacing: 0.15vw;
-               margin-bottom: 0.5vw;
+               font-size: 12px; /* 18px * 2/3 */
+               letter-spacing: 2px; /* 3px * 2/3 */
+               margin-bottom: 6.67px; /* 10px * 2/3 */
             }
-            textarea
+            .input-container
             {
+               transform: translateY(-6.67px); /* -10px * 2/3 */
+            }
+            textarea {
                font-family: 'Roboto', sans-serif;
-               font-size: 1vw;
-               padding: 0.4vw;
+               font-size: 13.33px; /* 20px * 2/3 */
+               padding: 5.33px; /* 8px * 2/3 */
                width: 100%;
-               border: 0.1vw solid #555555;
-               border-radius: 0.5vw;
+               border: 1.33px solid #555555; /* 2px * 2/3 */
+               border-radius: 6.67px; /* 10px * 2/3 */
                outline: none;
                appearance: none; /* Removes default browser styles */
                background-color: white;
-               height: 5vw;
+               height: 66.67px; /* 100px * 2/3 */
                resize: none;
-            }  
-            #transportation-cost
-            {
-               width: 28vw;
-               height: 8vw;
+            }
+            #transportation-cost {
+               width: 373.33px; /* 560px * 2/3 */
+               height: 106.67px; /* 160px * 2/3 */
                border-bottom-left-radius: 0;
                border-bottom-right-radius: 0;
                border-bottom: 0;
             }
-            #totalCost
-            {
+            #totalCost {
                border-top-right-radius: 0;
                border-top-left-radius: 0;
-               width: 28vw;
+               width: 373.33px; /* 560px * 2/3 */
             }
             label#pesoSign {
                visibility: hidden;
                position: absolute;
                font-weight: 100;
                color: black;
-               transform: translateY(0.45vw);
+               transform: translateY(6px); /* 9px * 2/3 */
                background-color: transparent;
-               font-size: 1vw;
-            }           
+               font-size: 13.33px; /* 20px * 2/3 */
+            }
          }
-      }   
-      .subbtn-container
-      {
-         transform: translate(-6vw,2vw);
+      }
+      .subbtn-container {
+         transform: translate(4px,18px);/* -120px * 2/3, 40px * 2/3 */
          display: flex;
          background-color: transparent;
-         justify-content:space-between;
+         justify-content: space-between;
          pointer-events: none;
-         width: 125%;
-         input
-         {
-            pointer-events:all;
+         width: 500px; /* 2500px * 2/3 */
+         input {
+            pointer-events: all;
          }
-         button
-         {
-            height: 2.5vw;
-            width: 8vw;
-            padding: 0 0.5vw;
-            font-size: 1.5vw;
-            border: 0.35vw solid transparent;
+         button {
+            height: 33.33px; /* 50px * 2/3 */
+            width: 106.67px; /* 160px * 2/3 */
+            padding: 0 6.67px; /* 0 10px * 2/3 */
+            font-size: 20px; /* 30px * 2/3 */
+            border: 4.67px solid transparent; /* 7px * 2/3 */
             font-weight: bold;
-            border-radius: 1vw;
-            cursor:pointer !important;
+            border-radius: 13.33px; /* 20px * 2/3 */
+            cursor: pointer !important;
             transition: 0.3s;
             pointer-events: all;
          }
-         button.subbtn
-         {
+         button.subbtn {
             background-color: var(--yellow);
             border-color: var(--yellow);
             color: var(--maroon);
          }
-         button.subbtn:hover
-         {
+         button.subbtn:hover {
             background-color: var(--maroon);
             color: var(--yellow);
          }
-         button.appbtn
-         {
+         button.appbtn {
             background-color: var(--yellow);
             border-color: var(--yellow);
             color: var(--maroon);
          }
-         button.appbtn:hover
-         {
+         button.appbtn:hover {
             background-color: white;
             color: green;
          }
-         button.rejbtn
-         {
+         button.rejbtn {
             background-color: var(--maroon);
             border-color: var(--maroon);
             color: var(--yellow);
          }
-         
-         button.rejbtn:hover
-         {
+   
+         button.rejbtn:hover {
             background-color: white;
             color: red;
          }
-         .attachment 
-         {
+         .attachment {
             opacity: 0; /* Makes the input invisible */
             position: absolute; /* Keeps it accessible but hidden */
-            width: 0.1vw;
-            height: 0.1vw;
-            
+            width: 1.33px; /* 2px * 2/3 */
+            height: 1.33px; /* 2px * 2/3 */
          }
-         .attachment-label 
-         {
+         .attachment-label {
             display: flex;
             justify-content: left;
             align-items: center;
             pointer-events: all;
             cursor: pointer;
-            font-size: 0.9vw;
+            font-size: 12px; /* 18px * 2/3 */
             font-weight: bold;
-            letter-spacing: 0.2vw;   
-            transform: translateX(2vw);
+            letter-spacing: 2.67px; /* 4px * 2/3 */
+            transform: translateX(26.67px); /* 40px * 2/3 */
          }
-         .attachment-label:hover
-         {
-            font-size: 0.91vw;
-            color:var(--maroon);
-            img
-            {
-               height: 1.1vw;
-               width: 1.1vw;
+         .attachment-label:hover {
+            font-size: 12.13px; /* 18.2px * 2/3 */
+            color: var(--maroon);
+            img {
+               height: 14.67px; /* 22px * 2/3 */
+               width: 14.67px; /* 22px * 2/3 */
             }
          }
-         .attachment-label img
-         {
-            height: 1vw;
-            width: 1vw;
-            transform: translateX(-1.5vw);         
+         .attachment-label img {
+            height: 13.33px; /* 20px * 2/3 */
+            width: 13.33px; /* 20px * 2/3 */
+            transform: translateX(-20px); /* -30px * 2/3 */
          }
       }
    }

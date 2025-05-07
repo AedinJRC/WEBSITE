@@ -445,7 +445,33 @@ if (window.innerWidth < 992) {
                <div class="vrf-details">
                   <div class="vrf-details-column">
                      <div class="input-container">
-                        <input name="vrfname" value="<?php if($_SESSION['role']!="Secretary") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" required>
+                        <?php
+                           if ($_SESSION['role'] != 'Secretary') 
+                           {
+                              ?>
+                                 <input name="vrfname" value="<?php if($_SESSION['role']!="Secretary") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" readonly> 
+                              <?php
+                           }
+                           else
+                           {
+                              ?>
+                                 <select name="vrfdepartment" id="department" required>
+                                    <option value="" disabled selected></option>
+                                    <?php
+                                       include 'config.php';
+                                       $selectdepartment = "SELECT * FROM usertb ORDER BY lname ASC";
+                                       $resultdepartment = $conn->query($selectdepartment);
+                                       if ($resultdepartment->num_rows > 0) {
+                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
+                                             echo "<option value='".$rowdepartment['lname'].", ".$rowdepartment['fname']."'>".$rowdepartment['lname'].", ".$rowdepartment['fname']."</option>";
+                                          }
+                                       }
+                                    ?>
+                                 </select>
+                              <?php    
+                           }
+                        ?>
+                        
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
@@ -453,7 +479,7 @@ if (window.innerWidth < 992) {
                            if ($_SESSION['role'] != 'Secretary') 
                            {
                               ?>
-                                 <input name="vrfdepartment" value="<?php echo $_SESSION['department'] ?>" type="text" id="department" required>
+                                 <input name="vrfdepartment" value="<?php echo $_SESSION['department'] ?>" type="text" id="department" readonly>
                               <?php
                            }
                            else
@@ -493,7 +519,7 @@ if (window.innerWidth < 992) {
                   </div>
                   <div class="vrf-details-column">
                      <div class="input-container">
-                        <input style="height:2vw;" name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
+                        <input style="" name="vrfdate_filed" type="date" value="<?php echo date("Y-m-d"); ?>" id="dateFiled" required readonly>
                         <label for="dateFiled">DATE FILED:</label>
                      </div>
                      <div class="input-container">
@@ -574,7 +600,7 @@ if (window.innerWidth < 992) {
                   <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                   <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required></textarea>
                </span>
-               <div class="vrf-details" style="margin-top:1vw;">
+               <div class="vrf-details" style="margin-top:13px;">
                   <div class="input-container">
                      <?php
                         if ($_SESSION['role'] == 'Admin') {
@@ -644,7 +670,7 @@ if (window.innerWidth < 992) {
 
                            const removeButton = document.createElement("button");
                            removeButton.classList.add("remove-passenger");
-                           removeButton.style = "position:absolute; transform:translateX(16.8vw)";
+                           removeButton.style = "position:absolute; transform:translateX(224px)";
                            removeButton.type = "button";
                            removeButton.textContent = "×";
                            removeButton.onclick = function () 
@@ -702,19 +728,19 @@ if (window.innerWidth < 992) {
                            // Create a container for attachment input
                            const inputContainer = document.createElement("div");
                            inputContainer.classList.add("input-container"); // No passenger-entry class here!
-                           inputContainer.style= "transform: translateY(0.5vw); display:flex; flex-direction:row;";
+                           inputContainer.style= "transform: translateY(7px); display:flex; flex-direction:row;";
 
                            const attachmentInput = document.createElement("input");
                            attachmentInput.type = "file";
                            attachmentInput.name = "vrfpassenger_attachment";
                            attachmentInput.required = true;
-                           attachmentInput.style = "width:14vw; border-top-right-radius:0; border-bottom-right-radius:0;";
+                           attachmentInput.style = "width:190px; border-top-right-radius:0; border-bottom-right-radius:0;";
 
                            const numberInput = document.createElement("input");
                            numberInput.type = "number";
                            numberInput.name = "vrfpassenger_count";
                            numberInput.required = true;
-                           numberInput.style = "text-align:center; width:4vw; border-top-left-radius:0; border-bottom-left-radius:0;";
+                           numberInput.style = "text-align:center; width:50px; border-top-left-radius:0; border-bottom-left-radius:0;";
 
                            const label = document.createElement("label");
                            label.textContent = `PASSENGER COUNT`;
@@ -722,7 +748,7 @@ if (window.innerWidth < 992) {
                            // Create a remove button
                            const removeButton = document.createElement("button");
                            removeButton.textContent = "×";
-                           removeButton.style = "position:absolute; transform:translateY(2.1vw)";
+                           removeButton.style = "position:absolute; transform:translateY(30px)";
                            removeButton.onclick = function () 
                            {
                               passengerList.removeChild(inputContainer);
@@ -740,16 +766,18 @@ if (window.innerWidth < 992) {
                         }
                      </script>
                   </div>   
-                  <span class="address" style="margin-top:-1.8vw">
+                  <span class="address" style="margin-top:-20px">
                      <span style="text-align:center;">TRANSPORTATION COST</span>
-                     <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
-                     <div class="input-container">
-                        <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly></a>
-                        <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
-                        <div>
-                           <label id="pesoSign">₱</label>
+                     <span style="transform: translateX(60px);">
+                        <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                        <div class="input-container">
+                           <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly></a>
+                           <label for="total_cost" style="margin-left:13px">TOTAL COST</label>
+                           <div>
+                              <label id="pesoSign">₱</label>
+                           </div>
                         </div>
-                     </div>
+                     </span>
                      <div class="subbtn-container">
                         <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
                         <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
