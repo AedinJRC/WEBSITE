@@ -127,11 +127,102 @@
             margin-top: 2px;
             display: none;
         }
+
+                /* Terms and Conditions Modal */
+        /* Enhanced Terms and Conditions Modal */
+        .terms-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .terms-content {
+            background-color: #ffffff;
+            margin: auto;
+            padding: 30px 25px;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .terms-header h2 {
+            margin-bottom: 5px;
+            font-size: 24px;
+            color: #7D192E;
+            text-align: center;
+        }
+
+        .terms-header p {
+            margin: 4px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .terms-body {
+            margin: 20px 0;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .terms-body h3 {
+            margin-top: 20px;
+            margin-bottom: 5px;
+            font-size: 16px;
+            color: #7D192E;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            flex-wrap: wrap;
+            text-align: left;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: #7D192E;
+        }
+
+        .terms-footer {
+            text-align: center;
+        }
+
+        .terms-btn {
+            background-color: #7D192E;
+            color: #ffffff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .terms-btn:hover {
+            background-color: #5a1121;
+        }
+
     </style>
 </head>
 <body>
     <div class="signup-container">
-        <form class="signup-form" method="post" enctype="multipart/form-data" onsubmit="return signupValidatePasswords()">
+        <form id="signupForm" class="signup-form" method="post" enctype="multipart/form-data" onsubmit="event.preventDefault(); return signupValidatePasswords();">
             
             <div class="signup-avatar-container">
                 <img id="signup-preview" src="uploads/default_avatar.png" alt="Avatar Preview">
@@ -174,6 +265,7 @@
                                 echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
                             }
                         }
+                        $conn->close();
                     ?>
                 </select>
             </div>
@@ -193,85 +285,154 @@
         </form>
     </div>
 
+    <!-- Terms and Conditions Modal -->
+    <div id="termsModal" class="terms-modal">
+        <div class="terms-content">
+            <div class="terms-header">
+                <h2>Vehicle Reservation & Monitoring System Terms and Conditions</h2>
+                <p>Colegio San Agustin - Biñan<br>Department of General Services</p>
+                <p><strong>Effective Date: <?php echo date('F j, Y'); ?></strong></p>
+            </div>
+            <div class="terms-body">
+    <p>By accessing and using the Vehicle Reservation and Monitoring System of Colegio San Agustin - Biñan (CSA-Biñan), you agree to comply with the following terms and conditions. These rules are established to ensure the safe, efficient, and accountable use of CSA-Biñan's official vehicles.</p>
+    
+    <h3>1. Eligibility</h3>
+    <p>The system is available to CSA-Biñan faculty, staff, administrators, and authorized students for official school-related functions only.</p>
+    <p>Reservation requests must be made using your CSA-Biñan credentials.</p>
+    
+    <h3>2. Proper Use of Vehicles</h3>
+    <p>Reserved vehicles must be used strictly for the stated purpose and destination.</p>
+    <p>Personal use of school vehicles is strictly prohibited.</p>
+    <p>Users must adhere to traffic laws, institutional policies, and safety regulations at all times.</p>
+    
+    <h3>3. Reservation Process</h3>
+    <p>All reservations must be made through the official system at least [X] days in advance.</p>
+    <p>Confirmation is subject to vehicle availability and approval by the Department of General Services.</p>
+    <p>Users must accurately complete all required fields in the reservation form.</p>
+    
+    <h3>4. Cancellations and No-Shows</h3>
+    <p>If plans change, users must cancel reservations at least 24 hours before the scheduled time.</p>
+    <p>Unjustified no-shows may result in suspension of access to the system.</p>
+    
+    <h3>5. Monitoring and Reporting</h3>
+    <p>Vehicles may be equipped with GPS tracking systems for safety and accountability.</p>
+    <p>Users must submit a post-trip report if required, including any incidents, delays, or concerns during the trip.</p>
+    
+    <h3>6. Damage, Accidents, and Liability</h3>
+    <p>Any accidents, damage, or irregularities must be reported immediately to the Department of General Services.</p>
+    <p>Users may be held liable for damages caused by negligence or unauthorized use.</p>
+    
+    <h3>7. Data Privacy</h3>
+    <p>Personal and trip-related information will be collected and used in accordance with our Privacy Policy.</p>
+    <p>CSA-Biñan is committed to protecting your data under the Data Privacy Act of 2012.</p>
+    
+    <h3>8. Violations and Sanctions</h3>
+    <p>Violation of these terms may result in:</p>
+    <p>Temporary or permanent suspension from the system</p>
+    <p>Administrative sanctions under CSA-Biñan's employee/student code of conduct</p>
+    <p>Possible legal action, depending on the severity of the violation</p>
+    
+    <h3>9. Amendments</h3>
+    <p>CSA-Biñan reserves the right to update or modify these terms at any time. Users will be notified of changes via official channels.</p>
+    
+    <h3>10. Contact Information</h3>
+    <p>For concerns, clarifications, or reports, please contact:<br>
+    Department of General Services<br>
+    Colegio San Agustin - Biñan<br>
+    📧 [Insert Email Address]<br>
+    📞 [Insert Phone Number]</p>
+</div>
+            <div class="terms-checkbox">
+                <input type="checkbox" id="termsAgree" required>
+                <label for="termsAgree">I have read and agree to the Terms and Conditions</label>
+            </div>
+            <div class="terms-footer">
+                <button type="button" class="terms-btn" id="termsAccept">Accept</button>
+                <button type="button" class="terms-btn" id="termsDecline">Decline</button>
+            </div>
+        </div>
+    </div>
+
     <?php
-        if (isset($_POST['signup_sigbtn'])) {
-            include 'config.php';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup_employee-number'])) {
+        // Process the form submission after terms acceptance
+        include 'config.php';
 
-            $employeeid = $_POST['signup_employee-number'];
-            $fname = $_POST['signup_first-name'];
-            $mname = $_POST['signup_middle-name'];
-            $lname = $_POST['signup_last-name']; 
-            $pword = $_POST['signup_password'];
-            $departmen = $_POST['signup_department'];
+        $employeeid = $_POST['signup_employee-number'];
+        $fname = $_POST['signup_first-name'];
+        $mname = $_POST['signup_middle-name'];
+        $lname = $_POST['signup_last-name']; 
+        $pword = $_POST['signup_password'];
+        $departmen = $_POST['signup_department'];
 
-            if (isset($_FILES['signup_ppicture']) && $_FILES['signup_ppicture']['error'] === 0) {
-                $filename = uniqid() . "_" . basename($_FILES['signup_ppicture']['name']);
-                $target_directory = "uploads/";
-                $target_file = $target_directory . $filename;
-                move_uploaded_file($_FILES['signup_ppicture']['tmp_name'], $target_file);
-                $ppicture = $filename;
-            } else {
-                $ppicture = "default_avatar.png";
-            }
+        if (isset($_FILES['signup_ppicture']) && $_FILES['signup_ppicture']['error'] === 0) {
+            $filename = uniqid() . "_" . basename($_FILES['signup_ppicture']['name']);
+            $target_directory = "uploads/";
+            $target_file = $target_directory . $filename;
+            move_uploaded_file($_FILES['signup_ppicture']['tmp_name'], $target_file);
+            $ppicture = $filename;
+        } else {
+            $ppicture = "default_avatar.png";
+        }
 
-            $fnameProcessed = strtolower(str_replace(['-', ' '], '', $fname));
-            $mnameProcessed = strtolower(str_replace(['-', ' '], '', $mname));
-            $lnameProcessed = strtolower(str_replace(['-', ' '], '', $lname));
+        $fnameProcessed = strtolower(str_replace(['-', ' '], '', $fname));
+        $mnameProcessed = strtolower(str_replace(['-', ' '], '', $mname));
+        $lnameProcessed = strtolower(str_replace(['-', ' '], '', $lname));
 
-            $checkEmployee = "SELECT employeeid FROM employeetb 
-                            WHERE employeeid = ?
-                            AND LOWER(REPLACE(REPLACE(fname, '-', ''), ' ', '')) = ?
-                            AND LOWER(REPLACE(REPLACE(mname, '-', ''), ' ', '')) = ?
-                            AND LOWER(REPLACE(REPLACE(lname, '-', ''), ' ', '')) = ?";
-            $stmtEmp = $conn->prepare($checkEmployee);
-            $stmtEmp->bind_param("ssss", $employeeid, $fnameProcessed, $mnameProcessed, $lnameProcessed);
-            $stmtEmp->execute();
-            $stmtEmp->store_result();
+        $checkEmployee = "SELECT employeeid FROM employeetb 
+                        WHERE employeeid = ?
+                        AND LOWER(REPLACE(REPLACE(fname, '-', ''), ' ', '')) = ?
+                        AND LOWER(REPLACE(REPLACE(mname, '-', ''), ' ', '')) = ?
+                        AND LOWER(REPLACE(REPLACE(lname, '-', ''), ' ', '')) = ?";
+        $stmtEmp = $conn->prepare($checkEmployee);
+        $stmtEmp->bind_param("ssss", $employeeid, $fnameProcessed, $mnameProcessed, $lnameProcessed);
+        $stmtEmp->execute();
+        $stmtEmp->store_result();
 
-            if ($stmtEmp->num_rows == 0) {
+        if ($stmtEmp->num_rows == 0) {
+            echo "<script>
+                alert('Employee not found in records! Please check your Employee Number, First Name, Middle Name, and Last Name.');
+                window.history.back();
+            </script>";
+        } else {
+            $checkUser = "SELECT employeeid FROM usertb WHERE employeeid = ?";
+            $stmtUser = $conn->prepare($checkUser);
+            $stmtUser->bind_param("s", $employeeid);
+            $stmtUser->execute();
+            $stmtUser->store_result();
+
+            if ($stmtUser->num_rows > 0) {
                 echo "<script>
-                    alert('Employee not found in records! Please check your Employee Number, First Name, Middle Name, and Last Name.');
-                    window.history.back();
+                    alert('Employee Number already registered! Please log in.');
+                    window.location.href = 'index.php?log=a';
                 </script>";
             } else {
-                $checkUser = "SELECT employeeid FROM usertb WHERE employeeid = ?";
-                $stmtUser = $conn->prepare($checkUser);
-                $stmtUser->bind_param("s", $employeeid);
-                $stmtUser->execute();
-                $stmtUser->store_result();
+                $insertUser = "INSERT INTO usertb (employeeid, ppicture, fname, lname, pword, department) 
+                            VALUES (?, ?, ?, ?, ?, ?)";
+                $stmtInsert = $conn->prepare($insertUser);
+                $stmtInsert->bind_param("ssssss", $employeeid, $ppicture, $fname, $lname, $pword, $departmen);
 
-                if ($stmtUser->num_rows > 0) {
+                if ($stmtInsert->execute()) {
                     echo "<script>
-                        alert('Employee Number already registered! Please log in.');
-                        window.location.href = 'index.php?log=a';
+                        alert('Account created successfully! You can now log in.');
+                        window.location.href = 'index.php?log=a'; 
                     </script>";
                 } else {
-                    $insertUser = "INSERT INTO usertb (employeeid, ppicture, fname, lname, pword, department) 
-                                VALUES (?, ?, ?, ?, ?, ?)";
-                    $stmtInsert = $conn->prepare($insertUser);
-                    $stmtInsert->bind_param("ssssss", $employeeid, $ppicture, $fname, $lname, $pword, $departmen);
-
-                    if ($stmtInsert->execute()) {
-                        echo "<script>
-                            alert('Account created successfully! You can now log in.');
-                            window.location.href = 'index.php?log=a'; 
-                        </script>";
-                    } else {
-                        echo "<script>
-                            alert('Something went wrong during signup. Please try again.');
-                            window.history.back();
-                        </script>";
-                    }
-
-                    $stmtInsert->close();
+                    echo "<script>
+                        alert('Something went wrong during signup. Please try again.');
+                        window.history.back();
+                    </script>";
                 }
 
-                $stmtUser->close();
+                $stmtInsert->close();
             }
 
-            $stmtEmp->close();
-            $conn->close();
+            $stmtUser->close();
         }
+
+        $stmtEmp->close();
+        $conn->close();
+    }
     ?>
 
     <script>
@@ -296,9 +457,27 @@
                 return false;
             } else {
                 error.style.display = "none";
-                return true;
+                
+                // Show terms modal instead of submitting form
+                document.getElementById('termsModal').style.display = 'block';
+                return false;
             }
         }
+
+        // Terms and Conditions handling
+        document.getElementById('termsAccept').addEventListener('click', function() {
+            if (document.getElementById('termsAgree').checked) {
+                // Submit the form
+                document.getElementById('signupForm').submit();
+            } else {
+                alert('You must agree to the Terms and Conditions to proceed.');
+            }
+        });
+
+        document.getElementById('termsDecline').addEventListener('click', function() {
+            document.getElementById('termsModal').style.display = 'none';
+            alert('You must accept the Terms and Conditions to create an account.');
+        });
     </script>
 </body>
 </html>

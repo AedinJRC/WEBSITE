@@ -9,12 +9,10 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
             background-color: #f3f4f6;
-            padding: 20px;
         }
         
         .container {

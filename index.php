@@ -34,7 +34,10 @@ html {
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f1f0f0;
+    background-image: url('PNG/Background.png');
+    background-repeat: no-repeat;       /* Prevents tiling */
+    background-size: cover;             /* Scales image to cover entire background */
+    background-position: center center; /* Centers the image */
 }
 
 .vh_1 {
@@ -236,7 +239,6 @@ body {
     align-items: center;
     gap: 3vw; /* Converted gap to vw for better proportional spacing */
     padding: 2vh; /* Converted padding to vh */
-    background-color: #f9f9f9;
     color: #80050d;
 }
 
@@ -260,10 +262,10 @@ body {
 }
 
 .text-section .title {
-    font-size: 9.5vh; /* Converted font size to vh */
+    font-size: 8vh; /* Converted font size to vh */
     color: #80050d;
     font-weight: bold;
-    
+    width: 130%;
 }
 
 
@@ -279,7 +281,6 @@ body {
     justify-content: flex-end;
     padding-right: 100px;
     align-items: center;
-    background-color: #f9f9f9;
 }
 
 .right-section img {
@@ -329,6 +330,9 @@ body {
         max-width: 50px; /* Even smaller image on mobile */
         padding: 5px;
     }
+    .text-section .title {
+        transform: translateX(-10%)
+    }
 }
 
 /* Responsive Header & Five Logo */
@@ -351,6 +355,7 @@ body {
         height: 10px;
         width: 80px;
         margin: 0 auto;
+        margin-bottom: -10px;
     }
 
     .text-section .title {
@@ -396,10 +401,10 @@ body {
     max-width: 120vh; /* smaller max width */
     height: auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.5vh; /* smaller gap */
+    gap: 10vh; /* smaller gap */
 }
 
 /* Introduce Section */
@@ -1123,9 +1128,9 @@ footer .column > a:hover {
                 <div class="left-section">
                     <div class="red-bar"></div>
                     <div class="text-section">
-    <span>Vehicle Reservation and Monitoring System</span>
-    <div class="title">General Services Office</div>
-</div>
+                        <span>General Services Office</span>
+                        <div class="title">Vehicle Reservation and Monitoring System</div>
+                    </div>
                 </div>
                 <div class="right-section">
                     <img src="PNG/GSO Logo.png" alt="Logo">
@@ -1149,7 +1154,7 @@ footer .column > a:hover {
             <div class="box1">
                 <div class="introduce">
                     <h1>Introducing Good Solution</h1>
-                    <h2>An online, for CSA-Biñan employees to manage their school vehicle reservation.</h2>
+                    <h2>An online platform for CSA-Biñan employees to manage their school vehicle reservation.</h2>
                     <div class="create_butt_container">
                         <button class="intro_butt"><a href="index.php?sig=a">Sign up now</a></button>
                     </div>
