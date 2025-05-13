@@ -350,14 +350,14 @@ main
                z-index: 9999;
                background-color: transparent;
                box-sizing: border-box;
-               margin-left: 54.2vw;
-               font-size: 1.6vw;
+               margin-left: 722.7px; /* 54.2vw * 13.3333 */
+               font-size: 21.3px;    /* 1.6vw * 13.3333 */
                text-align: center;
-               height: 2vw;
-               width: 2vw;
+               height: 26.7px;       /* 2vw * 13.3333 */
+               width: 26.7px;        /* 2vw * 13.3333 */
                border-radius: 100%;
                transition: 0.2s;
-               transform: translate(1vw,-0.8vw);
+               transform: translate(13.3px, -10.7px); /* 1vw, -0.8vw */
             }  
             a.closepopup:hover
             {
@@ -367,57 +367,55 @@ main
             background: white;
             .input-container {
                position: relative;
-             }
+            }
             .input-container input,
             .input-container select {
-               font-size: 0.9vw;
-               padding: 0.4vw;
-               width: 18vw;
-               border: 0.1vw solid #555555;
-               border-radius: 0.5vw;
+               font-size: 12px;           /* 0.9vw * 13.3333 */
+               padding: 5.3px;            /* 0.4vw * 13.3333 */
+               width: 240px;              /* 18vw * 13.3333 */
+               border: 1.3px solid #555;  /* 0.1vw * 13.3333 */
+               border-radius: 6.7px;      /* 0.5vw * 13.3333 */
                outline: none;
-               appearance: none; /* Removes default browser styles */
+               appearance: none;
                background-color: white;
             }
             .input-container label {
                position: absolute;
-               left: 0.5vw;
+               left: 6.7px;               /* 0.5vw * 13.3333 */
                top: 50%;
                transform: translateY(-50%);
                transition: all 0.3s ease;
-               font-size: 0.95vw;
+               font-size: 12.7px;         /* 0.95vw * 13.3333 */
                color: #777;
-               letter-spacing: .15vw;
+               letter-spacing: 2px;       /* .15vw * 13.3333 */
                font-weight: bold;
                pointer-events: none;
             }
-            /* Float the label up when input is focused or has content */
             .input-container input:focus + label,
             .input-container input.has-content + label,
             .input-container select:focus + label,
             .input-container select.has-content + label {
                top: 0;
-               font-size: 0.75vw;
+               font-size: 10px;           /* 0.75vw * 13.3333 */
                color: black;
                background: white;
-               padding: 0 0.3vw;
-             }
+               padding: 0 4px;            /* 0.3vw * 13.3333 */
+            }
             .input-container input:focus,
             .input-container input.has-content,
             .input-container select:focus,
             .input-container select.has-content {
-            border-color: maroon;
+               border-color: maroon;
             }
-            .input-container label
-            {
+            .input-container label {
                position: absolute;
-               left: 0.5vw;
+               left: 6.7px;               /* 0.5vw * 13.3333 */
                top: 50%;
                transform: translateY(-50%);
                transition: all 0.3s ease;
-               font-size: 0.95vw;
+               font-size: 12.7px;         /* 0.95vw * 13.3333 */
                color: #777;
-               letter-spacing: .15vw;
+               letter-spacing: 2px;       /* .15vw * 13.3333 */
                font-weight: bold;
                pointer-events: none;
             }
@@ -426,11 +424,10 @@ main
                position: absolute;
                font-weight: 100;
                color: black;
-               transform: translateY(-0.5vw);
+               transform: translateY(-6.7px);  /* 0.5vw * 13.3333 */
                background-color: transparent;
-               font-size: 1vw;
+               font-size: 13.3px;             /* 1vw * 13.3333 */
             }         
-            
          }
       }
    }
