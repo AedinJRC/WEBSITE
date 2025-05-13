@@ -128,96 +128,196 @@
             display: none;
         }
 
-                /* Terms and Conditions Modal */
         /* Enhanced Terms and Conditions Modal */
         .terms-modal {
             display: none;
             position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.75);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             overflow-y: auto;
             padding: 20px;
             box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .terms-content {
             background-color: #ffffff;
-            margin: auto;
-            padding: 30px 25px;
-            width: 100%;
+            margin: 50px auto;
+            padding: 30px;
+            width: 90%;
             max-width: 700px;
-            border-radius: 8px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            max-height: 80vh;
             overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.4s ease;
         }
 
-        .terms-header h2 {
-            margin-bottom: 5px;
-            font-size: 24px;
-            color: #7D192E;
+        @keyframes slideUp {
+            from { 
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .terms-header {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
+        .terms-header h2 {
+            margin: 0 0 5px 0;
+            font-size: 28px;
+            color: #7D192E;
+            font-weight: 600;
+        }
+
         .terms-header p {
-            margin: 4px 0;
+            margin: 5px 0;
             font-size: 14px;
-            color: #555;
+            color: #666;
+        }
+
+        .terms-header p strong {
+            color: #333;
+            font-weight: 600;
         }
 
         .terms-body {
-            margin: 20px 0;
+            margin: 25px 0;
             font-size: 14px;
-            color: #333;
-            line-height: 1.6;
+            color: #444;
+            line-height: 1.7;
+        }
+
+        .terms-body p {
+            margin-bottom: 15px;
         }
 
         .terms-body h3 {
-            margin-top: 20px;
-            margin-bottom: 5px;
-            font-size: 16px;
+            margin: 25px 0 10px 0;
+            font-size: 17px;
             color: #7D192E;
+            font-weight: 600;
+        }
+
+        .terms-body ul {
+            margin: 10px 0 15px 20px;
+            padding-left: 15px;
+        }
+
+        .terms-body li {
+            margin-bottom: 8px;
         }
 
         .terms-checkbox {
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: 8px;
-            margin: 20px 0;
-            font-size: 14px;
-            flex-wrap: wrap;
-            text-align: left;
+            justify-content: center;
+            margin: 25px 0;
+            padding: 15px 0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .terms-checkbox input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            margin: 0;
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
             accent-color: #7D192E;
+            cursor: pointer;
+        }
+
+        .terms-checkbox label {
+            font-size: 15px;
+            color: #333;
+            cursor: pointer;
         }
 
         .terms-footer {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
         }
 
         .terms-btn {
             background-color: #7D192E;
             color: #ffffff;
             border: none;
-            padding: 10px 25px;
+            padding: 12px 30px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
-            margin: 0 10px;
-            transition: background-color 0.3s ease;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 120px;
         }
 
         .terms-btn:hover {
             background-color: #5a1121;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        .terms-btn:active {
+            transform: translateY(0);
+        }
+
+        .terms-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .terms-btn:disabled:hover {
+            background-color: #cccccc;
+        }
+
+        #termsDecline {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        #termsDecline:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Scrollbar styling for modal */
+        .terms-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terms-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .terms-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .terms-content::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
     </style>
 </head>
 <body>
@@ -289,65 +389,90 @@
     <div id="termsModal" class="terms-modal">
         <div class="terms-content">
             <div class="terms-header">
-                <h2>Vehicle Reservation & Monitoring System Terms and Conditions</h2>
+                <h2>Privacy Policy</h2>
                 <p>Colegio San Agustin - Biñan<br>Department of General Services</p>
                 <p><strong>Effective Date: <?php echo date('F j, Y'); ?></strong></p>
             </div>
             <div class="terms-body">
-    <p>By accessing and using the Vehicle Reservation and Monitoring System of Colegio San Agustin - Biñan (CSA-Biñan), you agree to comply with the following terms and conditions. These rules are established to ensure the safe, efficient, and accountable use of CSA-Biñan's official vehicles.</p>
-    
-    <h3>1. Eligibility</h3>
-    <p>The system is available to CSA-Biñan faculty, staff, administrators, and authorized students for official school-related functions only.</p>
-    <p>Reservation requests must be made using your CSA-Biñan credentials.</p>
-    
-    <h3>2. Proper Use of Vehicles</h3>
-    <p>Reserved vehicles must be used strictly for the stated purpose and destination.</p>
-    <p>Personal use of school vehicles is strictly prohibited.</p>
-    <p>Users must adhere to traffic laws, institutional policies, and safety regulations at all times.</p>
-    
-    <h3>3. Reservation Process</h3>
-    <p>All reservations must be made through the official system at least [X] days in advance.</p>
-    <p>Confirmation is subject to vehicle availability and approval by the Department of General Services.</p>
-    <p>Users must accurately complete all required fields in the reservation form.</p>
-    
-    <h3>4. Cancellations and No-Shows</h3>
-    <p>If plans change, users must cancel reservations at least 24 hours before the scheduled time.</p>
-    <p>Unjustified no-shows may result in suspension of access to the system.</p>
-    
-    <h3>5. Monitoring and Reporting</h3>
-    <p>Vehicles may be equipped with GPS tracking systems for safety and accountability.</p>
-    <p>Users must submit a post-trip report if required, including any incidents, delays, or concerns during the trip.</p>
-    
-    <h3>6. Damage, Accidents, and Liability</h3>
-    <p>Any accidents, damage, or irregularities must be reported immediately to the Department of General Services.</p>
-    <p>Users may be held liable for damages caused by negligence or unauthorized use.</p>
-    
-    <h3>7. Data Privacy</h3>
-    <p>Personal and trip-related information will be collected and used in accordance with our Privacy Policy.</p>
-    <p>CSA-Biñan is committed to protecting your data under the Data Privacy Act of 2012.</p>
-    
-    <h3>8. Violations and Sanctions</h3>
-    <p>Violation of these terms may result in:</p>
-    <p>Temporary or permanent suspension from the system</p>
-    <p>Administrative sanctions under CSA-Biñan's employee/student code of conduct</p>
-    <p>Possible legal action, depending on the severity of the violation</p>
-    
-    <h3>9. Amendments</h3>
-    <p>CSA-Biñan reserves the right to update or modify these terms at any time. Users will be notified of changes via official channels.</p>
-    
-    <h3>10. Contact Information</h3>
-    <p>For concerns, clarifications, or reports, please contact:<br>
-    Department of General Services<br>
-    Colegio San Agustin - Biñan<br>
-    📧 [Insert Email Address]<br>
-    📞 [Insert Phone Number]</p>
-</div>
+                <p>Colegio San Agustin - Biñan (CSA-Biñan), through its Department of General Services, is committed to protecting the privacy and personal data of all users of the Vehicle Reservation and Monitoring System. 
+                This Privacy Policy explains how we collect, use, store, disclose, and protect your information in compliance with the Data Privacy Act of 2012 (Republic Act No. 10173) and relevant institutional policies.</p>
+                
+                <h3>1. Information We Collect</h3>
+                <p>We collect the following types of information:</p>
+                <p><strong>a. Personal Information:</strong></p>
+                <ul>
+                    <li>Full Name</li>
+                    <li>Employee or Student ID Number</li>
+                    <li>Department or Office Affiliation</li>
+                    <li>Contact Information (email address, phone number)</li>
+                </ul>
+                <p><strong>b. Reservation Details:</strong></p>
+                <ul>
+                    <li>Purpose of vehicle use</li>
+                    <li>Destination</li>
+                    <li>Date and time of reservation</li>
+                    <li>Duration of use</li>
+                </ul>
+                <p><strong>c. Vehicle Monitoring Data:</strong></p>
+                <ul>
+                    <li>Assigned vehicle and driver</li>
+                    <li>Time of departure and return</li>
+                    <li>Fuel consumption and mileage</li>
+                    <li>GPS tracking data (if applicable)</li>
+                </ul>
+
+                <h3>2. Purpose of Data Collection</h3>
+                <p>The data is collected for the following purposes:</p>
+                <ul>
+                    <li>To process and manage vehicle reservation requests</li>
+                    <li>To ensure efficient and equitable allocation of vehicles</li>
+                    <li>To monitor the use of institutional vehicles for safety, accountability, and operational efficiency</li>
+                    <li>To maintain accurate records for administrative and audit purposes</li>
+                </ul>
+                
+                <h3>3. Data Sharing and Disclosure</h3>
+                <p>Your information may be shared only under the following circumstances:</p>
+                <ul>
+                    <li>With authorized personnel within CSA-Biñan who need the information to perform their official duties</li>
+                    <li>When required by law or legal process</li>
+                    <li>In emergency situations where health or safety is at risk</li>
+                    <li>With third-party service providers under strict confidentiality agreements</li>
+                </ul>
+                
+                <h3>4. Data Retention</h3>
+                <p>Personal data will be retained only for as long as necessary to fulfill the purposes for which it was collected, or as required by law and institutional policies.</p>
+                
+                <h3>5. Data Security</h3>
+                <p>CSA-Biñan uses appropriate technical and organizational measures to protect your personal data, including:</p>
+                <ul>
+                    <li>Secure storage and access controls</li>
+                    <li>Regular system audits</li>
+                    <li>Authorized access only to designated personnel</li>
+                    <li>Encryption of sensitive data</li>
+                </ul>
+                
+                <h3>6. Your Rights</h3>
+                <p>You have the right to:</p>
+                <ul>
+                    <li>Access and review your personal data</li>
+                    <li>Request correction of inaccurate or outdated data</li>
+                    <li>Withdraw your consent at any time (subject to service limitations)</li>
+                    <li>Lodge a complaint with the CSA-Biñan Data Protection Officer (DPO) or the National Privacy Commission (NPC)</li>
+                </ul>
+                
+                <h3>7. Inquiries and Complaints</h3>
+                <p>For questions, concerns, or data privacy-related complaints, you may contact:<br>
+                Department of General Services<br>
+                Colegio San Agustin - Biñan<br>
+                📧 csabinancampus2020@gmail.com<br>
+                📞 Tel. Nos. (+632) 8478-0167 to 71 ▪ DL (+632) 8478-0172 ▪ Fax No. (+632) 8478-0180</p>
+            </div>
             <div class="terms-checkbox">
                 <input type="checkbox" id="termsAgree" required>
-                <label for="termsAgree">I have read and agree to the Terms and Conditions</label>
+                <label for="termsAgree">I have read and agree to the Privacy Policy and Terms of Service</label>
             </div>
             <div class="terms-footer">
-                <button type="button" class="terms-btn" id="termsAccept">Accept</button>
+                <button type="button" class="terms-btn" id="termsAccept" disabled>Accept</button>
                 <button type="button" class="terms-btn" id="termsDecline">Decline</button>
             </div>
         </div>
@@ -464,19 +589,26 @@
             }
         }
 
-        // Terms and Conditions handling
-        document.getElementById('termsAccept').addEventListener('click', function() {
-            if (document.getElementById('termsAgree').checked) {
-                // Submit the form
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const termsAgree = document.getElementById('termsAgree');
+            const termsAccept = document.getElementById('termsAccept');
+            
+            // Update button state when checkbox changes
+            termsAgree.addEventListener('change', function() {
+                termsAccept.disabled = !this.checked;
+            });
+            
+            // Handle accept button click
+            termsAccept.addEventListener('click', function() {
                 document.getElementById('signupForm').submit();
-            } else {
-                alert('You must agree to the Terms and Conditions to proceed.');
-            }
-        });
-
-        document.getElementById('termsDecline').addEventListener('click', function() {
-            document.getElementById('termsModal').style.display = 'none';
-            alert('You must accept the Terms and Conditions to create an account.');
+            });
+            
+            // Handle decline button click
+            document.getElementById('termsDecline').addEventListener('click', function() {
+                document.getElementById('termsModal').style.display = 'none';
+                alert('You must accept the Privacy Policy and Terms of Service to create an account.');
+            });
         });
     </script>
 </body>
