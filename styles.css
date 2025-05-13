@@ -762,6 +762,13 @@ li
       height: 2.92vw;
       width: 2.92vw;
    }
+   #pending-notif
+   {
+      display: inline-block;
+      background-color: var(--yellow);
+      height: 10px;
+      width: 10px;
+   }
 }
 .sidebar.active {
    position: sticky;

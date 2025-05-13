@@ -175,6 +175,7 @@ if (window.innerWidth < 992) {
             <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
                <img src="PNG/Pie.png" alt="Requests">
                <span>Requests</span>
+               <div id="pending-notif"></div>
                <img src="PNG/Down.png" alt="DropDown">
             </button>
             <ul class="dropdown-container">
@@ -369,7 +370,7 @@ if (window.innerWidth < 992) {
          } elseif (isset($_GET["creq"]) and !empty($_GET["creq"])) {
             $defaultTime = 3000; // 3 seconds for cancelled requests
          } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
-            $defaultTime = 3000; // 3 seconds for pending approval
+            $defaultTime = 30000; // 3 seconds for pending approval
          } else {
             $defaultTime = 3000;
          }
@@ -1012,7 +1013,7 @@ if (window.innerWidth < 992) {
                   $status="accounting_status";
                }
                include 'config.php';
-               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status='Pending' ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status2 ORDER BY date_filed DESC, id DESC";
                $resultvrf = $conn->query($selectvrf);
                if ($resultvrf->num_rows > 0) {
                   $rowvrf = $resultvrf->fetch_assoc();
