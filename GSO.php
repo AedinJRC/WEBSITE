@@ -455,7 +455,7 @@ if (window.innerWidth < 992) {
                            else
                            {
                               ?>
-                                 <select name="vrfdepartment" id="department" required>
+                                 <select name="vrfname" id="department" required>
                                     <option value="" disabled selected></option>
                                     <?php
                                        include 'config.php';
@@ -540,27 +540,27 @@ if (window.innerWidth < 992) {
                                     <option value="" disabled selected></option>
                                  </select>
                                  <script>
-                                 const vehicles = [
-                                    <?php
-                                    include("config.php");
-                                    $selectvehicle = "SELECT * FROM carstb";
-                                    $resultvehicle = $conn->query($selectvehicle);
-                                    $vehicleArray = [];
+                                    const vehicles = [
+                                       <?php
+                                       include("config.php");
+                                       $selectvehicle = "SELECT * FROM carstb";
+                                       $resultvehicle = $conn->query($selectvehicle);
+                                       $vehicleArray = [];
 
-                                    if ($resultvehicle->num_rows > 0) {
-                                       while($rowvehicle = $resultvehicle->fetch_assoc()) {
-                                          $plate_number = $rowvehicle['plate_number'];
-                                          $brand = addslashes($rowvehicle['brand']);
-                                          $model = addslashes($rowvehicle['model']);
+                                       if ($resultvehicle->num_rows > 0) {
+                                          while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                                             $plate_number = $rowvehicle['plate_number'];
+                                             $brand = addslashes($rowvehicle['brand']);
+                                             $model = addslashes($rowvehicle['model']);
 
-                                          $vehicleArray[] = "{ plate_number: \"$plate_number\", brand: \"$brand\", model: \"$model\" }";
+                                             $vehicleArray[] = "{ plate_number: \"$plate_number\", brand: \"$brand\", model: \"$model\" }";
+                                          }
                                        }
-                                    }
 
-                                    echo implode(",\n", $vehicleArray);
-                                    ?>
-                                 ];
-                              </script>
+                                       echo implode(",\n", $vehicleArray);
+                                       ?>
+                                    ];
+                                 </script>
                               <?php
                            }
                         ?>
@@ -584,7 +584,7 @@ if (window.innerWidth < 992) {
                                        $resultdriver = $conn->query($selectdriver);
                                        if ($resultdriver->num_rows > 0) {
                                           while($rowdriver = $resultdriver->fetch_assoc()) {
-                                             echo "<option value='".$rowdriver['employeeid']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
+                                             echo "<option value='"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."'>"."Mr. ".$rowdriver['fname']." ".$rowdriver['lname']."</option>";
                                           }
                                        }
                                     ?>
@@ -827,7 +827,7 @@ if (window.innerWidth < 992) {
 
                   if (codingDay !== selectedDay) {
                         const option = document.createElement('option');
-                        option.value = vehicle.plate_number;
+                        option.value =  vehicle.brand + " " + vehicle.model;
                         option.textContent = vehicle.brand + " " + vehicle.model;
                         vehicleSelect.appendChild(option);
                   }
@@ -1079,7 +1079,24 @@ if (window.innerWidth < 992) {
                               </span>
                            </div>
                            <div class="info-heading">
-                              <img src="uploads/Maynard.png" alt="Profile">
+                              <?php
+                                 $name = $rowvrf['name'];
+                                 $selectppicture = $conn->prepare("SELECT * FROM usertb WHERE CONCAT(fname, ' ', lname) = ?");
+                                 $selectppicture->execute([$name]);
+                                 $resultppicture = $selectppicture->get_result();
+
+                                 if ($resultppicture->num_rows > 0) {
+                                    $rowppicture = $resultppicture->fetch_assoc();
+                                    if ($rowppicture['ppicture'] != null) {
+                                       $profilePicture = $rowppicture['ppicture'];
+                                    } else {
+                                       $profilePicture = "default.png";
+                                    } 
+                                 } else {
+                                    $profilePicture = "default.png";
+                                 }
+                              ?>
+                              <img src="uploads/<?php echo htmlspecialchars($profilePicture); ?>" alt="Profile">
                               <span class="info-heading-text">
                                  <span class="name"><?php echo $rowvrf['name'] ?></span>
                                  <span class="department"><?php echo $rowvrf['department'] ?></span>
@@ -1360,6 +1377,7 @@ if (window.innerWidth < 992) {
                                        if($_SESSION['role'] == "Accountant")
                                        {
                                           ?>
+                                             <span style="transform: translateX(60px);">
                                              <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
                                              <div class="input-container">
                                                 <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.5vw;" step="0.01" min="0" required>
@@ -1368,11 +1386,13 @@ if (window.innerWidth < 992) {
                                                    <label id="pesoSign">₱</label>
                                                 </div>
                                              </div>
+                                             </span>
                                           <?php
                                        }
                                        else
                                        {
                                           ?>
+                                             <span style="transform: translateX(60px);">
                                              <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
                                              <div class="input-container">   
                                                 <?php
@@ -1383,7 +1403,7 @@ if (window.innerWidth < 992) {
                                                       <?php
                                                    }
                                                 ?>
-                                                   <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                                   <input name="vrftotal_cost" type="number" id="totalCost" value="<?php if($rowvrf['total_cost'] == 0.00) {echo"";} ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
                                                 <?php
                                                    if($rowvrf['total_cost'] == 0.00)
                                                    {
@@ -1397,6 +1417,7 @@ if (window.innerWidth < 992) {
                                                    <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;\"" ?> id="pesoSign">₱</label>
                                                 </div>
                                              </div>
+                                             </span>
                                           <?php
                                        }
                                     ?>
@@ -1595,7 +1616,24 @@ if (window.innerWidth < 992) {
                               </span>
                            </div>
                            <div class="info-heading">
-                              <img src="uploads/Maynard.png" alt="Profile">
+                           <?php
+                              $name = $rowvrf['name'];
+                              $selectppicture = $conn->prepare("SELECT * FROM usertb WHERE CONCAT(fname, ' ', lname) = ?");
+                              $selectppicture->execute([$name]);
+                              $resultppicture = $selectppicture->get_result();
+
+                              if ($resultppicture->num_rows > 0) {
+                                 $rowppicture = $resultppicture->fetch_assoc();
+                                 if ($rowppicture['ppicture'] != null) {
+                                    $profilePicture = $rowppicture['ppicture'];
+                                 } else {
+                                    $profilePicture = "default.png";
+                                 } 
+                              } else {
+                                 $profilePicture = "default.png";
+                              }
+                           ?>
+                           <img src="uploads/<?php echo htmlspecialchars($profilePicture); ?>" alt="Profile">
                               <span class="info-heading-text">
                                  <span class="name"><?php echo $rowvrf['name'] ?></span>
                                  <span class="department"><?php echo $rowvrf['department'] ?></span>
@@ -1789,31 +1827,44 @@ if (window.innerWidth < 992) {
                                     
                                  </div>   
                                  <span class="address" style="margin-top:-1.8vw">
-                                    <span style="text-align:center">TRANSPORTATION COST</span>
-                                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
-                                    <div class="input-container">   
-                                       <?php
-                                          if($rowvrf['total_cost'] == 0.00)
-                                          {
-                                             ?>
-                                                <a href="#vrespopup">      
-                                             <?php
-                                          }
-                                       ?>
-                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
-                                       <?php
-                                          if($rowvrf['total_cost'] == 0.00)
-                                          {
-                                             ?>
-                                                </a>      
-                                             <?php
-                                          }
-                                       ?>
-                                       <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
-                                       <div>
-                                          <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
+                                    <!-- <span style="text-align:center;">TRANSPORTATION COST</span>
+                                    <span style="transform: translateX(60px);">
+                                       <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                                       <div class="input-container">
+                                          <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly></a>
+                                          <label for="total_cost" style="margin-left:13px">TOTAL COST</label>
+                                          <div>
+                                             <label id="pesoSign">₱</label>
+                                          </div>
                                        </div>
-                                    </div>
+                                    </span> -->
+                                    <span style="text-align:center">TRANSPORTATION COST</span>
+                                    <span style="transform: translateX(60px);">
+                                       <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
+                                       <div class="input-container">   
+                                          <?php
+                                             if($rowvrf['total_cost'] == 0.00)
+                                             {
+                                                ?>
+                                                   <a href="#vrespopup">      
+                                                <?php
+                                             }
+                                          ?>
+                                             <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                          <?php
+                                             if($rowvrf['total_cost'] == 0.00)
+                                             {
+                                                ?>
+                                                   </a>      
+                                                <?php
+                                             }
+                                          ?>
+                                          <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                          <div>
+                                             <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
+                                          </div>
+                                       </div>
+                                    </span>
                                     <script>
                                        function updatePesoVisibility() {
                                           if (document.activeElement === input || input.checkValidity()) {
@@ -1974,7 +2025,24 @@ if (window.innerWidth < 992) {
                               </span>
                            </div>
                            <div class="info-heading">
-                              <img src="uploads/Maynard.png" alt="Profile">
+                              <?php
+                                 $name = $rowvrf['name'];
+                                 $selectppicture = $conn->prepare("SELECT * FROM usertb WHERE CONCAT(fname, ' ', lname) = ?");
+                                 $selectppicture->execute([$name]);
+                                 $resultppicture = $selectppicture->get_result();
+
+                                 if ($resultppicture->num_rows > 0) {
+                                    $rowppicture = $resultppicture->fetch_assoc();
+                                    if ($rowppicture['ppicture'] != null) {
+                                       $profilePicture = $rowppicture['ppicture'];
+                                    } else {
+                                       $profilePicture = "default.png";
+                                    } 
+                                 } else {
+                                    $profilePicture = "default.png";
+                                 }
+                              ?>
+                              <img src="uploads/<?php echo htmlspecialchars($profilePicture); ?>" alt="Profile">  
                               <span class="info-heading-text">
                                  <span class="name"><?php echo $rowvrf['name'] ?></span>
                                  <span class="department"><?php echo $rowvrf['department'] ?></span>
@@ -2157,6 +2225,7 @@ if (window.innerWidth < 992) {
                                  </div>   
                                  <span class="address" style="margin-top:-1.8vw">
                                     <span style="text-align:center">TRANSPORTATION COST</span>
+                                    <span style="transform: translateX(60px);">
                                     <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
                                     <div class="input-container">   
                                        <?php
@@ -2181,6 +2250,7 @@ if (window.innerWidth < 992) {
                                           <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
                                        </div>
                                     </div>
+                                    </span>
                                     <script>
                                        function updatePesoVisibility() {
                                           if (document.activeElement === input || input.checkValidity()) {
