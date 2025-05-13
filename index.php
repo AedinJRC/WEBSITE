@@ -1156,7 +1156,7 @@ footer .column > a:hover {
                     <h1>Introducing Good Solution</h1>
                     <h2>An online platform for CSA-Biñan employees to manage their school vehicle reservation.</h2>
                     <div class="create_butt_container">
-                        <button class="intro_butt"><a href="index.php?sig=a">Sign up now</a></button>
+                        <button class="intro_butt"><a href="test.php">Click here</a></button>
                     </div>
                 </div>
                 <div class="intro_pic">
