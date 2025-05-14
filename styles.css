@@ -737,7 +737,7 @@ li
       font-weight: bold;
    }
    #role {
-      font-size: 1vw;
+      font-size: 0.83vw;
    }
    #profile {
       height: 4.38vw;
@@ -768,6 +768,7 @@ li
       background-color: var(--yellow);
       height: 10px;
       width: 10px;
+      border-radius: 100%;
    }
 }
 .sidebar.active {
@@ -899,6 +900,11 @@ li
       display: block;
       height: 2.92vw;
       width: 2.92vw;
+   }
+   #pending-notif
+   {
+      position:absolute;
+      transform:translateX(10.9vw)
    }
 }
 #dateFiled
