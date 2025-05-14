@@ -829,6 +829,7 @@ if (window.innerWidth < 992) {
       // Dynamically set inactivity time based on PHP session or GET parameters
       const inactivityTime = <?php 
          // Default inactivity time
+         
          if (isset($_GET["vsch"]) and !empty($_GET["vsch"])) {
             $defaultTime = 3000; // 3 seconds for vehicle schedules
          } elseif (isset($_GET["mveh"]) and !empty($_GET["mveh"])) {
@@ -853,6 +854,8 @@ if (window.innerWidth < 992) {
             $defaultTime = 3000; // 3 seconds for cancelled requests
          } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
             $defaultTime = 30000; // 3 seconds for pending approval
+         } if($_SESSION['role']="Director") {
+            $defaultTime = 30000; // 3 seconds for Director
          } else {
             $defaultTime = 3000;
          }
