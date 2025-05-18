@@ -710,7 +710,7 @@ if (window.innerWidth < 992) {
                </li>
             </ul>
          <?php
-      } elseif ($_SESSION['role']=="Directory")
+      } elseif ($_SESSION['role']=="Director")
       {
          ?>
             <ul class="nav-list">
@@ -977,7 +977,7 @@ if (window.innerWidth < 992) {
             $defaultTime = 3000; // 3 seconds for cancelled requests
          } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
             $defaultTime = 30000; // 3 seconds for pending approval
-         } if($_SESSION['role']="Director") {
+         } if($_SESSION['role']=="Director") {
             $defaultTime = 30000; // 3 seconds for Director
          } else {
             $defaultTime = 3000;
