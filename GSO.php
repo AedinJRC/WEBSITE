@@ -395,14 +395,7 @@ if (window.innerWidth < 992) {
 <?php
    function home()
    {
-      if ($_SESSION['role'] == 'User') {
-         include 'calendar.php';
-      }
-      else {
-         ?>
-            
-         <?php
-      }  
+      include 'calendar.php';
    }
    function vehicleReservationForm()
    {
