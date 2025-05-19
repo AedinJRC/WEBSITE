@@ -173,20 +173,25 @@ main
          .input-container input:focus,
          .input-container input:valid,
          .input-container select:focus,
-         .input-container select:valid {
+         .input-container select:valid,
+         .input-container input.filled,
+         .input-container select.filled {
             border-color: var(--maroon);
          }
-   
+
          .input-container input:focus ~ label,
          .input-container input:valid ~ label,
          .input-container select:focus ~ label,
-         .input-container select:valid ~ label {
+         .input-container select:valid ~ label,
+         .input-container input.filled ~ label,
+         .input-container select.filled ~ label {
             top: 0;
-            font-size: 10px; /* 15px * 2/3 */
+            font-size: 10px;
             color: black;
             background: white;
-            padding: 0 4px; /* 6px * 2/3 */
+            padding: 0 4px;
          }
+
          .input-container input[type="date"]:not(:placeholder-shown) ~ label,
          .input-container input[type="date"]:focus ~ label,
          .input-container input[type="file"]:not(:placeholder-shown) ~ label,
@@ -251,8 +256,8 @@ main
             }
          }
       }
-      .subbtn-container {
-         transform: translate(4px,18px);/* -120px * 2/3, 40px * 2/3 */
+      .subbtn-container {/* -120px * 2/3, 40px * 2/3 */
+         transform: translateY(-5px);
          display: flex;
          background-color: transparent;
          justify-content: space-between;
@@ -737,7 +742,7 @@ li
       font-weight: bold;
    }
    #role {
-      font-size: 1vw;
+      font-size: 0.83vw;
    }
    #profile {
       height: 4.38vw;
@@ -761,6 +766,14 @@ li
       display: none;
       height: 2.92vw;
       width: 2.92vw;
+   }
+   #pending-notif
+   {
+      display: inline-block;
+      background-color: var(--yellow);
+      height: 10px;
+      width: 10px;
+      border-radius: 100%;
    }
 }
 .sidebar.active {
@@ -892,6 +905,19 @@ li
       display: block;
       height: 2.92vw;
       width: 2.92vw;
+   }
+   #pending-notif
+   {
+      position:absolute;
+      transform:translateX(10.9vw)
+   }
+   #pending-number
+   {
+      background-color:var(--yellow);
+      padding:0 0.4vw;
+      border-radius:45%;
+      color: var(--maroon);
+      font-weight: bold;
    }
 }
 #dateFiled

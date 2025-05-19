@@ -156,78 +156,682 @@ if (window.innerWidth < 992) {
             </div>
          </a>
       </li>
-      <ul class="nav-list">
-         <li style="height: 2.5vw;"></li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
-               <img src="PNG/Calendar.png" alt="Calendar">
-               <span>Calendar</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                  <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
-               <img src="PNG/Pie.png" alt="Requests">
-               <span>Requests</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?papp=a"><span>Pending Approval</span></a></li>
-                  <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                  <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
-               <img src="PNG/Vehicle.png" alt="Vehicle">
-               <span>Vehicles</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
-                  <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                  <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
-               <img src="PNG/Account.png" alt="Report">
-               <span>Accounts</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
-                  <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
-               <img src="PNG/File.png" alt="Report">
-               <span>Report</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-                  <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
-               </div>
-            </ul>
-         </li>
-      </ul>
-
       <?php
+      if($_SESSION['role'] == "Secretary")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($penging_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
+      elseif($_SESSION['role'] == "Immediate Head")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($penging_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
+      elseif($_SESSION == "Accountant")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($penging_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
+      elseif($_SESSION == "Director")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($penging_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
+      elseif($_SESSION['role'] == "Accountant")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($penging_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      } elseif ($_SESSION['role']=="Director")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($penging_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
       include 'config.php'; // Your DB connection
 
       if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['ppicture'])) {
@@ -336,6 +940,8 @@ if (window.innerWidth < 992) {
          summaryReport();
          elseif(isset($_GET["mrep"]) and !empty($_GET["mrep"]))
          maintenanceReport();
+         elseif($_SESSION['role'] == "Director")
+         pendingApproval();
          else
          home();
       ?>
@@ -346,6 +952,7 @@ if (window.innerWidth < 992) {
       // Dynamically set inactivity time based on PHP session or GET parameters
       const inactivityTime = <?php 
          // Default inactivity time
+         
          if (isset($_GET["vsch"]) and !empty($_GET["vsch"])) {
             $defaultTime = 3000; // 3 seconds for vehicle schedules
          } elseif (isset($_GET["mveh"]) and !empty($_GET["mveh"])) {
@@ -369,7 +976,9 @@ if (window.innerWidth < 992) {
          } elseif (isset($_GET["creq"]) and !empty($_GET["creq"])) {
             $defaultTime = 3000; // 3 seconds for cancelled requests
          } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
-            $defaultTime = 3000; // 3 seconds for pending approval
+            $defaultTime = 30000; // 3 seconds for pending approval
+         } if($_SESSION['role']=="Director") {
+            $defaultTime = 30000; // 3 seconds for Director
          } else {
             $defaultTime = 3000;
          }
@@ -389,7 +998,27 @@ if (window.innerWidth < 992) {
       document.onkeydown = resetTimer; // Use keydown instead of keypress
       document.onscroll = resetTimer;
       document.onclick = resetTimer;
-   </script>
+
+      document.addEventListener("DOMContentLoaded", function () {
+         const inputIds = ['department', 'flname'];
+         inputIds.forEach(function(id) {
+            const input = document.getElementById(id);
+            if (!input) return;
+
+            // For inputs
+            if (input.tagName.toLowerCase() === 'input' && input.value.trim() !== "") {
+               input.classList.add('filled');
+            }
+
+            // For selects
+            if (input.tagName.toLowerCase() === 'select' && input.value !== "") {
+               input.classList.add('filled');
+            }
+         });
+      });
+      </script>
+
+
 </body>
 </html>
 <?php
@@ -439,16 +1068,16 @@ if (window.innerWidth < 992) {
                   <div class="vrf-details-column">
                      <div class="input-container">
                         <?php
-                           if ($_SESSION['role'] != 'Secretary') 
+                           if ($_SESSION['role'] != 'Secretary')
                            {
                               ?>
-                                 <input name="vrfname" value="<?php if($_SESSION['role']!="Secretary") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" readonly> 
+                                 <input name="vrfname" value="<?php if($_SESSION['role']!="Secretary") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="flname" readonly></a>
                               <?php
                            }
                            else
                            {
                               ?>
-                                 <select name="vrfname" id="department" required>
+                                 <select name="vrfname" id="name" required>
                                     <option value="" disabled selected></option>
                                     <?php
                                        include 'config.php';
@@ -461,10 +1090,10 @@ if (window.innerWidth < 992) {
                                        }
                                     ?>
                                  </select>
-                              <?php    
+                              <?php
                            }
                         ?>
-                        
+
                         <label for="name">NAME:</label>
                      </div>
                      <div class="input-container">
@@ -764,7 +1393,7 @@ if (window.innerWidth < 992) {
                      <span style="transform: translateX(60px);">
                         <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
                         <div class="input-container">
-                           <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly></a>
+                           <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:18px;cursor: not-allowed;" step="0.01" min="0" readonly></a>
                            <label for="total_cost" style="margin-left:13px">TOTAL COST</label>
                            <div>
                               <label id="pesoSign">₱</label>
@@ -1005,7 +1634,7 @@ if (window.innerWidth < 992) {
                   $status="accounting_status";
                }
                include 'config.php';
-               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status='Pending' ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status2 ORDER BY date_filed DESC, id DESC";
                $resultvrf = $conn->query($selectvrf);
                if ($resultvrf->num_rows > 0) {
                   $rowvrf = $resultvrf->fetch_assoc();
@@ -1109,21 +1738,13 @@ if (window.innerWidth < 992) {
                               </div>
                               <div>
                                  <div><div class="title">Driver:</div><div class="dikoalam">
-                                    <?php 
-                                       $employeeid = $rowvrf['driver'];
-                                       $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
-                                       $resultdriver = $conn->query($selectdriver);
-                                       if ($resultdriver->num_rows > 0) {
-                                          $rowdriver = $resultdriver->fetch_assoc();
-                                          echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname'];
-                                       } else {
-                                          echo $rowvrf['driver'];
-                                       } 
+                                    <?php
+                                       echo $rowvrf['driver'];
                                     ?>
                                  </div></div>
                                  <div><div class="title">Vehicle to be used:</div><div class="dikoalam">
-                                    <?php 
-                                       echo $rowvrf['vehicle']; 
+                                    <?php
+                                       echo $rowvrf['vehicle'];
                                     ?>
                                  </div></div>
                                  <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
@@ -1308,7 +1929,7 @@ if (window.innerWidth < 992) {
                                                       if ($resultdriver->num_rows > 0) {
                                                          while($rowdriver = $resultdriver->fetch_assoc()) {
                                                             ?>
-                                                               <option value="<?php echo $rowdriver['employeeid']; ?>"><?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?></option>
+                                                               <option value="<?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?>"><?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?></option>
                                                             <?php
                                                          }
                                                       }
@@ -1325,7 +1946,7 @@ if (window.innerWidth < 992) {
                                  <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                                  <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
                               </span>
-                              <div class="vrf-details" style="margin-top:1vw;">
+                              <div class="vrf-details" style="margin-top:13.33px;">
                                  <div class="input-container">
                                     <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
                                     <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
@@ -1343,7 +1964,7 @@ if (window.innerWidth < 992) {
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -1352,8 +1973,8 @@ if (window.innerWidth < 992) {
                                              } else {
                                                 ?>
                                                    <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
-                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
-                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 190px; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 50px; border-top-left-radius: 0; border-bottom-left-radius: 0;">
                                                       <label for="passengerCount">PASSENGER NAMES</label>
                                                    </div>
 
@@ -1374,7 +1995,7 @@ if (window.innerWidth < 992) {
                                              <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
                                              <div class="input-container">
                                                 <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.5vw;" step="0.01" min="0" required>
-                                                <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                                <label for="total_cost" style="margin-left:13.33px">TOTAL COST</label>
                                                 <div>
                                                    <label id="pesoSign">₱</label>
                                                 </div>
@@ -1405,7 +2026,7 @@ if (window.innerWidth < 992) {
                                                       <?php
                                                    }
                                                 ?>
-                                                <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                                <label for="total_cost" style="margin-left:13.33">TOTAL COST</label>
                                                 <div>
                                                    <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;\"" ?> id="pesoSign">₱</label>
                                                 </div>
@@ -1440,9 +2061,9 @@ if (window.innerWidth < 992) {
                                        input.addEventListener("focus", updatePesoVisibility);
                                        input.addEventListener("blur", updatePesoVisibility);
                                     </script>
-                                    <div class="subbtn-container">
+                                    <div class="subbtn-container" style="transform: translateY(0px);">
                                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
-                                       <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                       <a style="transform:translateY(5px);" href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
                                        <button class="rejbtn" type="submit" name="vrfrejbtn">Reject</button>
                                        <button class="appbtn" type="submit" name="vrfappbtn">Approve</button>
                                     </div>
@@ -1780,7 +2401,7 @@ if (window.innerWidth < 992) {
                                  <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                                  <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
                               </span>
-                              <div class="vrf-details" style="margin-top:1vw;">
+                              <div class="vrf-details" style="margin-top:13.33;">
                                  <div class="input-container">
                                     <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
                                     <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
@@ -1798,7 +2419,7 @@ if (window.innerWidth < 992) {
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -1807,8 +2428,8 @@ if (window.innerWidth < 992) {
                                              } else {
                                                 ?>
                                                    <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
-                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
-                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 190px; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 50px; border-top-left-radius: 0; border-bottom-left-radius: 0;">
                                                       <label for="passengerCount">PASSENGER NAMES</label>
                                                    </div>
 
@@ -1852,7 +2473,7 @@ if (window.innerWidth < 992) {
                                                 <?php
                                              }
                                           ?>
-                                          <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                          <label for="total_cost" style="margin-left:13.33px">TOTAL COST</label>
                                           <div>
                                              <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
                                           </div>
@@ -1882,7 +2503,7 @@ if (window.innerWidth < 992) {
                                        input.addEventListener("blur", updatePesoVisibility);
                                     </script>
                                     <div class="subbtn-container">
-                                       <a style="transform:translate(0,1vw)" href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                       <a style="transform:translate(0,13.33px)" href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
                                     </div>
                                  </span>
                               </div>
@@ -2177,7 +2798,7 @@ if (window.innerWidth < 992) {
                                  <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                                  <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
                               </span>
-                              <div class="vrf-details" style="margin-top:1vw;">
+                              <div class="vrf-details" style="margin-top:13.33px;">
                                  <div class="input-container">
                                     <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
                                     <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
@@ -2195,7 +2816,7 @@ if (window.innerWidth < 992) {
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -2204,8 +2825,8 @@ if (window.innerWidth < 992) {
                                              } else {
                                                 ?>
                                                    <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
-                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
-                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 190px; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 50px; border-top-left-radius: 0; border-bottom-left-radius: 0;">
                                                       <label for="passengerCount">PASSENGER NAMES</label>
                                                    </div>
 
@@ -2229,7 +2850,7 @@ if (window.innerWidth < 992) {
                                              <?php
                                           }
                                        ?>
-                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:20px;" step="0.01" min="0" readonly>
                                        <?php
                                           if($rowvrf['total_cost'] == 0.00)
                                           {
@@ -2238,7 +2859,7 @@ if (window.innerWidth < 992) {
                                              <?php
                                           }
                                        ?>
-                                       <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
+                                       <label for="total_cost" style="margin-left:13px">TOTAL COST</label>
                                        <div>
                                           <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
                                        </div>
@@ -2268,7 +2889,7 @@ if (window.innerWidth < 992) {
                                        input.addEventListener("blur", updatePesoVisibility);
                                     </script>
                                     <div class="subbtn-container">
-                                       <a style="transform:translate(0,1vw)" href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                       <a style="transform:translate(0,13.33px);" href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
                                     </div>
                                  </span>
                               </div>

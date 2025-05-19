@@ -1226,7 +1226,7 @@ footer .column > a:hover {
                             $_SESSION["updated_at"] = $loginrow["updated_at"];
                             $logincount = mysqli_num_rows($loginquery);
                             if($logincount == 1)
-                                header("location: gso.php");
+                                header("location: GSO.php");
                         }
                         else
                         {

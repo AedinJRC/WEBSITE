@@ -1,7 +1,16 @@
 function toggleDropdown(button) {
-  button.nextElementSibling.classList.toggle('show');
-  button.classList.toggle('rotate');
+   const dropdown = button.nextElementSibling;
+   const dropdownId = button.getAttribute('data-id') || 'defaultDropdown';
+
+   // Toggle dropdown visibility and button rotation
+   dropdown.classList.toggle('show');
+   button.classList.toggle('rotate');
+
+   // Save state to localStorage
+   const isOpen = dropdown.classList.contains('show');
+   localStorage.setItem(`dropdownState-${dropdownId}`, isOpen ? 'open' : 'closed');
 }
+
 
 function toggleSidebar(button) {
   const sidebar = event.currentTarget.parentElement;
@@ -63,4 +72,17 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     sidebar.classList.add('active'); // Optional: only needed if your HTML doesn't already include `.active`
   }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+   document.querySelectorAll('[data-id]').forEach(button => {
+      const dropdownId = button.getAttribute('data-id');
+      const state = localStorage.getItem(`dropdownState-${dropdownId}`);
+      const dropdown = button.nextElementSibling;
+
+      if (state === 'open') {
+         dropdown.classList.add('show');
+         button.classList.add('rotate');
+      }
+   });
 });
