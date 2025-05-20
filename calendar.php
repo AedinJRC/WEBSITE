@@ -289,6 +289,11 @@ function generateColorFromString($string) {
             list-style-type: none;
         }
 
+        .fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
     </style>
 </head>
 <body>
@@ -508,6 +513,20 @@ document.addEventListener("DOMContentLoaded", function () {
         field.addEventListener('change', function() { updateField(field); });
     });
 });
+
+ // Apply fade transition to all <a> tags with class "request-btn-callendar"
+  document.querySelectorAll('a.request-btn-callendar').forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault(); // prevent instant jump
+      document.body.classList.add('fade-out');
+
+      setTimeout(() => {
+        window.location.href = this.href;
+      }, 500); // wait for transition to finish
+    });
+  });
+
+
 </script>
 
 </body>
