@@ -1,5 +1,4 @@
 <?php
-// Include config file for database connection
 include('config.php');
 
 // Check if a month and year were passed in the URL, otherwise use the current month/year

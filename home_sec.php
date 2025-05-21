@@ -5,7 +5,8 @@ $statusFilter = isset($_GET['status']) ? $_GET['status'] : 'Pending';
 $searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 $sql = "SELECT * FROM vrftb 
-        WHERE gsodirector_status = ? 
+        WHERE immediatehead_status = 'Approved' 
+          AND gsodirector_status = ? 
           AND departure >= CURDATE()";
 
 $params = [];
@@ -448,8 +449,8 @@ table {
           <th scope="col">Departure</th>
           <th scope="col">Vehicle</th>
           <th scope="col">Driver</th>
-          <th scope="col">Accounting</th>
           <th scope="col">GSO Assistant</th>
+          <th scope="col">Accounting</th>
           <th scope="col">GSO Director</th>
         </tr>
       </thead>
