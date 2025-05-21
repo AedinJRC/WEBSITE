@@ -527,6 +527,9 @@ button.submit-btn:hover {
                                 <option value="Sedan">Sedan</option>
                                 <option value="SUV">SUV</option>
                                 <option value="Truck">Truck</option>
+                                 <option value="Sedan">Sedan</option>
+                                <option value="SUV">SUV</option>
+                                <option value="Truck">Truck</option>
                             </select>
                             <label for="body-type">Body Type</label>
                         </div>
