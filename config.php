@@ -1,9 +1,14 @@
 <?php
+   $hostname = "ftp.papskorms.com";
+   $username = "admin@csa.papskorms.com";
+   $password = "\$tud3nts@CSA";
+   $dbname = "vehiclemonitoringdbms";
+   
    $hostname = "localhost";
    $username = "root";
    $password = "";
    $dbname = "vehiclemonitoringdbms";
-
+ 
    try {
       // Enable MySQLi exceptions
       mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);

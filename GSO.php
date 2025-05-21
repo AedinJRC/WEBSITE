@@ -143,7 +143,7 @@ if (window.innerWidth < 992) {
 
 </script>
 
-   <nav class="sidebar active">
+<nav class="sidebar active">
       <button onclick="toggleSidebar()" id="logo">
          <img src="PNG/GSO_Logo.png" alt="">
          <span class="logo">GSO</span>
@@ -156,78 +156,682 @@ if (window.innerWidth < 992) {
             </div>
          </a>
       </li>
-      <ul class="nav-list">
-         <li style="height: 2.5vw;"></li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
-               <img src="PNG/Calendar.png" alt="Calendar">
-               <span>Calendar</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                  <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
-               <img src="PNG/Pie.png" alt="Requests">
-               <span>Requests</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?papp=a"><span>Pending Approval</span></a></li>
-                  <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                  <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
-               <img src="PNG/Vehicle.png" alt="Vehicle">
-               <span>Vehicles</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
-                  <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                  <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
-               <img src="PNG/Account.png" alt="Report">
-               <span>Accounts</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
-                  <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
-               </div>
-            </ul>
-         </li>
-         <li>
-            <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
-               <img src="PNG/File.png" alt="Report">
-               <span>Report</span>
-               <img src="PNG/Down.png" alt="DropDown">
-            </button>
-            <ul class="dropdown-container">
-               <div>
-                  <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-                  <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
-               </div>
-            </ul>
-         </li>
-      </ul>
-
       <?php
+      if($_SESSION['role'] == "Secretary")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($pending_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
+      elseif($_SESSION['role'] == "Immediate Head")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($pending_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
+      elseif($_SESSION == "Accountant")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($pending_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
+      elseif($_SESSION == "Director")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($pending_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
+      elseif($_SESSION['role'] == "Accountant")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($pending_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      } elseif ($_SESSION['role']=="Director")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($pending_count>0)
+                              {
+
+                              }
+                              else
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      }
       include 'config.php'; // Your DB connection
 
       if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['ppicture'])) {
@@ -235,21 +839,21 @@ if (window.innerWidth < 992) {
               $filename = uniqid() . "_" . basename($_FILES['ppicture']['name']);
               $target_directory = "uploads/";
               $target_file = $target_directory . $filename;
-      
+
               if (move_uploaded_file($_FILES['ppicture']['tmp_name'], $target_file)) {
                   $employeeid = $_SESSION['employeeid']; // Assumes employee ID is stored in session
-      
+
                   // Update picture in database
                   $updateQuery = "UPDATE usertb SET ppicture = ? WHERE employeeid = ?";
                   $stmt = $conn->prepare($updateQuery);
                   $stmt->bind_param("ss", $filename, $employeeid);
-      
+
                   if ($stmt->execute()) {
                       $_SESSION['ppicture'] = $filename; // Update session with new filename
                   } else {
                       echo "<script>alert('Failed to update profile picture in the database.');</script>";
                   }
-      
+
                   $stmt->close();
               } else {
                   echo "<script>alert('Failed to upload image file.');</script>";
@@ -257,15 +861,15 @@ if (window.innerWidth < 992) {
           } else {
               echo "<script>alert('Error uploading file.');</script>";
           }
-      
+
           $conn->close();
       }
       ?>
 <div id="logout">
     <form id="uploadForm" method="POST" enctype="multipart/form-data">
         <!-- Profile Picture -->
-        <img id="picture" 
-             src="uploads/<?php echo $_SESSION['ppicture']; ?>" 
+        <img id="picture"
+             src="uploads/<?php echo $_SESSION['ppicture']; ?>"
              alt="Profile Picture"
             style="cursor: pointer; width: 5vw; height: 5vw; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;"
              title="Click to change profile picture">
@@ -297,6 +901,7 @@ if (window.innerWidth < 992) {
     </a>
 </div>
    </nav>
+
    <?php
       if(isset($_GET["papp"]) and !empty($_GET["papp"]))
       {
@@ -396,11 +1001,11 @@ if (window.innerWidth < 992) {
 function home()
 {
     if ($_SESSION['role'] == 'User') {
-        include 'calendar.php';
+      include 'calendar.php';
     } elseif (in_array($_SESSION['role'], ['Secretary', 'Admin', 'Director'])) {
-        include 'home_sec.php';
+      include 'home_sec.php';
     } else {
-        echo "Unknown role.";
+      include 'calendar.php';
     }
 
    }
