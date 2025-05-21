@@ -341,15 +341,15 @@ if (window.innerWidth < 992) {
                            <?php
                               if($pending_count>0)
                               {
-
-                              }
-                              else
-                              {
                                  ?>
                                     <span id="pending-number"><?php
                                        echo $pending_count;
                                     ?></span>
                                  <?php
+                              }
+                              else
+                              {
+                                 
                               }
                            ?>
                         </a></li>
@@ -435,15 +435,15 @@ if (window.innerWidth < 992) {
                            <?php
                               if($pending_count>0)
                               {
-
-                              }
-                              else
-                              {
                                  ?>
                                     <span id="pending-number"><?php
                                        echo $pending_count;
                                     ?></span>
                                  <?php
+                              }
+                              else
+                              {
+                                 
                               }
                            ?>
                         </a></li>
@@ -679,15 +679,15 @@ if (window.innerWidth < 992) {
                            <?php
                               if($pending_count>0)
                               {
-
-                              }
-                              else
-                              {
                                  ?>
                                     <span id="pending-number"><?php
                                        echo $pending_count;
                                     ?></span>
                                  <?php
+                              }
+                              else
+                              {
+
                               }
                            ?>
                         </a></li>
@@ -710,7 +710,41 @@ if (window.innerWidth < 992) {
                </li>
             </ul>
          <?php
-      } elseif ($_SESSION['role']=="Director")
+      } 
+      elseif($_SESSION['role'] == "User")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      } 
+      elseif($_SESSION['role'] == "Driver")
       {
          ?>
             <ul class="nav-list">
@@ -781,6 +815,128 @@ if (window.innerWidth < 992) {
                                        echo $pending_count;
                                     ?></span>
                                  <?php
+                              }
+                           ?>
+                        </a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                     <img src="PNG/Vehicle.png" alt="Vehicle">
+                     <span>Vehicles</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                     <img src="PNG/Account.png" alt="Report">
+                     <span>Accounts</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                     <img src="PNG/File.png" alt="Report">
+                     <span>Report</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+            </ul>
+         <?php
+      } 
+      elseif ($_SESSION['role']=="Director")
+      {
+         ?>
+            <ul class="nav-list">
+               <li style="height: 2.5vw;"></li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                     <img src="PNG/Calendar.png" alt="Calendar">
+                     <span>Calendar</span>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                     </div>
+                  </ul>
+               </li>
+               <li>
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                     <img src="PNG/Pie.png" alt="Requests">
+                     <span>Requests</span>
+                     <?php
+                        if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin')
+                        {
+                           $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+                           $status="gsoassistant_status";
+                        }
+                        elseif($_SESSION['role']=='Immediate Head')
+                        {
+                           $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+                           $status="immediatehead_status";
+                        }
+                        elseif($_SESSION['role']=='Director')
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
+                        }
+                        else if($_SESSION['role']=='Accountant')
+                        {
+                           $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+
+                           $status="accounting_status";
+                        }
+                        include 'config.php';
+                        $selectpending = "SELECT * FROM vrftb WHERE $status2";
+                        $resultpending = $conn->query($selectpending);
+                        $pending_count = $resultpending->num_rows;
+                        if ($pending_count > 0) {
+                           ?>
+                              <div id="pending-notif"></div>
+                           <?php
+                        }
+                     ?>
+                     <img src="PNG/Down.png" alt="DropDown">
+                  </button>
+                  <ul class="dropdown-container">
+                     <div>
+                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                           <?php
+                              if($pending_count>0)
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $pending_count;
+                                    ?></span>
+                                 <?php
+                              }
+                              else
+                              {
+                                 
                               }
                            ?>
                         </a></li>
