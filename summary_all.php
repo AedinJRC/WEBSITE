@@ -1,25 +1,49 @@
 <?php 
 include 'config.php';
 
+// --- SESSION VALIDATION ---
 if (!isset($_SESSION['fname']) || !isset($_SESSION['lname'])) {
     header("Location: login.php");
     exit();
 }
 
-$full_name = $_SESSION['fname'] . ' ' . $_SESSION['lname'];
-// --- SEARCH FUNCTIONALITY ---
+$full_name = $_SESSION['fname'] . ' ' . $_SESSION['lname']; // Combine fname and lname
+
+// --- SEARCH & FILTER INITIALIZATION ---
 $search = '';
-$status_filter = '';  // Default to empty if no filter is selected
+$status_filter = '';
 
 if (isset($_POST['search'])) {
-    $search = $conn->real_escape_string($_POST['search']); // Sanitize search input
+    $search = $conn->real_escape_string($_POST['search']);
 }
 
 if (isset($_POST['status_filter']) && $_POST['status_filter'] != '') {
     $status_filter = $conn->real_escape_string($_POST['status_filter']);
 }
 
-// Build the SQL query based on search and status filter
+// --- TOTAL COST QUERY (after status_filter is defined) ---
+$total_query = "SELECT SUM(total_cost) AS total_spent FROM vrftb WHERE name = '$full_name'";
+if ($status_filter != '') {
+    $total_query .= " AND gsodirector_status = '$status_filter'";
+}
+
+$department = $_SESSION['department'];
+$dept_total_query = "SELECT SUM(total_cost) AS dept_total FROM vrftb WHERE department = '$department'";
+$dept_total_result = $conn->query($dept_total_query);
+
+$dept_total = 0;
+if ($dept_total_result && $row = $dept_total_result->fetch_assoc()) {
+    $dept_total = $row['dept_total'] ?? 0;
+}
+
+
+$total_result = $conn->query($total_query);
+$total_spent = 0;
+if ($total_result && $row = $total_result->fetch_assoc()) {
+    $total_spent = $row['total_spent'] ?? 0;
+}
+
+// --- MAIN DATA QUERY ---
 $sql = "SELECT * FROM vrftb WHERE name = '$full_name' ";
 if ($status_filter != '') {
     $sql .= "AND gsodirector_status = '$status_filter' ";
@@ -46,7 +70,6 @@ $sql .= "AND (
     gsodirector_status LIKE '%$search%' OR 
     accounting_status LIKE '%$search%' )";
 
-// Execute the query
 $result = $conn->query($sql);
 ?>
 
@@ -275,15 +298,63 @@ tbody tr:hover {
     border-color: #80050d; /* Darker maroon for the border */
     transform: scale(1.05); /* Slight zoom effect */
 }
+
+ .summary-container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 15px 25px;
+    background: #f9f6f6;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+  
+  .summary-container p,
+  .summary-container h3 {
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  .summary-container p.total-reports {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #80050d;
+  }
+  
+  .summary-container p.overall-cost,
+  .summary-container p.dept-cost {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  .summary-container h3 {
+    font-weight: 700;
+    color: #5a0011;
+    margin-top: 20px;
+  }
 </style>
 </head>
 <body>
 
 <div class="report-container">
-   <h1>burat Monitoring Summary Report</h1>
-   <p style="text-align:center; font-weight: bold; font-size: 2.3vh; color: #80050d; margin-bottom: 2vh;">
+   <h1>Vehicle Monitoring Summary Report</h1>
+<div class="summary-container">
+  <p class="total-reports">
     Total Reports: <?php echo $result->num_rows; ?>
-</p>
+  </p>
+
+  <p class="overall-cost">
+    <strong>My Total Cost:</strong> ₱<?php echo number_format($total_spent, 2); ?>
+  </p>
+
+  <h3>Total Cost for Department: <?php echo htmlspecialchars($department); ?></h3>
+
+  <p class="dept-cost">
+    <strong>₱<?php echo number_format($dept_total, 2); ?></strong>
+  </p>
+</div>
+
 <div style="text-align: center;">
   <button onclick="printTable()" class="hover-button" style="margin-bottom: 2vh; font-size: 1.6vh; padding: 1vh 2vh; border: .4vh solid var(--maroonColor); color: var(--maroonColor); border-radius: 1vh; cursor: pointer;">
     🖨️ Print Table
