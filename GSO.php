@@ -157,7 +157,7 @@ if (window.innerWidth < 992) {
          </a>
       </li>
       <?php
-      if($_SESSION['role'] == "Secretary")
+      if($_SESSION['role'] == "Secretary" OR $_SESSION['role'] == "Admin")
       {
          ?>
             <ul class="nav-list">
@@ -219,15 +219,15 @@ if (window.innerWidth < 992) {
                            <?php
                               if($pending_count>0)
                               {
-
-                              }
-                              else
-                              {
-                                 ?>
+                                  ?>
                                     <span id="pending-number"><?php
                                        echo $pending_count;
                                     ?></span>
                                  <?php
+                              }
+                              else
+                              {
+                                
                               }
                            ?>
                         </a></li>
@@ -936,7 +936,7 @@ if (window.innerWidth < 992) {
                               }
                               else
                               {
-                                 
+
                               }
                            ?>
                         </a></li>
