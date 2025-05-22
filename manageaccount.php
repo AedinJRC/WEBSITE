@@ -542,18 +542,7 @@
         <div id="message-container"></div>
 
         <?php
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "vehiclemonitoringdbms";
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+        include 'config.php';
 
         // Handle AJAX Update Request
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
@@ -656,14 +645,14 @@
                                    value="<?php echo htmlspecialchars($row['lname']); ?>" class="form-control">
                         </td>
                         <td>
-                            <select id="role-<?php echo htmlspecialchars($row['employeeid']); ?>" class="form-control">
-                                <?php
-                                    $roles = ['Accountant', 'Admin', 'Director', 'Driver', 'Immediate, Secretary, User']; 
-                                    foreach ($roles as $role) {
-                                        $selected = ($row['role'] == $role) ? 'selected' : '';
-                                        echo "<option value='" . htmlspecialchars($role) . "' $selected>" . htmlspecialchars($role) . "</option>";
-                                    }
-                                ?>
+                            <select id="role-<?php echo htmlspecialchars($row['employeeid']); ?>">
+                            <?php
+                                $roles = ['Accountant', 'Director', 'Driver', 'Immediate Head' , 'Secretary', 'User']; 
+                                foreach ($roles as $role) {
+                                    $selected = ($row['role'] == $role) ? 'selected' : '';
+                                    echo "<option value='" . htmlspecialchars($role) . "' $selected>" . htmlspecialchars($role) . "</option>";
+                                }
+                            ?>
                             </select>
                         </td>
                         <td>
