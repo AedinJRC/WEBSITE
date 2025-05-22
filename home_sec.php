@@ -191,6 +191,11 @@ table {
     box-shadow: 0 0.2vh 0.8vh rgba(231, 76, 60, 0.4);
   }
 
+  .Seen {
+  color: var(--green);
+  font-weight: 600;
+}
+
   .no-data {
     text-align: center;
     font-style: italic;
