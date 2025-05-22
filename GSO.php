@@ -1843,7 +1843,8 @@ function home()
                               <?php
                                  $name = $rowvrf['name'];
                                  $selectppicture = $conn->prepare("SELECT * FROM usertb WHERE CONCAT(fname, ' ', lname) = ?");
-                                 $selectppicture->execute([$name]);
+                                 $selectppicture->bind_param("s", $name);
+                                 $selectppicture->execute();
                                  $resultppicture = $selectppicture->get_result();
 
                                  if ($resultppicture->num_rows > 0) {
