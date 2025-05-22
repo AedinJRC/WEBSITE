@@ -1478,7 +1478,7 @@ function home()
                      <span style="transform: translateX(60px);">
                         <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
                         <div class="input-container">
-                           <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly></a>
+                           <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:17px;cursor: not-allowed;" step="0.01" min="0" readonly></a>
                            <label for="total_cost" style="margin-left:13px">TOTAL COST</label>
                            <div>
                               <label id="pesoSign">₱</label>
@@ -2035,7 +2035,7 @@ function home()
                                  <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                                  <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
                               </span>
-                              <div class="vrf-details" style="margin-top:1vw;">
+                              <div class="vrf-details" style="margin-top:13.33px;">
                                  <div class="input-container">
                                     <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
                                     <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
@@ -2053,7 +2053,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -2061,9 +2061,9 @@ function home()
                                                 }
                                              } else {
                                                 ?>
-                                                   <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
-                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
-                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                   <div class="input-container" style="transform: translateY(7px); display: flex; flex-direction: row;">
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 190px; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 50px; border-top-left-radius: 0; border-bottom-left-radius: 0;">
                                                       <label for="passengerCount">PASSENGER NAMES</label>
                                                    </div>
 
@@ -2517,7 +2517,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -2526,8 +2526,8 @@ function home()
                                              } else {
                                                 ?>
                                                    <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
-                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
-                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 190px; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 50px; border-top-left-radius: 0; border-bottom-left-radius: 0;">
                                                       <label for="passengerCount">PASSENGER NAMES</label>
                                                    </div>
 
@@ -2910,7 +2910,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(16.8vw);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -2919,8 +2919,8 @@ function home()
                                              } else {
                                                 ?>
                                                    <div class="input-container" style="transform: translateY(0.5vw); display: flex; flex-direction: row;">
-                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 14vw; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
-                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 4vw; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                      <a href="uploads/<?php echo $rowvrfid['passenger_attachment'] ?>" target="_blank"><input type="text" value="<?php echo $rowvrfid['passenger_attachment'] ?>" name="vrfpassenger_attachment" required style="cursor:pointer; border-color:black; width: 190px; border-top-right-radius: 0; border-bottom-right-radius: 0;"></a>
+                                                      <input readonly type="number" value="<?php echo $rowvrfid['passenger_count'] ?>" name="vrfpassenger_count" required style=" border-color:black; text-align: center; width: 50px; border-top-left-radius: 0; border-bottom-left-radius: 0;">
                                                       <label for="passengerCount">PASSENGER NAMES</label>
                                                    </div>
 
