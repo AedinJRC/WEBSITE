@@ -1130,7 +1130,7 @@ if (window.innerWidth < 992) {
          } elseif (isset($_GET["creq"]) and !empty($_GET["creq"])) {
             $defaultTime = 3000; // 3 seconds for cancelled requests
          } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
-            $defaultTime = 15000; // 3 seconds for pending approval
+            $defaultTime = 3000; // 3 seconds for pending approval
          } else {
             $defaultTime = 3000;
          }
@@ -1810,7 +1810,7 @@ function home()
                   ?>
                      <a href="GSO.php?papp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if (isset($_GET['vrfid'])) {
+                     if (isset($_GET['vrfid']) && $status != 'Approved') {
                         include 'config.php';
                         $updatevrf = "UPDATE vrftb SET $status='Seen', updated_at = updated_at WHERE id = ?";
                         $stmt = $conn->prepare($updatevrf);
