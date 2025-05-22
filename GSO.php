@@ -826,7 +826,7 @@ if (window.innerWidth < 992) {
                         $resultpending = $conn->query($selectpending);
                         $pending_count = $resultpending->num_rows;
                         $selectvrfc = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND (gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes') ORDER BY date_filed DESC, id DESC";
-                        $resultvrfc = $conn->query($selectvrf);
+                        $resultvrfc = $conn->query($selectvrfc);
                         $cancel_count = $resultvrfc->num_rows;
                         if ($pending_count > 0) {
                            ?>
@@ -854,9 +854,10 @@ if (window.innerWidth < 992) {
                               }
                            ?>
                         </a></li>
-                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved </span>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved </span></a></li>
+                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span>
                            <?php
-                              if($$cancel_count>0)
+                              if($cancel_count>0)
                               {
                                  ?>
                                     <span id="pending-number"><?php
@@ -868,9 +869,7 @@ if (window.innerWidth < 992) {
                               {
 
                               }
-                           ?>
-                        </a></li>
-                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                           ?></a></li>
                      </div>
                   </ul>
                </li>
@@ -1893,7 +1892,7 @@ function home()
                                        <label for="budgetNo">BUDGET No.:</label>
                                     </div>
                                     <?php
-                                       if ($_SESSION['role'] != 'Secretary') {
+                                       if (!in_array($_SESSION['role'], ['Secretary', 'Director'])) {
                                           ?>
                                              <div class="input-container">
                                                 <?php
