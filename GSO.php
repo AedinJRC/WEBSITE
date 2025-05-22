@@ -2076,7 +2076,7 @@ function home()
                                                             }
                                                             if ($day != $coding_day) {
                                                                ?>
-                                                                  <option value="<?php echo $rowvehicle['plate_number']; ?>"><?php echo $rowvehicle['brand']." ".$rowvehicle['model']; ?></option>
+                                                                  <option value="<?php echo $rowvehicle['brand']." ".$rowvehicle['model']; ?>"><?php echo $rowvehicle['brand']." ".$rowvehicle['model']; ?></option>
                                                                <?php
                                                             }
                                                          }
@@ -2095,7 +2095,7 @@ function home()
                                                       if ($resultdriver->num_rows > 0) {
                                                          while($rowdriver = $resultdriver->fetch_assoc()) {
                                                             ?>
-                                                               <option value="<?php echo $rowdriver['employeeid']; ?>"><?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?></option>
+                                                               <option value="<?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?>"><?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?></option>
                                                             <?php
                                                          }
                                                       }
