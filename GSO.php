@@ -1810,7 +1810,7 @@ function home()
                   ?>
                      <a href="GSO.php?papp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if (isset($_GET['vrfid']) && $status != 'Approved') {
+                     if (isset($_GET['vrfid']) && $rowvrf[$status] != 'Approved') {
                         include 'config.php';
                         $updatevrf = "UPDATE vrftb SET $status='Seen', updated_at = updated_at WHERE id = ?";
                         $stmt = $conn->prepare($updatevrf);
