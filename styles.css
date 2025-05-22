@@ -274,7 +274,7 @@ main
          }
       }
       .subbtn-container {/* -120px * 2/3, 40px * 2/3 */
-         transform: translateY(-5px);
+         transform: translateY(10px);
          display: flex;
          background-color: transparent;
          justify-content: space-between;

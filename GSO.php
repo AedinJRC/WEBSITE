@@ -1810,14 +1810,23 @@ function home()
                   ?>
                      <a href="GSO.php?papp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if (isset($_GET['vrfid']) && $rowvrf[$status] != 'Approved') {
+                     if (isset($_GET['vrfid'])) {
                         include 'config.php';
-                        $updatevrf = "UPDATE vrftb SET $status='Seen', updated_at = updated_at WHERE id = ?";
-                        $stmt = $conn->prepare($updatevrf);
-                        if ($stmt) {
-                           $stmt->bind_param("s", $_GET['vrfid']);
-                           $stmt->execute();
-                           $stmt->close();
+                        $selectstatus = "SELECT $status FROM vrftb WHERE id = ?";
+                        $stmt = $conn->prepare($selectstatus);
+                        $stmt->bind_param("s", $_GET['vrfid']);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $rowvrf2 = $result->fetch_assoc();
+                        $stmt->close();
+                        if ($rowvrf2[$status] != 'Approved') {
+                           $updatevrf = "UPDATE vrftb SET $status='Seen', updated_at = updated_at WHERE id = ?";
+                           $stmt = $conn->prepare($updatevrf);
+                           if ($stmt) {
+                              $stmt->bind_param("s", $_GET['vrfid']);
+                              $stmt->execute();
+                              $stmt->close();
+                           } 
                         }
                      }
                      if($rowvrf[$status] != "Seen")
