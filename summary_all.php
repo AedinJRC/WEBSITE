@@ -1,6 +1,12 @@
 <?php 
 include 'config.php';
 
+if (!isset($_SESSION['fname']) || !isset($_SESSION['lname'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$full_name = $_SESSION['fname'] . ' ' . $_SESSION['lname'];
 // --- SEARCH FUNCTIONALITY ---
 $search = '';
 $status_filter = '';  // Default to empty if no filter is selected
@@ -14,11 +20,11 @@ if (isset($_POST['status_filter']) && $_POST['status_filter'] != '') {
 }
 
 // Build the SQL query based on search and status filter
-$sql = "SELECT * FROM vrftb WHERE ";
+$sql = "SELECT * FROM vrftb WHERE name = '$full_name' ";
 if ($status_filter != '') {
-    $sql .= "gsodirector_status = '$status_filter' AND ";
+    $sql .= "AND gsodirector_status = '$status_filter' ";
 }
-$sql .= "(
+$sql .= "AND (
     id LIKE '%$search%' OR 
     name LIKE '%$search%' OR 
     department LIKE '%$search%' OR 
@@ -49,8 +55,8 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Vehicle Monitoring Summary Report</title>
-    <style> 
-
+   
+<style>  
 
 * {
    margin: 0;
@@ -274,7 +280,7 @@ tbody tr:hover {
 <body>
 
 <div class="report-container">
-   <h1>Vehicle Monitoring Summary Report</h1>
+   <h1>burat Monitoring Summary Report</h1>
    <p style="text-align:center; font-weight: bold; font-size: 2.3vh; color: #80050d; margin-bottom: 2vh;">
     Total Reports: <?php echo $result->num_rows; ?>
 </p>
