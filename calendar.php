@@ -11,7 +11,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
 }
 
 // Query the database for events in the selected month and year based on the departure date
-$sql = "SELECT * FROM vrftb WHERE YEAR(departure) = ? AND MONTH(departure) = ? AND gsodirector_status = 'Approved' ORDER BY departure";
+$sql = "SELECT * FROM vrftb WHERE YEAR(departure) = ? AND MONTH(departure) = ? AND gsodirector_status = 'Approved' AND user_cancelled = 'No' ORDER BY departure";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $currentYear, $currentMonth);
 $stmt->execute();
@@ -252,7 +252,7 @@ function generateColorFromString($string) {
 }
 
 .vehicle-reservation-form {
-    max-height: 70vh; 
+    max-height: 420px; 
 }
 .center-container {
             display: flex;

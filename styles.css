@@ -637,6 +637,7 @@ li
       flex-grow: 1;
    }
    .dropdown-btn {
+      position: relative;
       width: 50%;
       margin-left: 25%;
       display: flex;
@@ -787,7 +788,7 @@ li
    #pending-notif
    {
       display: inline-block;
-      background-color: var(--yellow);
+      background-color: var(--maroon);
       height: 10px;
       width: 10px;
       border-radius: 100%;
@@ -925,7 +926,7 @@ li
    }
    #pending-notif
    {
-      position:absolute;
+      position: absolute;
       transform:translateX(10.9vw)
    }
    #pending-number

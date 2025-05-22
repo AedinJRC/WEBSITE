@@ -825,6 +825,9 @@ if (window.innerWidth < 992) {
                         $selectpending = "SELECT * FROM vrftb WHERE $status2";
                         $resultpending = $conn->query($selectpending);
                         $pending_count = $resultpending->num_rows;
+                        $selectvrfc = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND (gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes') ORDER BY date_filed DESC, id DESC";
+                        $resultvrfc = $conn->query($selectvrf);
+                        $cancel_count = $resultvrfc->num_rows;
                         if ($pending_count > 0) {
                            ?>
                               <div id="pending-notif"></div>
@@ -851,7 +854,22 @@ if (window.innerWidth < 992) {
                               }
                            ?>
                         </a></li>
-                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved </span>
+                           <?php
+                              if($$cancel_count>0)
+                              {
+                                 ?>
+                                    <span id="pending-number"><?php
+                                       echo $cancel_count;
+                                    ?></span>
+                                 <?php
+                              }
+                              else
+                              {
+
+                              }
+                           ?>
+                        </a></li>
                         <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
                      </div>
                   </ul>
@@ -1019,7 +1037,7 @@ if (window.innerWidth < 992) {
       const inactivityTime = <?php 
          // Default inactivity time
          if (isset($_GET["vsch"]) and !empty($_GET["vsch"])) {
-            $defaultTime = 3000; // 3 seconds for vehicle schedules
+            $defaultTime = 12000; // 3 seconds for vehicle schedules
          } elseif (isset($_GET["mveh"]) and !empty($_GET["mveh"])) {
             $defaultTime = 60000; // 3 seconds for manage vehicle
          } elseif (isset($_GET["aveh"]) and !empty($_GET["aveh"])) {
@@ -1027,9 +1045,9 @@ if (window.innerWidth < 992) {
          } elseif (isset($_GET["macc"]) and !empty($_GET["macc"])) {
             $defaultTime = 60000; // 3 seconds for manage account
          } elseif (isset($_GET["srep"]) and !empty($_GET["srep"])) {
-            $defaultTime = 6000; // 3 seconds for summary report
+            $defaultTime = 12000; // 3 seconds for summary report
          } elseif (isset($_GET["mrep"]) and !empty($_GET["mrep"])) {
-            $defaultTime = 3000; // 3 seconds for maintenance report
+            $defaultTime = 12000; // 3 seconds for maintenance report
          } elseif (isset($_GET["mche"]) and !empty($_GET["mche"])) {
             $defaultTime = 60000; // 3 seconds for maintenance checklist
          } elseif (isset($_GET["mdep"]) and !empty($_GET["mdep"])) {
@@ -1041,9 +1059,9 @@ if (window.innerWidth < 992) {
          } elseif (isset($_GET["creq"]) and !empty($_GET["creq"])) {
             $defaultTime = 3000; // 3 seconds for cancelled requests
          } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
-            $defaultTime = 3000; // 3 seconds for pending approval
+            $defaultTime = 12000; // 3 seconds for pending approval
          } else {
-            $defaultTime = 3000;
+            $defaultTime = 12000;
          }
          
          echo $defaultTime; // Output the inactivity time
@@ -1213,7 +1231,7 @@ function home()
                         <label for="dateFiled">DATE FILED:</label>
                      </div>
                      <div class="input-container">
-                        <input name="vrfbudget_no" type="number" id="budgetNo" required>
+                        <input name="vrfbudget_no" type="number" id="budgetNo">
                         <label for="budgetNo">BUDGET No.:</label>
                      </div>
                      <div class="input-container">
@@ -1526,131 +1544,116 @@ function home()
             </script>
             <?php
                include 'config.php';
-               if (isset( $_POST['vrfsubbtn'])) {
-                  if (isset($_FILES["vrfletter_attachment"]))   
-                  {
-                     $id = htmlspecialchars($_POST['vrfid']);
-                     $name = htmlspecialchars($_POST['vrfname']);
-                     $department = htmlspecialchars($_POST['vrfdepartment']);
-                     $activity = htmlspecialchars($_POST['vrfactivity']);
-                     $purpose = htmlspecialchars($_POST['vrfpurpose']);
-                     $date_filed = htmlspecialchars($_POST['vrfdate_filed']);
-                     $budget_no = htmlspecialchars($_POST['vrfbudget_no']);
-                     $vehicle = isset($_POST['vrfvehicle']) && !empty($_POST['vrfvehicle']) ? htmlspecialchars($_POST['vrfvehicle']) : null;
-                     $driver = isset($_POST['vrfdriver']) && !empty($_POST['vrfdriver']) ? htmlspecialchars($_POST['vrfdriver']) : null;
-                     $destination = htmlspecialchars($_POST['vrfdestination']);
-                     $departure = htmlspecialchars($_POST['vrfdeparture']);
-                     $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
-                     if(isset($_POST['vrfpassenger_count']) and !empty($_POST['vrfpassenger_count']))
-                     {
-                        $passenger_count = htmlspecialchars($_POST['vrfpassenger_count']);
-                     }
-
-                     // File upload directory
-                     $targetDir = "uploads/";
-                     if (!is_dir($targetDir)) {
-                           mkdir($targetDir, 0777, true);
-                     }
-
-                     // Allowed file types
-                     $allowedTypes = ['docx', 'pdf'];
-
-                     // Handle letter attachment (Required)
-                     $letterFileName = basename($_FILES["vrfletter_attachment"]["name"]);
-                     $letterFilePath = $targetDir . $letterFileName;
-                     $letterFileType = strtolower(pathinfo($letterFilePath, PATHINFO_EXTENSION));
-
-                     if (!in_array($letterFileType, $allowedTypes)) {
+               if (isset($_POST['vrfsubbtn'])) {
+                   $id = htmlspecialchars($_POST['vrfid']);
+                   $name = htmlspecialchars($_POST['vrfname']);
+                   $department = htmlspecialchars($_POST['vrfdepartment']);
+                   $activity = htmlspecialchars($_POST['vrfactivity']);
+                   $purpose = htmlspecialchars($_POST['vrfpurpose']);
+                   $date_filed = htmlspecialchars($_POST['vrfdate_filed']);
+                   $budget_no = htmlspecialchars($_POST['vrfbudget_no']);
+                   $vehicle = isset($_POST['vrfvehicle']) && !empty($_POST['vrfvehicle']) ? htmlspecialchars($_POST['vrfvehicle']) : null;
+                   $driver = isset($_POST['vrfdriver']) && !empty($_POST['vrfdriver']) ? htmlspecialchars($_POST['vrfdriver']) : null;
+                   $destination = htmlspecialchars($_POST['vrfdestination']);
+                   $departure = htmlspecialchars($_POST['vrfdeparture']);
+                   $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
+                   $passenger_count = isset($_POST['vrfpassenger_count']) ? htmlspecialchars($_POST['vrfpassenger_count']) : null;
+               
+                   // File upload directory
+                   $targetDir = "uploads/";
+                   if (!is_dir($targetDir)) {
+                       mkdir($targetDir, 0777, true);
+                   }
+               
+                   $allowedTypes = ['docx', 'pdf'];
+               
+                   // Handle letter attachment (optional)
+                   $letterFileName = null;
+                   if (!empty($_FILES["vrfletter_attachment"]["name"])) {
+                       $letterFileName = basename($_FILES["vrfletter_attachment"]["name"]);
+                       $letterFilePath = $targetDir . $letterFileName;
+                       $letterFileType = strtolower(pathinfo($letterFilePath, PATHINFO_EXTENSION));
+               
+                       if (!in_array($letterFileType, $allowedTypes)) {
                            echo "<script>
-                                    alert('Invalid file type for letter attachment. Only Word Documents or PDFs are allowed.');
-                                    window.history.back();
+                                   alert('Invalid file type for letter attachment. Only Word Documents or PDFs are allowed.');
+                                   window.history.back();
                                  </script>";
                            exit;
-                     }
-
-                     $letterUploaded = move_uploaded_file($_FILES["vrfletter_attachment"]["tmp_name"], $letterFilePath);
-
-                     // Handle passenger attachment (Optional)
-                     $passengerFileName = null;
-                     if (!empty($_FILES["vrfpassenger_attachment"]["name"])) {
-                           $passengerFileName = basename($_FILES["vrfpassenger_attachment"]["name"]);
-                           $passengerFilePath = $targetDir . $passengerFileName;
-                           $passengerFileType = strtolower(pathinfo($passengerFilePath, PATHINFO_EXTENSION));
-
-                           if (!in_array($passengerFileType, $allowedTypes)) {
-                              echo "<script>
-                                    alert('Invalid file type for letter attachment. Only Word Documents or PDFs are allowed.');
-                                    window.history.back();
-                                 </script>";
-                              exit;
-                           }
-
-                           move_uploaded_file($_FILES["vrfpassenger_attachment"]["tmp_name"], $passengerFilePath);
-                     }
-
-                     if ($letterUploaded) {
-                           try {
-                              // Insert data into database
-                              $stmt = $conn->prepare("INSERT INTO vrftb 
-                                 (id, name, department, activity, purpose, date_filed, budget_no, vehicle, driver, destination, departure, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                              $stmt->bind_param(
-                                 "sssssssssssssss", 
-                                 $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
-                              );
-                              $stmt->execute();
-                              // Insert Passengers in passengertb
-                              if (!empty($_POST['vrfpassenger_name']) && !empty($_POST['vrfid'])) {
-                                 $stmt = $conn->prepare("INSERT INTO passengerstb (vrfid, passenger_name) VALUES (?, ?)");
-                                 foreach ($_POST['vrfpassenger_name'] as $passenger_name) {
-                                    $stmt->bind_param("ss", $_POST['vrfid'], $passenger_name); // Fix both bindings
-                                    $stmt->execute();
-                                 }
-                              }
-                              // Select the count of passengers for the given vrfid
-                              if (!isset($_POST['vrfpassenger_count'])) {
-                                 $countpassenger = "SELECT COUNT(*) AS passenger_count FROM passengerstb WHERE vrfid = ?";
-                                 $stmt = $conn->prepare($countpassenger);
-                                 $stmt->bind_param("s", $id);
-                                 $stmt->execute();
-                                 $resultcountpassenger = $stmt->get_result();
-                                 $rowcountpassenger = $resultcountpassenger->fetch_assoc();
-
-                                 // Store passenger count
-                                 $passenger_count = $rowcountpassenger['passenger_count'];
-
-                                 // Update the vrftb table with the passenger count
-                                 $stmt = $conn->prepare("UPDATE vrftb SET passenger_count = ? WHERE id = ?");
-                                 $stmt->bind_param("is", $passenger_count, $id);
-                                 $stmt->execute();
-                              }
-
-                              // Success message and redirection
-                              echo "<script>
-                                       alert('Reservation submitted!');
-                                    </script>";
-                              exit;
-                           } catch (Exception $e) {
-                              echo "<script>
-                                       alert('Error: " . addslashes($e->getMessage()) . "');
-                                       window.history.back();
-                                    </script>";
-                           }
-                     } else {
+                       }
+               
+                       if (!move_uploaded_file($_FILES["vrfletter_attachment"]["tmp_name"], $letterFilePath)) {
                            echo "<script>
-                                 alert('Failed to upload the letter attachment.');
-                                 window.history.back();
+                                   alert('Failed to upload the letter attachment.');
+                                   window.history.back();
                                  </script>";
-                     }
-                  } 
-                  else 
-                  {
-                     echo "<script>
-                              alert('Please upload a letter attachment.');
-                              window.history.back();
-                           </script>";
-                  }
-               }
+                           exit;
+                       }
+                   }
+               
+                   // Handle passenger attachment (optional)
+                   $passengerFileName = null;
+                   if (!empty($_FILES["vrfpassenger_attachment"]["name"])) {
+                       $passengerFileName = basename($_FILES["vrfpassenger_attachment"]["name"]);
+                       $passengerFilePath = $targetDir . $passengerFileName;
+                       $passengerFileType = strtolower(pathinfo($passengerFilePath, PATHINFO_EXTENSION));
+               
+                       if (!in_array($passengerFileType, $allowedTypes)) {
+                           echo "<script>
+                                   alert('Invalid file type for passenger attachment. Only Word Documents or PDFs are allowed.');
+                                   window.history.back();
+                                 </script>";
+                           exit;
+                       }
+               
+                       move_uploaded_file($_FILES["vrfpassenger_attachment"]["tmp_name"], $passengerFilePath);
+                   }
+               
+                   try {
+                       // Insert into vrftb
+                       $stmt = $conn->prepare("INSERT INTO vrftb 
+                           (id, name, department, activity, purpose, date_filed, budget_no, vehicle, driver, destination, departure, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                       $stmt->bind_param(
+                           "sssssssssssssss", 
+                           $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
+                       );
+                       $stmt->execute();
+               
+                       // Insert passengers if provided
+                       if (!empty($_POST['vrfpassenger_name']) && !empty($_POST['vrfid'])) {
+                           $stmt = $conn->prepare("INSERT INTO passengerstb (vrfid, passenger_name) VALUES (?, ?)");
+                           foreach ($_POST['vrfpassenger_name'] as $passenger_name) {
+                               $stmt->bind_param("ss", $id, $passenger_name);
+                               $stmt->execute();
+                           }
+                       }
+               
+                       // Count and update passenger count if not provided
+                       if (empty($_POST['vrfpassenger_count'])) {
+                           $stmt = $conn->prepare("SELECT COUNT(*) AS passenger_count FROM passengerstb WHERE vrfid = ?");
+                           $stmt->bind_param("s", $id);
+                           $stmt->execute();
+                           $result = $stmt->get_result();
+                           $row = $result->fetch_assoc();
+                           $passenger_count = $row['passenger_count'];
+               
+                           // Update vrftb with passenger count
+                           $stmt = $conn->prepare("UPDATE vrftb SET passenger_count = ? WHERE id = ?");
+                           $stmt->bind_param("is", $passenger_count, $id);
+                           $stmt->execute();
+                       }
+               
+                       echo "<script>alert('Reservation submitted!');</script>";
+                       exit;
+               
+                   } catch (Exception $e) {
+                       echo "<script>
+                               alert('Error: " . addslashes($e->getMessage()) . "');
+                               window.history.back();
+                             </script>";
+                   }
+               }               
             ?>
          </div>
       <?php
@@ -1856,6 +1859,7 @@ function home()
                                           $resultvrfid->num_rows > 0;
                                           $rowvrfid = $resultvrfid->fetch_assoc();
                                           echo $rowvrfid['id'];
+                                          $letter=$rowvrfid['letter_attachment']
                                        ?>
                                     </span>
                                  </span>
@@ -2149,7 +2153,15 @@ function home()
                                     </script>
                                     <div class="subbtn-container">
                                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
-                                       <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                       <?php
+                                       
+                                          if($letter != "")
+                                          {
+                                             ?>
+                                                <a href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                             <?php
+                                          }
+                                       ?>
                                        <button class="rejbtn" type="submit" name="vrfrejbtn">Reject</button>
                                        <button class="appbtn" type="submit" name="vrfappbtn">Approve</button>
                                     </div>
@@ -2628,7 +2640,7 @@ function home()
                   $status='accounting_status';
                }
                include 'config.php';
-               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND (gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected') ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND (gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes') ORDER BY date_filed DESC, id DESC";
                $resultvrf = $conn->query($selectvrf);
                if ($resultvrf->num_rows > 0) {
                   $rowvrf = $resultvrf->fetch_assoc();
@@ -2639,7 +2651,7 @@ function home()
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <?php
-            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' ORDER BY date_filed DESC, id DESC";
+            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes' ORDER BY date_filed DESC, id DESC";
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
                while($rowvrf = $resultvrf->fetch_assoc()) {
@@ -2664,27 +2676,41 @@ function home()
                               ?>
                               <span class="time">
                                  <span class="rejected">
-                                    <span>Rejected By:</span>
-                                    <span class="rejected-by">
-                                       <?php
-                                          if($rowvrf['gsoassistant_status'] == "Rejected")
-                                          {
-                                             echo "GSO Secretary";
-                                          }
-                                          elseif($rowvrf['immediatehead_status'] == "Rejected")
-                                          {
-                                             echo "Immediate Head";
-                                          }
-                                          elseif($rowvrf['gsodirector_status'] == "Rejected")
-                                          {
-                                             echo "GSO Director";
-                                          }
-                                          elseif($rowvrf['accounting_status'] == "Rejected")
-                                          {
-                                             echo "Accounting";
-                                          }
-                                       ?>
-                                    </span>
+                                    <?php
+                                       if($rowvrf['user_cancelled'] == 'No')
+                                       {
+                                          ?>
+                                             <span>Rejected By:</span>
+                                             <span class="rejected-by">
+                                                <?php
+                                                   if($rowvrf['gsoassistant_status'] == "Rejected")
+                                                   {
+                                                      echo "GSO Secretary";
+                                                   }
+                                                   elseif($rowvrf['immediatehead_status'] == "Rejected")
+                                                   {
+                                                      echo "Immediate Head";
+                                                   }
+                                                   elseif($rowvrf['gsodirector_status'] == "Rejected")
+                                                   {
+                                                      echo "GSO Director";
+                                                   }
+                                                   elseif($rowvrf['accounting_status'] == "Rejected")
+                                                   {
+                                                      echo "Accounting";
+                                                   }
+                                                ?>
+                                             </span>
+                                          <?php 
+                                       }
+                                       else
+                                       {
+                                          ?>
+                                             <span>Cancelled By:</span>
+                                             <span class="rejected-by">User</span>
+                                          <?php
+                                       }
+                                    ?>
                                  </span>
                                  <?php
                                     $updated_at = strtotime($rowvrf['updated_at']);
