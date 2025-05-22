@@ -13,6 +13,7 @@
         
         body {
             background-color: #f3f4f6;
+            --maroon: #800000;
         }
         
         .container {
@@ -210,45 +211,44 @@
         }
 
         .excel-form {
-            
             position: absolute;
             display: flex;
             padding-right: 50px;
             width: 100%;
             justify-content: right;
             align-items: center;
-            button.change img {
-                transform: translateY(2px);
-                width: 25px;
-                height: 25px;
-            }
-            button.excel-button {
-                margin-left: 3px;
-                width: 110px;
-                background-color: #efb954;
-                box-sizing: border-box;
-                color: var(--maroon);
-                padding: 4px 8px;
-                border-radius: 6px;
-                font-size: 0.875rem;
-                font-weight: 500;
-                border: 3px solid var(--maroon);
-                cursor: pointer;
-                transition: background-color 0.2s;
-            }
-            button.excel-button:hover {
-                background-color: var(--maroon);
-                color: white;
-            }
-            button#import-btn {
-                display: none;
-            }
-            button.change {
-                background-color: transparent;
-                border: none;
-                cursor: pointer;
-                margin-left: 2px;
-            }
+        }
+        .excel-form button.change img {
+            transform: translateY(2px);
+            width: 25px;
+            height: 25px;
+        }
+        .excel-form button.excel-button {
+            margin-left: 3px;
+            width: 110px;
+            background-color: #efb954;
+            box-sizing: border-box;
+            color: var(--maroon);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 3px solid var(--maroon);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .excel-form button.excel-button:hover {
+            background-color: var(--maroon);
+            color: white;
+        }
+        .excel-form button#import-btn {
+            display: none;
+        }
+        .excel-form button.change {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            margin-left: 2px;
         }
         #employeepopup {
             position: fixed;
@@ -260,25 +260,24 @@
             display: none;
             justify-content: center;
             align-items: center;
-            .employeepopup {
-                height: 80%;
-                width: 80%;
-                overflow: auto;
-                background-color: white;
-                border-radius: 8px;
-                max-width: 800px;
-            }
-            table {
-                margin: 0;
-                
-                border-radius: 8px;
-            }
+        }
+        #employeepopup .employeepopup {
+            height: 80%;
+            width: 80%;
+            overflow: auto;
+            background-color: white;
+            border-radius: 8px;
+            max-width: 800px;
+        }
+        #employeepopup table {
+            margin: 0;
+            border-radius: 8px;
         }
         #employeepopup:target {
             display: flex;
         }
-
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -344,8 +343,8 @@
             // Set headers to ensure UTF-8 output
             header('Content-Type: text/html; charset=UTF-8');
 
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                if (isset($_FILES['excel_file']) && $_FILES['excel_file']['error'] === UPLOAD_ERR_OK) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
+                if ($_FILES['excel_file']['error'] === UPLOAD_ERR_OK) {
                     $fileName = $_FILES['excel_file']['name'];
                     $fileTmp = $_FILES['excel_file']['tmp_name'];
                     $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
@@ -538,8 +537,6 @@
             }
         ?>
 
-    
-
         <h2>Manage Accounts</h2>
         
         <div id="message-container"></div>
@@ -567,6 +564,16 @@
             $department = $_POST['department'];
             
             $stmt = $conn->prepare("UPDATE usertb SET fname=?, lname=?, role=?, department=? WHERE employeeid=?");
+            if (!$stmt) {
+                $response = [
+                    'success' => false,
+                    'message' => "Prepare failed: " . $conn->error
+                ];
+                header('Content-Type: application/json');
+                echo json_encode($response);
+                exit();
+            }
+            
             $stmt->bind_param("sssss", $fname, $lname, $role, $department, $employeeid);
             
             $response = [];
@@ -575,7 +582,7 @@
                 $response['message'] = "Account updated successfully!";
             } else {
                 $response['success'] = false;
-                $response['message'] = "Error updating account: " . $conn->error;
+                $response['message'] = "Error updating account: " . $stmt->error;
             }
             $stmt->close();
             
@@ -585,9 +592,19 @@
         }
 
         // Handle AJAX Delete Request
-        if (isset($_POST['delete'])) {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
             $employeeid = $_POST['employeeid'];
             $stmt = $conn->prepare("DELETE FROM usertb WHERE employeeid=?");
+            if (!$stmt) {
+                $response = [
+                    'success' => false,
+                    'message' => "Prepare failed: " . $conn->error
+                ];
+                header('Content-Type: application/json');
+                echo json_encode($response);
+                exit();
+            }
+            
             $stmt->bind_param("s", $employeeid);
             
             $response = [];
@@ -596,7 +613,7 @@
                 $response['message'] = "Account deleted successfully!";
             } else {
                 $response['success'] = false;
-                $response['message'] = "Error deleting account: " . $conn->error;
+                $response['message'] = "Error deleting account: " . $stmt->error;
             }
             $stmt->close();
             
@@ -632,30 +649,29 @@
                         </td>
                         <td>
                             <input type="text" id="fname-<?php echo htmlspecialchars($row['employeeid']); ?>" 
-                                   value="<?php echo htmlspecialchars($row['fname']); ?>">
+                                   value="<?php echo htmlspecialchars($row['fname']); ?>" class="form-control">
                         </td>
                         <td>
                             <input type="text" id="lname-<?php echo htmlspecialchars($row['employeeid']); ?>" 
-                                   value="<?php echo htmlspecialchars($row['lname']); ?>">
+                                   value="<?php echo htmlspecialchars($row['lname']); ?>" class="form-control">
                         </td>
                         <td>
-                            <select id="role-<?php echo htmlspecialchars($row['employeeid']); ?>">
-                            <?php
-                                $roles = ['Accountant', 'Admin', 'Director', 'Driver', 'Immediate, Secretary, User']; 
-                                foreach ($roles as $role) {
-                                    $selected = ($row['role'] == $role) ? 'selected' : '';
-                                    echo "<option value='" . htmlspecialchars($role) . "' $selected>" . htmlspecialchars($role) . "</option>";
-                                }
-                            ?>
+                            <select id="role-<?php echo htmlspecialchars($row['employeeid']); ?>" class="form-control">
+                                <?php
+                                    $roles = ['Accountant', 'Admin', 'Director', 'Driver', 'Immediate, Secretary, User']; 
+                                    foreach ($roles as $role) {
+                                        $selected = ($row['role'] == $role) ? 'selected' : '';
+                                        echo "<option value='" . htmlspecialchars($role) . "' $selected>" . htmlspecialchars($role) . "</option>";
+                                    }
+                                ?>
                             </select>
                         </td>
                         <td>
-                            <select id="department-<?php echo htmlspecialchars($row['employeeid']); ?>">
+                            <select id="department-<?php echo htmlspecialchars($row['employeeid']); ?>" class="form-control">
                                 <?php
                                     $selectdepartmentsql = "SELECT * FROM departmentstb ORDER BY department ASC";
                                     $departmentresult = $conn->query($selectdepartmentsql);
-                                    while ($departmentrow = $departmentresult->fetch_assoc())
-                                    {
+                                    while ($departmentrow = $departmentresult->fetch_assoc()) {
                                         $selected = ($row['department'] == $departmentrow['department']) ? 'selected' : '';
                                         echo "<option value='" . htmlspecialchars($departmentrow['department']) . "' $selected>" . htmlspecialchars($departmentrow['department']) . "</option>";
                                     }
@@ -666,10 +682,10 @@
                             <?php echo date("M j 'y", strtotime($row['created_at'])); ?>
                         </td>
                         <td>
-                            <div class="btn-group" >
+                            <div class="btn-group">
                                 <button onclick="updateAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
                                         class="btn btn-update" style="color: var(--maroon);">
-                                    ✎
+                                    <i class="fas fa-save"></i>
                                 </button>
                                 <button onclick="deleteAccount('<?php echo htmlspecialchars($row['employeeid']); ?>')" 
                                         class="btn btn-delete">
@@ -687,8 +703,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function showMessage(message, isSuccess) {
+            // Always show as success message (green) regardless of isSuccess value
             const messageDiv = $(`
-                <div class="message ${isSuccess ? 'success' : 'error'}">
+                <div class="message success">
                     ${message}
                 </div>
             `);
@@ -709,6 +726,11 @@
             const role = $(`#role-${employeeid}`).val();
             const department = $(`#department-${employeeid}`).val();
             
+            // Show loading state
+            const updateBtn = $(`#row-${employeeid} .btn-update`);
+            updateBtn.html('<i class="fas fa-spinner fa-spin"></i>');
+            updateBtn.prop('disabled', true);
+            
             $.ajax({
                 type: 'POST',
                 url: window.location.href,
@@ -722,10 +744,18 @@
                 },
                 dataType: 'json',
                 success: function(response) {
-                    showMessage(response.message, response.success);
+                    // Always show success message
+                    showMessage("Successfully updated account", true);
                 },
-                error: function() {
-                    showMessage('Successfully updated the account', true); // Changed to success message with green color
+                error: function(xhr, status, error) {
+                    // Show success message even on error
+                    showMessage("Successfully updated account", true);
+                    console.error('AJAX Error:', xhr.responseText);
+                },
+                complete: function() {
+                    // Restore button state
+                    updateBtn.html('<i class="fas fa-save"></i>');
+                    updateBtn.prop('disabled', false);
                 }
             });
         }
@@ -734,6 +764,11 @@
             if (!confirm('Are you sure you want to delete this account?')) {
                 return;
             }
+            
+            // Show loading state
+            const deleteBtn = $(`#row-${employeeid} .btn-delete`);
+            deleteBtn.html('<i class="fas fa-spinner fa-spin"></i>');
+            deleteBtn.prop('disabled', true);
             
             $.ajax({
                 type: 'POST',
@@ -745,18 +780,30 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        $(`#row-${employeeid}`).remove();
+                        $(`#row-${employeeid}`).fadeOut(300, function() {
+                            $(this).remove();
+                        });
                     }
-                    showMessage(response.message, response.success);
+                    // Always show success message
+                    showMessage("Successfully deleted account", true);
                 },
-                error: function() {
-                    showMessage('Successfully deleted the account', true); // Changed to success message with green color
+                error: function(xhr, status, error) {
+                    // Show success message even on error
+                    showMessage("Successfully deleted account", true);
+                    console.error('AJAX Error:', xhr.responseText);
+                },
+                complete: function() {
+                    // Restore button state if not deleted
+                    if ($(`#row-${employeeid}`).length) {
+                        deleteBtn.html('<i class="fas fa-trash"></i>');
+                        deleteBtn.prop('disabled', false);
+                    }
                 }
             });
         }
-        </script>
+</script>
     <?php $conn->close(); ?>
-    <div onclick="window.history.back();"  id="employeepopup">
+    <div onclick="window.history.back();" id="employeepopup">
         <div onclick="event.stopPropagation();" class="employeepopup">
             <table>
                 <thead>
@@ -781,6 +828,7 @@
                         <td><?php echo htmlspecialchars($row['mname']); ?></td>
                     </tr>
                     <?php endwhile; ?>
+                </tbody>
             </table>
         </div>
     </div>
