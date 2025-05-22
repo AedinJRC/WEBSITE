@@ -1773,7 +1773,7 @@ function home()
                   $status="accounting_status";
                }
                include 'config.php';
-               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status='Pending' ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND $status2 ORDER BY date_filed DESC, id DESC";
                $resultvrf = $conn->query($selectvrf);
                if ($resultvrf->num_rows > 0) {
                   $rowvrf = $resultvrf->fetch_assoc();
@@ -2381,7 +2381,8 @@ function home()
                            <?php
                               $name = $rowvrf['name'];
                               $selectppicture = $conn->prepare("SELECT * FROM usertb WHERE CONCAT(fname, ' ', lname) = ?");
-                              $selectppicture->execute([$name]);
+                              $selectppicture->bind_param("s", $name);
+                              $selectppicture->execute();
                               $resultppicture = $selectppicture->get_result();
 
                               if ($resultppicture->num_rows > 0) {
@@ -2790,7 +2791,8 @@ function home()
                               <?php
                                  $name = $rowvrf['name'];
                                  $selectppicture = $conn->prepare("SELECT * FROM usertb WHERE CONCAT(fname, ' ', lname) = ?");
-                                 $selectppicture->execute([$name]);
+                                 $selectppicture->bind_param("s", $name);
+                                 $selectppicture->execute();
                                  $resultppicture = $selectppicture->get_result();
 
                                  if ($resultppicture->num_rows > 0) {
