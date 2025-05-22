@@ -1130,7 +1130,7 @@ if (window.innerWidth < 992) {
          } elseif (isset($_GET["creq"]) and !empty($_GET["creq"])) {
             $defaultTime = 3000; // 3 seconds for cancelled requests
          } elseif (isset($_GET["papp"]) and !empty($_GET["papp"])) {
-            $defaultTime = 3000; // 3 seconds for pending approval
+            $defaultTime = 15000; // 3 seconds for pending approval
          } else {
             $defaultTime = 3000;
          }
