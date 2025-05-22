@@ -545,18 +545,7 @@
         <div id="message-container"></div>
 
         <?php
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "vehiclemonitoringdbms";
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+        include 'config.php';
 
         // Handle AJAX Update Request
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
