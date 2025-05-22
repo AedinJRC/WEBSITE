@@ -145,7 +145,6 @@ main
                }
             }
          }
-         
          .input-container input:focus + label,
          .input-container input.has-content + label,
          .input-container select:focus + label,
@@ -188,7 +187,6 @@ main
          }
          
          .input-container input:focus,
-         .input-container input:valid,
          .input-container select:focus,
          .input-container select:valid,
          .input-container input.filled,
@@ -197,7 +195,6 @@ main
          }
 
          .input-container input:focus ~ label,
-         .input-container input:valid ~ label,
          .input-container select:focus ~ label,
          .input-container select:valid ~ label,
          .input-container input.filled ~ label,
