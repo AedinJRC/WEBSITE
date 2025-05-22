@@ -630,7 +630,7 @@
                         <td>
                             <select id="role-<?php echo htmlspecialchars($row['employeeid']); ?>">
                             <?php
-                                $roles = ['Accountant', 'Admin', 'Director', 'Driver', 'Immediate, Secretary, User']; 
+                                $roles = ['Accountant', 'Director', 'Driver', 'Immediate Head' , 'Secretary', 'User']; 
                                 foreach ($roles as $role) {
                                     $selected = ($row['role'] == $role) ? 'selected' : '';
                                     echo "<option value='" . htmlspecialchars($role) . "' $selected>" . htmlspecialchars($role) . "</option>";
