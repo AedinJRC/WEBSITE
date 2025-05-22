@@ -425,25 +425,29 @@ nav .closeMenu {
   const closeMenu = document.querySelector('.closeMenu');
   const mainMenu = document.querySelector('.mainMenu');
 
-  openMenu.addEventListener('click', () => {
-    mainMenu.classList.add('show');
+  openMenu?.addEventListener('click', () => {
+    mainMenu?.classList.add('show');
   });
 
-  closeMenu.addEventListener('click', () => {
-    mainMenu.classList.remove('show');
+  closeMenu?.addEventListener('click', () => {
+    mainMenu?.classList.remove('show');
   });
 
   // Dropdown toggle
   const dropdownBtns = document.querySelectorAll('.dropdown-btn');
+
   dropdownBtns.forEach(btn => {
     btn.addEventListener('click', function (e) {
-      e.stopPropagation();
+      e.stopPropagation(); // Prevents the click from reaching window listener
       const dropdown = this.nextElementSibling;
+
       document.querySelectorAll('.dropdown-container').forEach(dc => {
         if (dc !== dropdown) {
-          dc.style.display = 'none';
+          dc.style.display = 'none'; // Close other dropdowns
         }
       });
+
+      // Toggle the clicked one
       dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
     });
   });
@@ -452,13 +456,6 @@ nav .closeMenu {
   window.addEventListener('click', function () {
     document.querySelectorAll('.dropdown-container').forEach(drop => {
       drop.style.display = 'none';
-    });
-  });
-
-  // Prevent closing dropdown when clicking on button
-  document.querySelectorAll('.dropdown-btn').forEach(btn => {
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
     });
   });
 </script>

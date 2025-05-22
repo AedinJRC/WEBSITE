@@ -3089,7 +3089,15 @@ function home()
    function summaryReport()
    {
      
-         include 'summary_rep.php';
+        if ($_SESSION['role'] == 'User') {
+      include 'summary_all.php';
+    } elseif (in_array($_SESSION['role'], ['Secretary', 'Admin', 'Director'])) {
+      include 'summary_rep.php';
+    } else {
+      include 'summary_all.php';
+    }
+
+         
   
    }
    function maintenanceReport()
