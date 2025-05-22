@@ -1150,6 +1150,24 @@ if (window.innerWidth < 992) {
       document.onkeydown = resetTimer; // Use keydown instead of keypress
       document.onscroll = resetTimer;
       document.onclick = resetTimer;
+      // On DOM load, check each field and toggle .has-content if it has a value
+      document.addEventListener('DOMContentLoaded', function() {
+      var fields = document.querySelectorAll('.input-container input, .input-container select');
+      function updateField(el) {
+         if (el.value.trim() !== '') {
+            el.classList.add('has-content');
+         } else {
+            el.classList.remove('has-content');
+         }
+      }
+      fields.forEach(function(field) {
+         // Initial check on page load
+         updateField(field);
+         // On user input or change, update class
+         field.addEventListener('input', function() { updateField(field); });
+         field.addEventListener('change', function() { updateField(field); });
+      });
+      });
    </script>
 </body>
 </html>
@@ -2657,26 +2675,7 @@ function home()
                                  </span>
                               </div>
                            </form>
-                           <script>
-                              // On DOM load, check each field and toggle .has-content if it has a value
-                              document.addEventListener('DOMContentLoaded', function() {
-                              var fields = document.querySelectorAll('.input-container input, .input-container select');
-                              function updateField(el) {
-                                 if (el.value.trim() !== '') {
-                                    el.classList.add('has-content');
-                                 } else {
-                                    el.classList.remove('has-content');
-                                 }
-                              }
-                              fields.forEach(function(field) {
-                                 // Initial check on page load
-                                 updateField(field);
-                                 // On user input or change, update class
-                                 field.addEventListener('input', function() { updateField(field); });
-                                 field.addEventListener('change', function() { updateField(field); });
-                              });
-                              });
-                           </script>
+                           
                         </div>
                      </div>
                   <?php
