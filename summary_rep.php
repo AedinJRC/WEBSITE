@@ -14,9 +14,9 @@ if (isset($_POST['status_filter']) && $_POST['status_filter'] != '') {
 }
 
 // Build the SQL query based on search and status filter
-$sql = "SELECT * FROM vrftb WHERE ";
+$sql = "SELECT * FROM vrftb WHERE gsodirector_status == 'Approved' AND ";
 if ($status_filter != '') {
-    $sql .= "gsodirector_status = '$status_filter' AND ";
+    $sql .= "gsodirector_status = '$status_filter' AND  ";
 }
 $sql .= "(
     id LIKE '%$search%' OR 
