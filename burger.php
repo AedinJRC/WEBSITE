@@ -109,20 +109,16 @@ nav .closeMenu {
 
 .dropdown-container {
   display: none;
-  flex-direction: column;
-  background: lightgrey;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 220px;
-  z-index: 20;
+  list-style-type: none;
+  padding-left: 1em;
+  background-color: #f9f9f9;
 }
 
 .dropdown-container a {
   color: white;
   padding: 8px 12px;
   font-size: 16px;
-  text-align: left;
+  text-align: center;
 }
 
 .dropdown-container a:hover {
@@ -270,11 +266,16 @@ nav .closeMenu {
     cursor: pointer;
   }
 
-  .dropdown-container {
-    position: relative;
-    width: 100%;
-    background: var(--yellowColor);
-  }
+.dropdown-container {
+  display: none;
+  flex-direction: column;
+  background: lightgrey;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  z-index: 20;
+}
 
   #profile {
     width: clamp(50px, 25vw, 80px);
@@ -438,22 +439,24 @@ nav .closeMenu {
 
   dropdownBtns.forEach(btn => {
     btn.addEventListener('click', function (e) {
-      e.stopPropagation(); // Prevents the click from reaching window listener
+      e.stopPropagation();
       const dropdown = this.nextElementSibling;
 
+      // Close all other dropdowns
       document.querySelectorAll('.dropdown-container').forEach(dc => {
         if (dc !== dropdown) {
-          dc.style.display = 'none'; // Close other dropdowns
+          dc.style.display = 'none';
         }
       });
 
-      // Toggle the clicked one
-      dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+      // Toggle current dropdown
+      const isOpen = dropdown.style.display === 'block';
+      dropdown.style.display = isOpen ? 'none' : 'block';
     });
   });
 
   // Close dropdowns when clicking outside
-  window.addEventListener('click', function () {
+  document.addEventListener('click', function () {
     document.querySelectorAll('.dropdown-container').forEach(drop => {
       drop.style.display = 'none';
     });
