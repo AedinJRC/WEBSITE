@@ -1732,7 +1732,7 @@ function home()
                         $result = $stmt->get_result();
                         $rowvrf2 = $result->fetch_assoc();
                         $stmt->close();
-                        if ($rowvrf2[$status] != 'Approved') {
+                        if ($rowvrf2[$status] == 'Pending') {
                            $updatevrf = "UPDATE vrftb SET $status='Seen', updated_at = updated_at WHERE id = ?";
                            $stmt = $conn->prepare($updatevrf);
                            if ($stmt) {
@@ -1961,11 +1961,29 @@ function home()
                                           ?>
                                              <div class="input-container">
                                                 <select name="vrfvehicle" id="vehicleUsed" required>
-                                                   <option value="" disabled selected></option>
                                                    <?php
+                                                      if ($_SESSION['role'] == "Secretary") {
+                                                         ?>
+                                                            <option value="" disabled selected></option>
+                                                         <?php
+                                                      }
+                                                      else {
+                                                         ?>
+                                                            <option value="<?php echo $rowvrfid['vehicle']; ?>"><?php echo $rowvrfid['vehicle']; ?></option>
+                                                         <?php
+                                                      }
                                                       include("config.php");
-                                                      $selectvehicle = "SELECT * FROM carstb";
-                                                      $resultvehicle = $conn->query($selectvehicle);
+                                                      if ($_SESSION['role'] == "Secretary") {
+                                                         $vehicle = $rowvrfid['vehicle'];
+                                                         $stmt = $conn->prepare("SELECT * FROM carstb");
+                                                      }
+                                                      elseif ($_SESSION['role'] == "Director") {
+                                                         $vehicle = $rowvrfid['vehicle'];
+                                                         $stmt = $conn->prepare("SELECT * FROM carstb WHERE CONCAT(brand, ' ', model) != ?");
+                                                         $stmt->bind_param("s", $vehicle);
+                                                      }
+                                                      $stmt->execute();
+                                                      $resultvehicle = $stmt->get_result();
                                                       if ($resultvehicle->num_rows > 0) {
                                                          while($rowvehicle = $resultvehicle->fetch_assoc()) {
                                                             $departure=$rowvrf['departure'];
@@ -2010,8 +2028,17 @@ function home()
                                              </div>
                                              <div class="input-container">
                                                 <select name="vrfdriver" id="driver" required>
-                                                   <option value="" disabled selected></option>
                                                    <?php
+                                                      if ($_SESSION['role'] == "Secretary") {
+                                                         ?>
+                                                            <option value="" disabled selected></option>
+                                                         <?php
+                                                      }
+                                                      else {
+                                                         ?>
+                                                            <option value="<?php echo $rowvrfid['driver']; ?>"><?php echo $rowvrfid['driver']; ?></option>
+                                                         <?php
+                                                      }
                                                       include 'config.php';
                                                       $selectdriver = "SELECT * FROM usertb WHERE role = 'Driver'";
                                                       $resultdriver = $conn->query($selectdriver);
@@ -2106,7 +2133,7 @@ function home()
                                                       <?php
                                                    }
                                                 ?>
-                                                   <input name="vrftotal_cost" type="number" id="totalCost" value="<?php if($rowvrf['total_cost'] == 0.00) {echo"";} ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                                   <input name="vrftotal_cost" type="number" id="totalCost" value="<?php if($rowvrf['total_cost'] == 0.00) {echo"";} else {echo $rowvrf['total_cost'];}?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
                                                 <?php
                                                    if($rowvrf['total_cost'] == 0.00)
                                                    {
@@ -2198,7 +2225,7 @@ function home()
                      {
                         $updateStatus = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
                      }
-                     elseif($_SESSION['role']=='Secretary')
+                     elseif($_SESSION['role']=='Secretary' OR $_SESSION['role']=='Director')
                      {
                         $vehicle = $_POST['vrfvehicle'];
                         $driver = $_POST['vrfdriver'];
@@ -2668,7 +2695,7 @@ function home()
                         ?>
                            <div class="pending">
                               <?php
-                                 if($rowvrf[$status] == "Pending")
+                                 if($rowvrf[$status] == "Pending" OR $rowvrf['user_cancelled'] == 'Yes')
                                  {
                                     echo '<div class="circle"></div>';
                                  }
