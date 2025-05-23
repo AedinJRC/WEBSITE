@@ -1,11 +1,27 @@
 <?php
 include 'config.php';
 
-// Fetch inspected vehicles
-$sql = "SELECT DISTINCT c.plate_number, c.brand, c.model, c.year_model, c.color, c.transmission
-        FROM carstb c
-        INNER JOIN vehicle_checklists vc ON c.plate_number = vc.plate_number
-        ORDER BY c.brand, c.model";
+// Toggle distinct mode on button click
+if (isset($_POST['distinctbtn'])) {
+    if (isset($_SESSION['distinct']) && $_SESSION['distinct'] != 'no') {
+        $_SESSION['distinct'] = 'no';
+    } else {
+        $_SESSION['distinct'] = 'yes';
+    }
+}
+
+// Determine which SQL query to use
+if (isset($_SESSION['distinct']) && $_SESSION['distinct'] == 'yes') {
+    $sql = "SELECT DISTINCT c.plate_number, c.brand, c.model, c.year_model, c.color, c.transmission
+            FROM carstb c
+            INNER JOIN vehicle_checklists vc ON c.plate_number = vc.plate_number
+            ORDER BY c.brand, c.model";
+} else {
+    $sql = "SELECT c.plate_number, c.brand, c.model, c.year_model, c.color, c.transmission
+            FROM carstb c
+            INNER JOIN vehicle_checklists vc ON c.plate_number = vc.plate_number
+            ORDER BY c.brand, c.model";
+}
 $vehicles = $conn->query($sql);
 ?>
 
@@ -39,7 +55,6 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f5f7fa;
     color: #333;
-    line-height: 1.6;
 }
 
 .container {
@@ -212,11 +227,31 @@ body {
         padding: 20px 15px;
     }
 }
+.distinct-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition);
+    i{
+        color: white;
+    }
+}
 </style>
 </head>
 <body>
+<div class="container">    
+    <form method="post" action="">
+        <button class="distinct-button" type="submit" name="distinctbtn">
+            <?php
+                echo (isset($_SESSION["distinct"]) && $_SESSION["distinct"] == "yes") ? "<i class='fa fa-refresh'></i> Latest" : "<i class='fa fa-refresh'></i> All";
+            ?>
+        </button>
+    </form>
 
-<div class="container">
     <div class="header">
         <h1>Maintenance Report</h1>
         <h2>Inspected Vehicles</h2>
@@ -262,13 +297,13 @@ function showModal(plateNumber) {
     .then(data => {
         document.getElementById('modal-body').innerHTML = data;
         document.getElementById('modal').style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        document.body.style.overflow = 'hidden';
     });
 }
 
 function closeModal() {
     document.getElementById('modal').style.display = 'none';
-    document.body.style.overflow = 'auto'; // Re-enable scrolling
+    document.body.style.overflow = 'auto';
 }
 
 window.onclick = function(event) {
@@ -277,13 +312,11 @@ window.onclick = function(event) {
     }
 }
 
-// Close modal with Escape key
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         closeModal();
     }
 });
 </script>
-
 </body>
 </html>

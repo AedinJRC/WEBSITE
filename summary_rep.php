@@ -14,9 +14,16 @@ if (isset($_POST['status_filter']) && $_POST['status_filter'] != '') {
 }
 
 // Build the SQL query based on search and status filter
-$sql = "SELECT * FROM vrftb WHERE ";
+if ($_SESSION['role'] == 'Driver')
+{
+    $sql = "SELECT * FROM vrftb WHERE gsodirector_status = 'Approved' AND (user_cancelled = 'No' OR user_cancelled IS NULL) AND";
+}
+else
+{
+    $sql = "SELECT * FROM vrftb WHERE";
+}
 if ($status_filter != '') {
-    $sql .= "gsodirector_status = '$status_filter' AND ";
+    $sql .= "gsodirector_status = '$status_filter' AND  ";
 }
 $sql .= "(
     id LIKE '%$search%' OR 
@@ -38,7 +45,8 @@ $sql .= "(
     gsoassistant_status LIKE '%$search%' OR 
     immediatehead_status LIKE '%$search%' OR 
     gsodirector_status LIKE '%$search%' OR 
-    accounting_status LIKE '%$search%' )";
+    accounting_status LIKE '%$search%' OR
+    user_cancelled LIKE '%$search%')";
 
 // Execute the query
 $result = $conn->query($sql);
@@ -315,6 +323,7 @@ tbody tr:hover {
             
                 echo "<div class='card'>";
                 echo "<h2>".$row["name"]." - ".$row["department"]."</h2>";
+                echo "<p><strong>Form ID:</strong> ".$row["id"]."</p>";
                 echo "<p><strong>Activity:</strong> ".$row["activity"]."</p>";
                 echo "<p><strong>Purpose:</strong> ".$row["purpose"]."</p>";
                 echo "<p><strong>Date Filed:</strong> ".$row["date_filed"]."</p>";
@@ -335,6 +344,11 @@ tbody tr:hover {
                         <span class='$gsodirector_class'>GSO Director: ".$row["gsodirector_status"]."</span><br>
                         <span class='$accounting_class'>Accounting: ".$row["accounting_status"]."</span>
                       </p>";
+                if ($row['user_cancelled'] == 'Yes') {
+                    ?>
+                        <p><strong>Cancelled By User</strong></p>
+                    <?php
+                }
                 echo "</div>";
                 echo "</div>";
             }

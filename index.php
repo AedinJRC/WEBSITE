@@ -1133,7 +1133,7 @@ footer .column > a:hover {
                     </div>
                 </div>
                 <div class="right-section">
-                    <img src="PNG/GSO Logo.png" alt="Logo">
+                    <img src="PNG/GSO_Logo.png" alt="Logo">
                 </div>
             </div>
             
@@ -1172,7 +1172,7 @@ footer .column > a:hover {
             <div class="box2">
                 <div class="create_acc">
                     <div class="create_pic">
-                        <img src="PNG/GSO logo.png" alt="Logo">
+                        <img src="PNG/GSO_Logo.png" alt="Logo">
                     </div>
                     <h1>To create account</h1>
                     <div class="create_butt_container">
