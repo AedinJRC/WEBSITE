@@ -3083,16 +3083,16 @@ function home()
                                     <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
                                     <div class="input-container">   
                                        <?php
-                                          if($rowvrf['total_cost'] == 0.00)
+                                          if($rowvrfid['total_cost'] == 0.00)
                                           {
                                              ?>
                                                 <a href="#vrespopup">      
                                              <?php
                                           }
                                        ?>
-                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrfid['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
                                        <?php
-                                          if($rowvrf['total_cost'] == 0.00)
+                                          if($rowvrfid['total_cost'] == 0.00)
                                           {
                                              ?>
                                                 </a>      
@@ -3101,7 +3101,7 @@ function home()
                                        ?>
                                        <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                        <div>
-                                          <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
+                                          <label <?php if($rowvrfid['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
                                        </div>
                                     </div>
                                     </span>
