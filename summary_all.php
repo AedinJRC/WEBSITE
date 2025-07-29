@@ -1,4 +1,3 @@
-
 <?php 
 include 'config.php';
 
@@ -340,29 +339,6 @@ tbody tr:hover {
     color: #5a0011;
     margin-top: 20px;
   }
-  .cancel-form {
-    text-align: right;
-  }
-  .cancel-button
-  {
-    background-color: var(--maroon);
-    color: white;
-    padding: 5px 6px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    i{
-        color: white;
-    }
-  }
-  .cancel-button:hover {
-    background-color: var(--yellow);
-    color: var(--maroon);
-    i{
-        color: var(--maroon);
-    }
-    transition: background-color 0.3s ease;
-  }
 </style>
 </head>
 <body>
@@ -422,7 +398,6 @@ tbody tr:hover {
             
                 echo "<div class='card'>";
                 echo "<h2>".$row["name"]." - ".$row["department"]."</h2>";
-                echo "<p><strong>Form ID:</strong> ".$row["id"]."</p>";
                 echo "<p><strong>Activity:</strong> ".$row["activity"]."</p>";
                 echo "<p><strong>Purpose:</strong> ".$row["purpose"]."</p>";
                 echo "<p><strong>Date Filed:</strong> ".$row["date_filed"]."</p>";
@@ -444,56 +419,11 @@ tbody tr:hover {
                         <span class='$accounting_class'>Accounting: ".$row["accounting_status"]."</span>
                       </p>";
                 echo "</div>";
-                ?>
-                    <form class="cancel-form" method="POST" action="" onsubmit="return confirmCancel();">
-                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                        <button class="cancel-button" type="submit" name="cancel-btn"> <i class="fa fa-ban"></i> Cancel</button>
-                    </form>
-                    <script>
-                        function confirmCancel() {
-                            return confirm("Are you sure you want to cancel this record?");
-                        }
-                    </script>
-                <?php
                 echo "</div>";
             }
         } else {
             echo "<p style='text-align:center;'>No records found for the search criteria.</p>";
         }
-        if (isset($_POST['cancel-btn'])) {
-            // Retrieve the departure date of the record
-            $id = $_POST['id'];
-            $select_query = "SELECT departure FROM vrftb WHERE id = '$id'";
-        
-            $result = $conn->query($select_query);
-            if ($result && $result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                $departure_date = $row['departure'];
-        
-                // Get the current date and compare it with the departure date
-                $current_time = new DateTime();
-                $departure_time = new DateTime($departure_date);
-                $interval = $current_time->diff($departure_time);
-        
-                // Check if the departure date is in the past or within 1 day
-                if ($interval->invert == 1 || $interval->days < 1) {
-                    echo "<script>alert('You cannot cancel a reservation once the departure date has passed or within 1 day of departure.');</script>";
-                } else {
-                    // Proceed with cancellation if it's not within 1 day of departure and the date is not in the past
-                    $cancel_query = "UPDATE vrftb SET user_cancelled = 'yes' WHERE id = '$id'";
-                    if ($conn->query($cancel_query) === TRUE) {
-                        echo "<script>alert('Record cancelled successfully.');</script>";
-                        echo "<script>history.back();</script>";
-                    } else {
-                        echo "<script>alert('Error cancelling record: " . $conn->error . "');</script>";
-                    }
-                }
-            } else {
-                echo "<script>alert('Record not found.');</script>";
-            }
-        }
-        
-        
         $conn->close();
         ?>
     </div>
