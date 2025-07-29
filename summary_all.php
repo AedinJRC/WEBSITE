@@ -45,7 +45,13 @@ if ($total_result && $row = $total_result->fetch_assoc()) {
 }
 
 // --- MAIN DATA QUERY ---
-$sql = "SELECT * FROM vrftb WHERE user_cancelled = 'No' AND name = '$full_name' ";
+
+if($_SESSION['role'] == 'Immediate Head') {
+    $sql = "SELECT * FROM vrftb WHERE user_cancelled = 'No' AND (immediatehead_status='Approved' OR immediatehead_status='Rejected') AND department = '$department' ";
+   
+} else {
+     $sql = "SELECT * FROM vrftb WHERE user_cancelled = 'No' AND name = '$full_name' ";
+}
 if ($status_filter != '') {
     $sql .= "AND gsodirector_status = '$status_filter' ";
 }
