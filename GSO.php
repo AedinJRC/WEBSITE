@@ -1310,7 +1310,7 @@ function home()
                <div class="vrf-details" style="margin-top:13px;">
                   <div class="input-container">
                      <?php
-                        if ($_SESSION['role'] == 'Admin') {
+                        if ($_SESSION['role'] == 'Secretary' OR $_SESSION['role'] == 'GSO_Director' OR $_SESSION['role'] == 'Admin') {
                            $date=date("Y-m-d\T06:00");
                         }
                         else
