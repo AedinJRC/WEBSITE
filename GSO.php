@@ -1230,7 +1230,7 @@ function home()
                         <label for="dateFiled">DATE FILED:</label>
                      </div>
                      <div class="input-container">
-                        <input name="vrfbudget_no" type="number" id="budgetNo">
+                        <input name="vrfbudget_no" type="number" id="budgetNo" required>
                         <label for="budgetNo">BUDGET No.:</label>
                      </div>
                      <div class="input-container">
@@ -1576,14 +1576,6 @@ function home()
                        if (!in_array($letterFileType, $allowedTypes)) {
                            echo "<script>
                                    alert('Invalid file type for letter attachment. Only Word Documents or PDFs are allowed.');
-                                   window.history.back();
-                                 </script>";
-                           exit;
-                       }
-               
-                       if (!move_uploaded_file($_FILES["vrfletter_attachment"]["tmp_name"], $letterFilePath)) {
-                           echo "<script>
-                                   alert('Failed to upload the letter attachment.');
                                    window.history.back();
                                  </script>";
                            exit;
@@ -2108,7 +2100,7 @@ function home()
                                        {
                                           ?>
                                              <span style="transform: translateX(60px);">
-                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" required></textarea>
+                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost"></textarea>
                                              <div class="input-container">
                                                 <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.5vw;" step="0.01" min="0" required>
                                                 <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
