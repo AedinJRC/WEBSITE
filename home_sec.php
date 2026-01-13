@@ -6,16 +6,26 @@ $searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 $sql = "SELECT * FROM vrftb 
         WHERE immediatehead_status = 'Approved' 
-          AND gsodirector_status = ? 
-          AND departure >= CURDATE()";
+        AND departure >= CURDATE()";
 
 $params = [];
-$param_types = "s";  // for statusFilter
+$param_types = "";
 
-$params[] = $statusFilter;
+// ================== GSODIRECTOR STATUS LOGIC ==================
+if ($statusFilter === 'Pending') {
+    // Pending should include Seen
+    $sql .= " AND (gsodirector_status='Pending' OR gsodirector_status='Seen')";
+} else {
+    // Normal filter for Approved / Rejected
+    $sql .= " AND gsodirector_status=?";
+    $params[] = $statusFilter;
+    $param_types .= "s";
+}
+// ===============================================================
 
+
+// SEARCH LOGIC
 if ($searchTerm !== '') {
-    // Add search condition - searching across multiple columns
     $sql .= " AND (
         name LIKE ? OR 
         department LIKE ? OR 
@@ -24,9 +34,10 @@ if ($searchTerm !== '') {
         vehicle LIKE ? OR 
         driver LIKE ?
     )";
-    // Add six search params (one for each field), all with same type 's'
+
     $param_types .= "ssssss";
     $searchWildcard = "%" . $searchTerm . "%";
+    
     for ($i = 0; $i < 6; $i++) {
         $params[] = $searchWildcard;
     }
@@ -36,8 +47,11 @@ $sql .= " ORDER BY STR_TO_DATE(departure, '%Y-%m-%d %H:%i:%s') ASC";
 
 $stmt = $conn->prepare($sql);
 
-// Dynamically bind params
-$stmt->bind_param($param_types, ...$params);
+// Bind only if there are params
+if (!empty($params)) {
+    $stmt->bind_param($param_types, ...$params);
+}
+
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
