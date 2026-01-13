@@ -1318,8 +1318,15 @@ function home()
                            $date=date("Y-m-d\T06:00", strtotime("+7 days"));
                         }
                      ?>
-                     <input name="vrfdeparture" value="<?php echo $date; ?>" type="datetime-local" id="departureDate" required min='<?php echo $date; ?>'>
-                     <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                     <div class="input-container">
+                        <input name="vrfdeparture" value="<?php echo $date; ?>" type="datetime-local" id="departureDate" required min='<?php echo $date; ?>'>
+                        <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                     </div>
+                     <div style="height: 8px;"></div>
+                     <div class="input-container">
+                        <input name="vrfdeparture" value="<?php echo $date; ?>" type="datetime-local" id="departureDate" required min='<?php echo $date; ?>'>
+                        <label for="departureDate">DATE/TIME OF RETURN:</label>
+                     </div>
                      <div class="passenger-container">
                         <span>NAME OF PASSENGER/S</span>
                         <div id="passengerList">
