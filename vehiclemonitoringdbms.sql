@@ -296,6 +296,30 @@ insert  into `vehicle_checklists`(`id`,`inspected_by`,`plate_number`,`check_id`,
 (109,'AAVA DVDRC','NED 1154',9,'Good','2025-05-02 14:42:49'),
 (110,'AAVA DVDRC','NED 1154',10,'Fair','2025-05-02 14:42:49');
 
+/*Table structure for table `vrf_detailstb` */
+
+DROP TABLE IF EXISTS `vrf_detailstb`;
+
+CREATE TABLE `vrf_detailstb` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `vrf_id` varchar(20) DEFAULT NULL,
+  `vehicle` varchar(50) DEFAULT NULL,
+  `driver` varchar(50) DEFAULT NULL,
+  `departure` datetime DEFAULT NULL,
+  `return` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `fk_vrfdetails` (`vrf_id`),
+  CONSTRAINT `fk_vrfdetails` FOREIGN KEY (`vrf_id`) REFERENCES `vrftb` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `vrf_detailstb` */
+
+insert  into `vrf_detailstb`(`id`,`vrf_id`,`vehicle`,`driver`,`departure`,`return`,`created_at`,`updated_at`) values 
+(1,'2026-011301','Toyota Rush','Mr. Dexther Abuan','2026-01-20 06:00:00','2026-01-20 09:00:00','2026-01-17 16:13:42','2026-01-17 16:17:53'),
+(2,'2026-011302','Toyota Rush','Mr. Dexther Abuan','2025-05-05 06:00:00','2025-05-05 06:00:00','2026-01-17 16:17:14','2026-01-17 16:17:34');
+
 /*Table structure for table `vrftb` */
 
 DROP TABLE IF EXISTS `vrftb`;
@@ -308,34 +332,30 @@ CREATE TABLE `vrftb` (
   `purpose` varchar(20) DEFAULT NULL,
   `date_filed` date DEFAULT NULL,
   `budget_no` varchar(10) DEFAULT NULL,
-  `vehicle` varchar(50) DEFAULT NULL,
-  `driver` varchar(50) DEFAULT NULL,
   `destination` varchar(255) DEFAULT NULL,
-  `departure` datetime DEFAULT NULL,
-  `return` datetime DEFAULT NULL,
   `passenger_count` int(10) DEFAULT NULL,
   `passenger_attachment` varchar(255) DEFAULT NULL,
   `transportation_cost` varchar(255) DEFAULT NULL,
   `total_cost` decimal(10,2) DEFAULT 0.00,
   `letter_attachment` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `gsoassistant_status` enum('Pending','Seen','Rejected','Approved') DEFAULT 'Pending',
   `immediatehead_status` enum('Pending','Seen','Rejected','Approved') DEFAULT 'Pending',
   `gsodirector_status` enum('Pending','Seen','Rejected','Approved') DEFAULT 'Pending',
   `accounting_status` enum('Pending','Seen','Rejected','Approved') DEFAULT 'Pending',
   `user_cancelled` enum('Yes','No') DEFAULT 'No',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `vrftb` */
 
-insert  into `vrftb`(`id`,`name`,`department`,`activity`,`purpose`,`date_filed`,`budget_no`,`vehicle`,`driver`,`destination`,`departure`,`return`,`passenger_count`,`passenger_attachment`,`transportation_cost`,`total_cost`,`letter_attachment`,`created_at`,`updated_at`,`gsoassistant_status`,`immediatehead_status`,`gsodirector_status`,`accounting_status`,`user_cancelled`) values 
-('2025-042801','Jose Munoz','College','Recollection','School Related','2025-04-28','05124','DAM 6747','dexther','Tagaytay','2025-05-05 06:00:00',NULL,3,NULL,'Gas\r\n550\r\nTubig \r\n250\r\nKuryente \r\n750.50',1550.50,'TLComp-introTL.pdf','2025-04-28 13:18:11','2025-04-29 08:17:06','Approved','Approved','Approved','Approved','No'),
-('2025-043001','Jose Munoz','College','College Night','School Related','2025-04-30','05167','FAD 5799','Mr. Leon Mandigal','Manila','2025-05-05 06:00:00',NULL,20,'Letter to self.docx','200 Tubig\r\n4000 Gas',212312.00,'Letter to self.docx','2025-04-30 16:14:20','2025-05-15 06:25:16','Approved','Approved','Pending','Approved','No'),
-('2025-050301','David Brown','College','Seminar','Official Business','2025-05-03','05125','DAV 8382','leon','Manila Zoo','2025-05-16 06:00:00',NULL,2,NULL,'efjefajefa;',2000.00,'Intro_Algorithm.pdf','2025-05-03 14:29:22','2025-05-03 14:37:49','Approved','Approved','Approved','Approved','No'),
-('2026-011301','Abuan, Dexther','College','aa','School Related','2026-01-13','33','Toyota Rush','Mr. Dexther Abuan','bb','2026-01-16 06:03:00',NULL,0,NULL,'',0.00,NULL,'2026-01-13 11:43:32','2026-01-13 11:43:32','Pending','Pending','Pending','Pending','No'),
-('2026-011302','Abuan, Dexther','College','ss','School Related','2026-01-13','3','Toyota Rush','Mr. Dexther Abuan','ss','2026-01-16 06:00:00',NULL,0,NULL,'',88.00,NULL,'2026-01-13 11:49:17','2026-01-13 13:06:35','Approved','Approved','Seen','Approved','No');
+insert  into `vrftb`(`id`,`name`,`department`,`activity`,`purpose`,`date_filed`,`budget_no`,`destination`,`passenger_count`,`passenger_attachment`,`transportation_cost`,`total_cost`,`letter_attachment`,`gsoassistant_status`,`immediatehead_status`,`gsodirector_status`,`accounting_status`,`user_cancelled`,`created_at`,`updated_at`) values 
+('2025-042801','Jose Munoz','College','Recollection','School Related','2025-04-28','05124','Tagaytay',3,NULL,'Gas\r\n550\r\nTubig \r\n250\r\nKuryente \r\n750.50',1550.50,'TLComp-introTL.pdf','Approved','Approved','Approved','Approved','No','2025-04-28 13:18:11','2025-04-29 08:17:06'),
+('2025-043001','Jose Munoz','College','College Night','School Related','2025-04-30','05167','Manila',20,'Letter to self.docx','200 Tubig\r\n4000 Gas',212312.00,'Letter to self.docx','Approved','Approved','Pending','Approved','No','2025-04-30 16:14:20','2025-05-15 06:25:16'),
+('2025-050301','David Brown','College','Seminar','Official Business','2025-05-03','05125','Manila Zoo',2,NULL,'efjefajefa;',2000.00,'Intro_Algorithm.pdf','Approved','Approved','Approved','Approved','No','2025-05-03 14:29:22','2025-05-03 14:37:49'),
+('2026-011301','Abuan, Dexther','College','aa','School Related','2026-01-13','33','bb',0,NULL,'',0.00,NULL,'Pending','Pending','Pending','Pending','No','2026-01-13 11:43:32','2026-01-13 11:43:32'),
+('2026-011302','Abuan, Dexther','College','ss','School Related','2026-01-13','3','ss',0,NULL,'',88.00,NULL,'Approved','Approved','Seen','Approved','No','2026-01-13 11:49:17','2026-01-13 13:06:35');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
