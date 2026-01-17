@@ -1214,15 +1214,6 @@ function home()
                         <input name="vrfactivity" type="text" id="activity" required>
                         <label for="activity">ACTIVITY:</label>
                      </div>
-                     <div class="input-container">
-                        <select name="vrfpurpose" id="purpose" required>
-                           <option value="" disabled selected></option>
-                           <option value="School Related">School Related</option>
-                           <option value="Official Business">Official Business</option>
-                           <option value="Personal">Personal</option>
-                        </select>
-                        <label for="purpose">PURPOSE:</label>
-                     </div>
                   </div>
                   <div class="vrf-details-column">
                      <div class="input-container">
@@ -1233,204 +1224,211 @@ function home()
                         <input name="vrfbudget_no" type="number" id="budgetNo" required>
                         <label for="budgetNo">BUDGET No.:</label>
                      </div>
+                     <div class="input-container">
+                        <select name="vrfpurpose" id="purpose" required>
+                           <option value="" disabled selected></option>
+                           <option value="School Related">School Related</option>
+                           <option value="Official Business">Official Business</option>
+                           <option value="Personal">Personal</option>
+                        </select>
+                        <label for="purpose">PURPOSE:</label>
+                     </div>
                   </div>
+                  
                </div>
                <span class="address">
                   <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                   <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required></textarea>
                </span>
-               <div class="vrf-details" style="margin-top:13px;">
-                  <div class="input-container">
-                     <?php
-                        if ($_SESSION['role'] == 'Secretary' OR $_SESSION['role'] == 'GSO_Director' OR $_SESSION['role'] == 'Admin') {
-                           $date=date("Y-m-d\T06:00");
-                        }
-                        else
-                        {
-                           $date=date("Y-m-d\T06:00", strtotime("+7 days"));
-                        }
-                     ?>
+               <span class="vrf-reservation-details">
+                  
+               </span>
+               <span class="bottom-details">
+                  <div class="vrf-details">
                      <div class="input-container">
-                        <input name="vrfdeparture" value="<?php echo $date; ?>" type="datetime-local" id="departureDate" required min='<?php echo $date; ?>'>
-                        <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
-                     </div>
-                     <div style="height: 8px;"></div>
-                     <div class="input-container">
-                        <input name="vrfdeparture" value="<?php echo $date; ?>" type="datetime-local" id="departureDate" required min='<?php echo $date; ?>'>
-                        <label for="departureDate">DATE/TIME OF RETURN:</label>
-                     </div>
-                     <div class="passenger-container">
-                        <span>NAME OF PASSENGER/S</span>
-                        <div id="passengerList">
-                           <button type="button" id="attachmentButton" onclick="useAttachment()"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">USE ATTACHMENT</button>
-                           <button type="button" id="addButton" onclick="addPassenger()">&plus;</button>
-                        </div>
-                     </div>
-                     <script>
-                        function addPassenger() 
-                        {
-                           const passengerList = document.getElementById("passengerList");
-                           const addButton = document.getElementById("addButton");
-                           const attachmentButton = document.getElementById("attachmentButton");
-
-                           // Hide "USE ATTACHMENT" button when "+" button is Seen
-                           attachmentButton.style.display = "none";
-
-                           // Get all current passenger entries
-                           const inputContainers = passengerList.querySelectorAll(".passenger-entry");
-                           
-                           // Hide the remove button of the previous last passenger (if exists)
-                           if (inputContainers.length > 0) 
-                           {
-                              const lastContainer = inputContainers[inputContainers.length - 1];
-                              const lastRemoveButton = lastContainer.querySelector("button");
-                              if (lastRemoveButton) lastRemoveButton.style.display = "none";
+                        <?php
+                           if ($_SESSION['role'] == 'Secretary' OR $_SESSION['role'] == 'GSO_Director' OR $_SESSION['role'] == 'Admin') {
+                              $date=date("Y-m-d\T06:00");
                            }
-
-                           // Determine new passenger number
-                           const passengerCount = inputContainers.length + 1;
-
-                           const inputContainer = document.createElement("div");
-                           inputContainer.classList.add("input-container", "passenger-entry"); // Added passenger-entry class
-                           inputContainer.style.position = "relative";
-
-                           const input = document.createElement("input");
-                           input.type = "text";
-                           input.name = "vrfpassenger_name[]";
-                           input.required = true;
-
-                           // Add focus event to show placeholder
-                           input.addEventListener("focus", function () 
+                           else
                            {
-                              input.placeholder = "LNAME, Fname MI.";
-                           });
-
-                           // Add blur event to remove placeholder when unfocused
-                           input.addEventListener("blur", function () 
-                           {
-                              input.placeholder = "";
-                           });
-
-                           const label = document.createElement("label");
-                           label.textContent = `PASSENGER#${passengerCount}`;
-
-                           const removeButton = document.createElement("button");
-                           removeButton.classList.add("remove-passenger");
-                           removeButton.style = "position:absolute; transform:translateX(224px)";
-                           removeButton.type = "button";
-                           removeButton.textContent = "×";
-                           removeButton.onclick = function () 
-                           {
-                              inputContainer.remove();
-                              updateRemoveButtons();
-                              updatePassengerLabels();
-                           };
-
-                           inputContainer.appendChild(input);
-                           inputContainer.appendChild(label);
-                           inputContainer.appendChild(removeButton);
-
-                           // Insert before the add button
-                           passengerList.insertBefore(inputContainer, addButton);
-
-                           updateRemoveButtons();
-                           updatePassengerLabels();
-                        }
-
-                        function updateRemoveButtons() 
-                        {
-                           const inputContainers = document.querySelectorAll(".passenger-entry");
-
-                           // Show the remove button only for the last input container
-                           inputContainers.forEach((container, index) => 
-                           {
-                              const removeButton = container.querySelector("button");
-                              if (removeButton) 
-                                 removeButton.style.display = (index === inputContainers.length - 1) ? "inline-block" : "none";
-                           });
-                        }
-
-                        function updatePassengerLabels() 
-                        {
-                           const inputContainers = document.querySelectorAll(".passenger-entry");
-                           inputContainers.forEach((container, index) => 
-                           {
-                              const label = container.querySelector("label");
-                              if (label) 
-                                 label.textContent = `PASSENGER#${index + 1}`;
-                           });
-                        }
-
-                        function useAttachment() 
-                        {
-                           const passengerList = document.getElementById("passengerList");
-                           const addButton = document.getElementById("addButton");
-                           const attachmentButton = document.getElementById("attachmentButton");
-
-                           // Hide buttons
-                           addButton.style.display = "none";
-                           attachmentButton.style.display = "none";
-
-                           // Create a container for attachment input
-                           const inputContainer = document.createElement("div");
-                           inputContainer.classList.add("input-container"); // No passenger-entry class here!
-                           inputContainer.style= "transform: translateY(7px); display:flex; flex-direction:row;";
-
-                           const attachmentInput = document.createElement("input");
-                           attachmentInput.type = "file";
-                           attachmentInput.name = "vrfpassenger_attachment";
-                           attachmentInput.required = true;
-                           attachmentInput.style = "width:190px; border-top-right-radius:0; border-bottom-right-radius:0;";
-
-                           const numberInput = document.createElement("input");
-                           numberInput.type = "number";
-                           numberInput.name = "vrfpassenger_count";
-                           numberInput.required = true;
-                           numberInput.style = "text-align:center; width:50px; border-top-left-radius:0; border-bottom-left-radius:0;";
-
-                           const label = document.createElement("label");
-                           label.textContent = `PASSENGER COUNT`;
-
-                           // Create a remove button
-                           const removeButton = document.createElement("button");
-                           removeButton.textContent = "×";
-                           removeButton.style = "position:absolute; transform:translateY(30px)";
-                           removeButton.onclick = function () 
-                           {
-                              passengerList.removeChild(inputContainer);
-                              // Show buttons again
-                              addButton.style.display = "inline-block";
-                              attachmentButton.style.display = "inline-block";
-                           };
-
-                           // Append elements
-                           inputContainer.appendChild(attachmentInput);
-                           inputContainer.appendChild(numberInput);
-                           inputContainer.appendChild(label);
-                           inputContainer.appendChild(removeButton);
-                           passengerList.appendChild(inputContainer);
-                        }
-                     </script>
-                  </div>   
-                  <span class="address" style="margin-top:-20px">
-                     <span style="text-align:center;">TRANSPORTATION COST</span>
-                     <span style="transform: translateX(60px);">
-                        <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
-                        <div class="input-container">
-                           <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:17px;cursor: not-allowed;" step="0.01" min="0" readonly></a>
-                           <label for="total_cost" style="margin-left:13px">TOTAL COST</label>
-                           <div>
-                              <label id="pesoSign">₱</label>
+                              $date=date("Y-m-d\T06:00", strtotime("+7 days"));
+                           }
+                        ?>
+                        
+                        <div class="passenger-container">
+                           <span>NAME OF PASSENGER/S</span>
+                           <div id="passengerList">
+                              <button type="button" id="attachmentButton" onclick="useAttachment()"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">USE ATTACHMENT</button>
+                              <button type="button" id="addButton" onclick="addPassenger()">&plus;</button>
                            </div>
                         </div>
+                        <script>
+                           function addPassenger() 
+                           {
+                              const passengerList = document.getElementById("passengerList");
+                              const addButton = document.getElementById("addButton");
+                              const attachmentButton = document.getElementById("attachmentButton");
+
+                              // Hide "USE ATTACHMENT" button when "+" button is Seen
+                              attachmentButton.style.display = "none";
+
+                              // Get all current passenger entries
+                              const inputContainers = passengerList.querySelectorAll(".passenger-entry");
+                              
+                              // Hide the remove button of the previous last passenger (if exists)
+                              if (inputContainers.length > 0) 
+                              {
+                                 const lastContainer = inputContainers[inputContainers.length - 1];
+                                 const lastRemoveButton = lastContainer.querySelector("button");
+                                 if (lastRemoveButton) lastRemoveButton.style.display = "none";
+                              }
+
+                              // Determine new passenger number
+                              const passengerCount = inputContainers.length + 1;
+
+                              const inputContainer = document.createElement("div");
+                              inputContainer.classList.add("input-container", "passenger-entry"); // Added passenger-entry class
+                              inputContainer.style.position = "relative";
+
+                              const input = document.createElement("input");
+                              input.type = "text";
+                              input.name = "vrfpassenger_name[]";
+                              input.required = true;
+
+                              // Add focus event to show placeholder
+                              input.addEventListener("focus", function () 
+                              {
+                                 input.placeholder = "LNAME, Fname MI.";
+                              });
+
+                              // Add blur event to remove placeholder when unfocused
+                              input.addEventListener("blur", function () 
+                              {
+                                 input.placeholder = "";
+                              });
+
+                              const label = document.createElement("label");
+                              label.textContent = `PASSENGER#${passengerCount}`;
+
+                              const removeButton = document.createElement("button");
+                              removeButton.classList.add("remove-passenger");
+                              removeButton.style = "position:absolute; transform:translateX(224px)";
+                              removeButton.type = "button";
+                              removeButton.textContent = "×";
+                              removeButton.onclick = function () 
+                              {
+                                 inputContainer.remove();
+                                 updateRemoveButtons();
+                                 updatePassengerLabels();
+                              };
+
+                              inputContainer.appendChild(input);
+                              inputContainer.appendChild(label);
+                              inputContainer.appendChild(removeButton);
+
+                              // Insert before the add button
+                              passengerList.insertBefore(inputContainer, addButton);
+
+                              updateRemoveButtons();
+                              updatePassengerLabels();
+                           }
+
+                           function updateRemoveButtons() 
+                           {
+                              const inputContainers = document.querySelectorAll(".passenger-entry");
+
+                              // Show the remove button only for the last input container
+                              inputContainers.forEach((container, index) => 
+                              {
+                                 const removeButton = container.querySelector("button");
+                                 if (removeButton) 
+                                    removeButton.style.display = (index === inputContainers.length - 1) ? "inline-block" : "none";
+                              });
+                           }
+
+                           function updatePassengerLabels() 
+                           {
+                              const inputContainers = document.querySelectorAll(".passenger-entry");
+                              inputContainers.forEach((container, index) => 
+                              {
+                                 const label = container.querySelector("label");
+                                 if (label) 
+                                    label.textContent = `PASSENGER#${index + 1}`;
+                              });
+                           }
+
+                           function useAttachment() 
+                           {
+                              const passengerList = document.getElementById("passengerList");
+                              const addButton = document.getElementById("addButton");
+                              const attachmentButton = document.getElementById("attachmentButton");
+
+                              // Hide buttons
+                              addButton.style.display = "none";
+                              attachmentButton.style.display = "none";
+
+                              // Create a container for attachment input
+                              const inputContainer = document.createElement("div");
+                              inputContainer.classList.add("input-container"); // No passenger-entry class here!
+                              inputContainer.style= "transform: translateY(7px); display:flex; flex-direction:row;";
+
+                              const attachmentInput = document.createElement("input");
+                              attachmentInput.type = "file";
+                              attachmentInput.name = "vrfpassenger_attachment";
+                              attachmentInput.required = true;
+                              attachmentInput.style = "width:190px; border-top-right-radius:0; border-bottom-right-radius:0;";
+
+                              const numberInput = document.createElement("input");
+                              numberInput.type = "number";
+                              numberInput.name = "vrfpassenger_count";
+                              numberInput.required = true;
+                              numberInput.style = "text-align:center; width:50px; border-top-left-radius:0; border-bottom-left-radius:0;";
+
+                              const label = document.createElement("label");
+                              label.textContent = `PASSENGER COUNT`;
+
+                              // Create a remove button
+                              const removeButton = document.createElement("button");
+                              removeButton.textContent = "×";
+                              removeButton.style = "position:absolute; transform:translateY(30px)";
+                              removeButton.onclick = function () 
+                              {
+                                 passengerList.removeChild(inputContainer);
+                                 // Show buttons again
+                                 addButton.style.display = "inline-block";
+                                 attachmentButton.style.display = "inline-block";
+                              };
+
+                              // Append elements
+                              inputContainer.appendChild(attachmentInput);
+                              inputContainer.appendChild(numberInput);
+                              inputContainer.appendChild(label);
+                              inputContainer.appendChild(removeButton);
+                              passengerList.appendChild(inputContainer);
+                           }
+                        </script>
+                     </div>   
+                     <span class="address">
+                        <span style="text-align:center;">TRANSPORTATION COST</span>
+                        <span style="transform: translateX(60px);">
+                           <textarea style="cursor:not-allowed;" name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly></textarea>
+                           <div class="input-container">
+                              <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:17px;cursor: not-allowed;" step="0.01" min="0" readonly></a>
+                              <label for="total_cost">TOTAL COST</label>
+                              <div>
+                                 <label id="pesoSign">₱</label>
+                              </div>
+                           </div>
+                        </span>
+                        <div class="subbtn-container">
+                           <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
+                           <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
+                           <button class="subbtn" type="submit" name="vrfsubbtn">Submit</button>
+                        </div>
                      </span>
-                     <div class="subbtn-container">
-                        <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
-                        <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
-                        <button class="subbtn" type="submit" name="vrfsubbtn">Submit</button>
-                     </div>
-                  </span>
-               </div>
+                  </div>
+               </span>
             </form>
             <script>
             // Map plate number last digit to coding day
