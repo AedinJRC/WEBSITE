@@ -48,13 +48,24 @@ $result = $stmt->get_result();
 $events = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        // Generate color once per trip (using detail_id)
+
+        // same color for departure & return
         $color = generateColorFromString($row['detail_id']);
 
-        // Departure event
+        // get DATE only (ignore time)
+        $departureDate = date('Y-m-d', strtotime($row['departure']));
+        $returnDate = !empty($row['return'])
+            ? date('Y-m-d', strtotime($row['return']))
+            : null;
+
+        // ================= DEPARTURE EVENT =================
         $events[] = [
-            'id' => $row['detail_id'].'_dep',
-            'activity' => $row['activity'].' (Departure)',
+            'id' => $row['detail_id'] . '_dep',
+            'activity' => $row['activity'] . (
+                ($returnDate && $departureDate === $returnDate)
+                    ? ''               // same day → no label
+                    : ' (Departure)'   // different day
+            ),
             'departure' => $row['departure'],
             'name' => $row['name'],
             'vrf_id' => $row['vrf_id'],
@@ -71,12 +82,12 @@ if ($result->num_rows > 0) {
             'color' => $color
         ];
 
-        // Return event
-        if (!empty($row['return'])) {
+        // ================= RETURN EVENT (ONLY IF DIFFERENT DATE) =================
+        if (!empty($row['return']) && $departureDate !== $returnDate) {
             $events[] = [
-                'id' => $row['detail_id'].'_ret',
-                'activity' => $row['activity'].' (Return)',
-                'departure' => $row['return'], 
+                'id' => $row['detail_id'] . '_ret',
+                'activity' => $row['activity'] . ' (Return)',
+                'departure' => $row['return'],
                 'name' => $row['name'],
                 'vrf_id' => $row['vrf_id'],
                 'department' => $row['department'],
@@ -89,7 +100,7 @@ if ($result->num_rows > 0) {
                 'passenger_count' => $row['passenger_count'],
                 'passenger_attachment' => $row['passenger_attachment'],
                 'letter_attachment' => $row['letter_attachment'],
-                'color' => $color // same color for return
+                'color' => $color
             ];
         }
     }

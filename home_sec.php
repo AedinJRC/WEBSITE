@@ -4,20 +4,29 @@ include('config.php');
 $statusFilter = isset($_GET['status']) ? $_GET['status'] : 'Pending';
 $searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-$sql = "SELECT * FROM vrftb 
-        WHERE immediatehead_status = 'Approved' 
-        AND departure >= CURDATE()";
+$sql = "
+SELECT 
+    v.*, 
+    d.vehicle,
+    d.driver,
+    d.departure,
+    d.return
+FROM vrftb v
+INNER JOIN vrf_detailstb d ON d.vrf_id = v.id
+WHERE 
+    v.immediatehead_status = 'Approved'
+    AND d.departure >= CURDATE()
+    AND v.user_cancelled = 'No'
+";
 
 $params = [];
 $param_types = "";
 
 // ================== GSODIRECTOR STATUS LOGIC ==================
 if ($statusFilter === 'Pending') {
-    // Pending should include Seen
-    $sql .= " AND (gsodirector_status='Pending' OR gsodirector_status='Seen')";
+    $sql .= " AND (v.gsodirector_status='Pending' OR v.gsodirector_status='Seen')";
 } else {
-    // Normal filter for Approved / Rejected
-    $sql .= " AND gsodirector_status=?";
+    $sql .= " AND v.gsodirector_status=?";
     $params[] = $statusFilter;
     $param_types .= "s";
 }
@@ -27,23 +36,22 @@ if ($statusFilter === 'Pending') {
 // SEARCH LOGIC
 if ($searchTerm !== '') {
     $sql .= " AND (
-        name LIKE ? OR 
-        department LIKE ? OR 
-        purpose LIKE ? OR 
-        destination LIKE ? OR 
-        vehicle LIKE ? OR 
-        driver LIKE ?
+        v.name LIKE ? OR 
+        v.department LIKE ? OR 
+        v.purpose LIKE ? OR 
+        v.destination LIKE ? OR 
+        d.vehicle LIKE ? OR 
+        d.driver LIKE ?
     )";
 
     $param_types .= "ssssss";
     $searchWildcard = "%" . $searchTerm . "%";
-    
     for ($i = 0; $i < 6; $i++) {
         $params[] = $searchWildcard;
     }
 }
 
-$sql .= " ORDER BY STR_TO_DATE(departure, '%Y-%m-%d %H:%i:%s') ASC";
+$sql .= " ORDER BY d.departure ASC";
 
 $stmt = $conn->prepare($sql);
 
