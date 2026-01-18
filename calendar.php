@@ -11,7 +11,35 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
 }
 
 // Query the database for events in the selected month and year based on the departure date
-$sql = "SELECT * FROM vrftb WHERE YEAR(departure) = ? AND MONTH(departure) = ? AND gsodirector_status = 'Approved' AND user_cancelled = 'No' ORDER BY departure";
+$sql = "
+SELECT 
+    vd.id AS detail_id,
+    vd.vehicle,
+    vd.driver,
+    vd.departure,
+    vd.return,
+
+    vt.id AS vrf_id,
+    vt.name,
+    vt.department,
+    vt.activity,
+    vt.purpose,
+    vt.date_filed,
+    vt.budget_no,
+    vt.destination,
+    vt.passenger_count,
+    vt.passenger_attachment,
+    vt.letter_attachment
+FROM vrf_detailstb vd
+INNER JOIN vrftb vt ON vd.vrf_id = vt.id
+WHERE 
+    vt.gsodirector_status = 'Approved'
+    AND vt.user_cancelled = 'No'
+    AND YEAR(vd.departure) = ?
+    AND MONTH(vd.departure) = ?
+ORDER BY vd.departure
+";
+
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $currentYear, $currentMonth);
 $stmt->execute();
@@ -20,13 +48,56 @@ $result = $stmt->get_result();
 $events = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $events[] = $row;
+        // Generate color once per trip (using detail_id)
+        $color = generateColorFromString($row['detail_id']);
+
+        // Departure event
+        $events[] = [
+            'id' => $row['detail_id'].'_dep',
+            'activity' => $row['activity'].' (Departure)',
+            'departure' => $row['departure'],
+            'name' => $row['name'],
+            'vrf_id' => $row['vrf_id'],
+            'department' => $row['department'],
+            'purpose' => $row['purpose'],
+            'date_filed' => $row['date_filed'],
+            'budget_no' => $row['budget_no'],
+            'driver' => $row['driver'],
+            'vehicle' => $row['vehicle'],
+            'destination' => $row['destination'],
+            'passenger_count' => $row['passenger_count'],
+            'passenger_attachment' => $row['passenger_attachment'],
+            'letter_attachment' => $row['letter_attachment'],
+            'color' => $color
+        ];
+
+        // Return event
+        if (!empty($row['return'])) {
+            $events[] = [
+                'id' => $row['detail_id'].'_ret',
+                'activity' => $row['activity'].' (Return)',
+                'departure' => $row['return'], 
+                'name' => $row['name'],
+                'vrf_id' => $row['vrf_id'],
+                'department' => $row['department'],
+                'purpose' => $row['purpose'],
+                'date_filed' => $row['date_filed'],
+                'budget_no' => $row['budget_no'],
+                'driver' => $row['driver'],
+                'vehicle' => $row['vehicle'],
+                'destination' => $row['destination'],
+                'passenger_count' => $row['passenger_count'],
+                'passenger_attachment' => $row['passenger_attachment'],
+                'letter_attachment' => $row['letter_attachment'],
+                'color' => $color // same color for return
+            ];
+        }
     }
 }
 
 function generateColorFromString($string) {
     $hash = md5($string); // create hash from string
-    $color = substr($hash, 0, 6); // use first 6 chars as color
+    $color = substr($hash, 0, 6); 
     return '#' . $color;
 }
 ?>
@@ -38,7 +109,83 @@ function generateColorFromString($string) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar with Events</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.select-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 35px;
+}
+
+.select-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--maroonColor);
+    font-size: 14px;
+}
+        .nav-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.calendar-jump { 
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+   
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Dropdown base */
+.calendar-jump select {
+    appearance: none;
+    padding: 6px 32px 6px 12px; /* space for arrow */
+    border-radius: 8px;
+    border: 2px solid transparent; /* default border transparent */
+    color: var(--maroonColor);
+    font-weight: 600;
+    cursor: pointer;
+    transition: border 0.2s ease; /* smooth border transition */
+    position: relative;
+
+   
+}
+
+/* Hover & Focus effect - only border changes */
+.calendar-jump select:hover,
+.calendar-jump select:focus {
+    border-color: var(--maroonColor); /* highlight border */
+    outline: none;
+    box-shadow: none; /* keep it flat */
+}
+
+
+
+/* Mobile friendly */
+@media (max-width: 600px) {
+    .calendar-jump {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .calendar-jump select {
+        width: 100%;
+    }
+}
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f7f7f7;
@@ -309,6 +456,41 @@ function generateColorFromString($string) {
         </a>
     </div>
 
+     <div class="nav-top">
+      <form method="GET" class="calendar-jump">
+    <input type="hidden" name="vsch" value="a">
+
+    <div class="select-wrapper">
+    <select name="month" onchange="this.form.submit()">
+        <?php
+        for ($m = 1; $m <= 12; $m++) {
+            $selected = ($m == $currentMonth) ? 'selected' : '';
+            echo "<option value='$m' $selected>" . date('F', mktime(0,0,0,$m,1)) . "</option>";
+        }
+        ?>
+    </select>
+
+     <i class="fa-solid fa-chevron-down select-icon"></i>
+    </div>
+
+     <div class="select-wrapper">
+    <select name="year" onchange="this.form.submit()">
+        <?php
+        $startYear = 2020;
+        $endYear = date('Y') + 5;
+
+        for ($y = $startYear; $y <= $endYear; $y++) {
+            $selected = ($y == $currentYear) ? 'selected' : '';
+            echo "<option value='$y' $selected>$y</option>";
+        }
+        ?>
+    </select>
+       <i class="fa-solid fa-chevron-down select-icon"></i>
+    </div>
+</form>
+
+</div>
+
     <!-- Calendar -->
     <div class="calendar">
         <div class="calendar-header">S</div>
@@ -338,29 +520,30 @@ function generateColorFromString($string) {
                        date('Y', strtotime($event['departure'])) == $currentYear;
             });
 
-            foreach ($eventsOnDay as $event) {
-                $color = generateColorFromString($event['activity']); // or use $event['id'] or $event['name']
-                echo "<a href='#' 
-                          class='event'
-                          title='{$event['activity']}'
-                          data-name='{$event['name']}'
-                          data-id='{$event['id']}'
-                          data-activity='{$event['activity']}'
-                          data-department='{$event['department']}'
-                          data-purpose='{$event['purpose']}'
-                          data-date_filed='{$event['date_filed']}'
-                          data-budget_no='{$event['budget_no']}'
-                          data-driver='{$event['driver']}'
-                          data-vehicle='{$event['vehicle']}'
-                          data-destination='{$event['destination']}'
-                          data-departure='{$event['departure']}'
-                          data-passenger_count='{$event['passenger_count']}'
-                          data-passenger_attachment='{$event['passenger_attachment']}'
-                          data-letter_attachment='{$event['letter_attachment']}'
-                          style='background-color: $color'>
-                         {$event['activity']}
-                     </a>";
-            }
+     foreach ($eventsOnDay as $event) {
+    $color = $event['color']; // <- use this
+
+    echo "<a href='#' 
+              class='event'
+              title='{$event['activity']}'
+              data-name='{$event['name']}'
+              data-id='{$event['vrf_id']}'
+              data-activity='{$event['activity']}'
+              data-department='{$event['department']}'
+              data-purpose='{$event['purpose']}'
+              data-date_filed='{$event['date_filed']}'
+              data-budget_no='{$event['budget_no']}'
+              data-driver='{$event['driver']}'
+              data-vehicle='{$event['vehicle']}'
+              data-destination='{$event['destination']}'
+              data-departure='{$event['departure']}'
+              data-passenger_count='{$event['passenger_count']}'
+              data-passenger_attachment='{$event['passenger_attachment']}'
+              data-letter_attachment='{$event['letter_attachment']}'
+              style='background-color: $color'>
+             {$event['activity']}
+         </a>";
+}
             echo "</div>";
         }
         ?>

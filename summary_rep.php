@@ -14,41 +14,54 @@ if (isset($_POST['status_filter']) && $_POST['status_filter'] != '') {
 }
 
 // Build the SQL query based on search and status filter
-if ($_SESSION['role'] == 'Driver')
-{
-    $sql = "SELECT * FROM vrftb WHERE gsodirector_status = 'Approved' AND (user_cancelled = 'No' OR user_cancelled IS NULL) AND";
+// Example using INNER JOIN to combine vrftb and vrf_detailstb
+if ($_SESSION['role'] == 'Driver') {
+   $sql = "SELECT v.*, d.vehicle, d.driver, d.departure, d.return, d.created_at
+        FROM vrftb v
+        INNER JOIN vrf_detailstb d ON v.id = d.vrf_id
+        WHERE v.gsodirector_status = 'Approved'
+        AND (v.user_cancelled = 'No' OR v.user_cancelled IS NULL)
+        ORDER BY d.created_at ASC"; 
+} else {
+    $sql = "SELECT v.*, d.vehicle, d.driver, d.departure, d.return
+            FROM vrftb v
+            INNER JOIN vrf_detailstb d ON v.id = d.vrf_id
+            WHERE 1=1"; // dummy WHERE to make appending easier
 }
-else
-{
-    $sql = "SELECT * FROM vrftb WHERE";
-}
-if ($status_filter != '') {
-    $sql .= "gsodirector_status = '$status_filter' AND  ";
-}
-$sql .= "(
-    id LIKE '%$search%' OR 
-    name LIKE '%$search%' OR 
-    department LIKE '%$search%' OR 
-    activity LIKE '%$search%' OR 
-    purpose LIKE '%$search%' OR 
-    date_filed LIKE '%$search%' OR 
-    budget_no LIKE '%$search%' OR 
-    vehicle LIKE '%$search%' OR 
-    driver LIKE '%$search%' OR 
-    destination LIKE '%$search%' OR 
-    departure LIKE '%$search%' OR 
-    passenger_count LIKE '%$search%' OR 
-    passenger_attachment LIKE '%$search%' OR 
-    transportation_cost LIKE '%$search%' OR 
-    total_cost LIKE '%$search%' OR 
-    letter_attachment LIKE '%$search%' OR 
-    gsoassistant_status LIKE '%$search%' OR 
-    immediatehead_status LIKE '%$search%' OR 
-    gsodirector_status LIKE '%$search%' OR 
-    accounting_status LIKE '%$search%' OR
-    user_cancelled LIKE '%$search%')";
 
-// Execute the query
+// Status filter
+if ($status_filter != '') {
+    $sql .= " AND v.gsodirector_status = '$status_filter'";
+}
+
+// Search filter
+if ($search != '') {
+    $sql .= " AND (
+        v.id LIKE '%$search%' OR 
+        v.name LIKE '%$search%' OR 
+        v.department LIKE '%$search%' OR 
+        v.activity LIKE '%$search%' OR 
+        v.purpose LIKE '%$search%' OR 
+        v.date_filed LIKE '%$search%' OR 
+        v.budget_no LIKE '%$search%' OR 
+        d.vehicle LIKE '%$search%' OR 
+        d.driver LIKE '%$search%' OR 
+        d.destination LIKE '%$search%' OR 
+        d.departure LIKE '%$search%' OR 
+        v.passenger_count LIKE '%$search%' OR 
+        v.passenger_attachment LIKE '%$search%' OR 
+        v.transportation_cost LIKE '%$search%' OR 
+        v.total_cost LIKE '%$search%' OR 
+        v.letter_attachment LIKE '%$search%' OR 
+        v.gsoassistant_status LIKE '%$search%' OR 
+        v.immediatehead_status LIKE '%$search%' OR 
+        v.gsodirector_status LIKE '%$search%' OR 
+        v.accounting_status LIKE '%$search%' OR
+        v.user_cancelled LIKE '%$search%'
+    )";
+}
+
+// Execute
 $result = $conn->query($sql);
 ?>
 

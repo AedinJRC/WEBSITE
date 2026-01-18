@@ -45,36 +45,54 @@ if ($total_result && $row = $total_result->fetch_assoc()) {
 
 // --- MAIN DATA QUERY ---
 
-if($_SESSION['role'] == 'Immediate Head') {
-    $sql = "SELECT * FROM vrftb WHERE user_cancelled = 'No' AND (immediatehead_status='Approved' OR immediatehead_status='Rejected') AND department = '$department' ";
-   
+$sql = "
+SELECT d.*, v.*
+FROM vrf_detailstb d
+INNER JOIN vrftb v ON d.vrf_id = v.id
+WHERE v.gsodirector_status = 'Approved'
+  AND v.user_cancelled = 'No'
+";
+
+// Role-based conditions
+if ($_SESSION['role'] == 'Immediate Head') {
+    $sql .= " AND (v.immediatehead_status='Approved' OR v.immediatehead_status='Rejected') AND v.department = '$department'";
 } else {
-     $sql = "SELECT * FROM vrftb WHERE user_cancelled = 'No' AND name = '$full_name' ";
+    $sql .= " AND v.name = '$full_name'";
 }
+
+// Optional status filter
 if ($status_filter != '') {
-    $sql .= "AND gsodirector_status = '$status_filter' ";
+    $sql .= " AND v.gsodirector_status = '$status_filter'";
 }
-$sql .= "AND (
-    id LIKE '%$search%' OR 
-    name LIKE '%$search%' OR 
-    department LIKE '%$search%' OR 
-    activity LIKE '%$search%' OR 
-    purpose LIKE '%$search%' OR 
-    date_filed LIKE '%$search%' OR 
-    budget_no LIKE '%$search%' OR 
-    vehicle LIKE '%$search%' OR 
-    driver LIKE '%$search%' OR 
-    destination LIKE '%$search%' OR 
-    departure LIKE '%$search%' OR 
-    passenger_count LIKE '%$search%' OR 
-    passenger_attachment LIKE '%$search%' OR 
-    transportation_cost LIKE '%$search%' OR 
-    total_cost LIKE '%$search%' OR 
-    letter_attachment LIKE '%$search%' OR 
-    gsoassistant_status LIKE '%$search%' OR 
-    immediatehead_status LIKE '%$search%' OR 
-    gsodirector_status LIKE '%$search%' OR 
-    accounting_status LIKE '%$search%' )";
+
+// Search filter
+if ($search != '') {
+    $sql .= " AND (
+        v.id LIKE '%$search%' OR 
+        v.name LIKE '%$search%' OR 
+        v.department LIKE '%$search%' OR 
+        v.activity LIKE '%$search%' OR 
+        v.purpose LIKE '%$search%' OR 
+        v.date_filed LIKE '%$search%' OR 
+        v.budget_no LIKE '%$search%' OR 
+        d.vehicle LIKE '%$search%' OR 
+        d.driver LIKE '%$search%' OR 
+        v.destination LIKE '%$search%' OR 
+        d.departure LIKE '%$search%' OR 
+        v.passenger_count LIKE '%$search%' OR 
+        v.passenger_attachment LIKE '%$search%' OR 
+        v.transportation_cost LIKE '%$search%' OR 
+        v.total_cost LIKE '%$search%' OR 
+        v.letter_attachment LIKE '%$search%' OR 
+        v.gsoassistant_status LIKE '%$search%' OR 
+        v.immediatehead_status LIKE '%$search%' OR 
+        v.gsodirector_status LIKE '%$search%' OR 
+        v.accounting_status LIKE '%$search%'
+    )";
+}
+
+// ORDER BY newest first
+$sql .= " ORDER BY v.created_at DESC";
 
 $result = $conn->query($sql);
 ?>
