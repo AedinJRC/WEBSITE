@@ -1240,9 +1240,382 @@ function home()
                   <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                   <textarea name="vrfdestination" maxlength="255" type="text" id="destination" required></textarea>
                </span>
-               <span class="vrf-reservation-details">
-                  
-               </span>
+             <?php
+               // drivers
+               $drivers = [];
+               $q = mysqli_query($conn, "SELECT * FROM usertb WHERE role='driver'");
+               while ($r = mysqli_fetch_assoc($q)) {
+                  $drivers[] = $r;
+               }
+
+               // vehicles
+               $vehicles = [];
+               $q = mysqli_query($conn, "SELECT *FROM carstb");
+               while ($r = mysqli_fetch_assoc($q)) {
+                  $vehicles[] = $r;
+               }
+
+               // option strings
+               $driverOptions = "";
+               foreach ($drivers as $d) {
+                  $driverOptions .= "<option value='{$d['employeeid']}'>"
+                     . htmlspecialchars($d['fname'] .' '.$d['lname'] ) .
+                  "</option>";
+               }
+
+               $vehicleOptions = "";
+               foreach ($vehicles as $v) {
+                  $vehicleOptions .= "<option value='{$v['plate_number']}'>"
+                     . htmlspecialchars($v['brand'].' '.$v['model']) .
+                  "</option>";
+               }
+               // existing bookings (vehicle + driver conflicts)
+               $existingBookings = [];
+               $q = mysqli_query(
+                  $conn,
+                  "SELECT departure, `return`, vehicle, driver FROM vrf_detailstb"
+               );
+
+               while ($r = mysqli_fetch_assoc($q)) {
+                  $existingBookings[] = [
+                     'departure' => $r['departure'],
+                     'return'    => $r['return'],
+                     'vehicle'   => $r['vehicle'],
+                     'driver'    => $r['driver']
+                  ];
+               }
+            ?>
+            <div class="details-container">
+
+               <input type="radio" id="rn1" name="mytabs" checked>
+               <label class="tab-name" for="rn1">1</label>
+
+               <div class="tab">
+                  <div class="input-container-2">
+                     <input name="vrfdeparture[]" type="datetime-local" id="departure-1" min="<?php echo $date; ?>" required>
+                     <label for="departure-1">DEPARTURE:</label>
+                  </div>
+
+                  <div class="input-container-2">
+                     <input name="vrfreturn[]" type="datetime-local" id="return-1" min="<?php echo $date; ?>" required>
+                     <label for="return-1">RETURN:</label>
+                  </div>
+
+                  <div class="input-container-2">
+                     <select name="vrfvehicle[]" id="vehicle-1" required>
+                        <option value="" disabled selected></option>
+                        <?= $vehicleOptions ?>
+                     </select>
+                     <label for="vehicle-1">VEHICLE:</label>
+                  </div>
+
+                  <div class="input-container-2">
+                     <select name="vrfdriver[]" id="driver-1" required>
+                        <option value="" disabled selected></option>
+                        <?= $driverOptions ?>
+                     </select>
+                     <label for="driver-1">DRIVER:</label>
+                  </div>
+               </div>
+
+               <label class="tab-name" id="tab-remover" for="remove-tab" style="display:none;">−</label>
+               <button type="button" id="remove-tab" class="remove-tab"></button>
+
+               <label class="tab-name" id="tab-adder" for="add-tab">+</label>
+               <button type="button" id="add-tab" class="add-tab"></button>
+            </div>
+            <script>
+               document.addEventListener("DOMContentLoaded", () => {
+
+                  const vehicleOptions = <?= json_encode($vehicleOptions) ?>;
+                  const driverOptions  = <?= json_encode($driverOptions) ?>;
+
+                  function attachFloatingLabelLogic(scope = document) {
+                     scope.querySelectorAll(".input-container-2 input, .input-container-2 select")
+                     .forEach(el => {
+                        if (el.value) el.classList.add("has-content");
+
+                        const evt = el.tagName === "SELECT" ? "change" : "input";
+                        el.addEventListener(evt, () => {
+                           el.value ? el.classList.add("has-content") : el.classList.remove("has-content");
+                        });
+                     });
+                  }
+
+                  attachFloatingLabelLogic();
+
+                  const container = document.querySelector(".details-container");
+                  const addBtn = document.getElementById("add-tab");
+                  const removeBtn = document.getElementById("remove-tab");
+                  const removeLabel = document.getElementById("tab-remover");
+
+                  let tabCount = container.querySelectorAll('input[type="radio"][name="mytabs"]').length;
+
+                  function updateRemoveVisibility() {
+                     removeLabel.style.display = tabCount >= 2 ? "inline-block" : "none";
+                  }
+                  updateRemoveVisibility();
+
+                  function createSelect(name, label, index, options) {
+                     // name e.g. "vrfvehicle" -> id becomes "vehicle"
+                     const id = name.replace(/^vrf/, '');
+                     return `
+                        <div class="input-container-2">
+                           <select name="${name}[]" id="${id}-${index}" required>
+                              <option value="" disabled selected></option>
+                              ${options}
+                           </select>
+                           <label for="${id}-${index}">${label}:</label>
+                        </div>
+                     `;
+                  }
+
+                  function createDateTime(name, label, index) {
+                     const id = name.replace(/^vrf/, '');
+                     return `
+                        <div class="input-container-2">
+                           <input type="datetime-local" name="${name}[]" id="${id}-${index}" required>
+                           <label for="${id}-${index}">${label}:</label>
+                        </div>
+                     `;
+                  }
+
+                  addBtn.addEventListener("click", () => {
+                     tabCount++;
+                     const tabId = `rn${tabCount}`;
+
+                     const template = `
+                        <input type="radio" id="${tabId}" name="mytabs">
+                        <label class="tab-name" for="${tabId}">${tabCount}</label>
+                        <div class="tab">
+                           ${createDateTime("vrfdeparture", "DEPARTURE", tabCount)}
+                           ${createDateTime("vrfreturn", "RETURN", tabCount)}
+                           ${createSelect("vrfvehicle", "VEHICLE", tabCount, vehicleOptions)}
+                           ${createSelect("vrfdriver", "DRIVER", tabCount, driverOptions)}
+                        </div>
+                     `;
+
+                     container.insertAdjacentHTML("beforeend", template);
+
+                     // find the newly added tab elements
+                     const radio = document.getElementById(tabId);
+                     const label = container.querySelector(`label[for="${tabId}"]`);
+                     const tab = label?.nextElementSibling;
+
+                     // attach floating label logic and event listeners to the new tab
+                     if (tab) attachFloatingLabelLogic(tab);
+                     attach(tabCount);
+
+                     // check the new radio
+                     radio.checked = true;
+
+                     updateRemoveVisibility();
+
+                     // refresh availability across all tabs
+                     setTimeout(refreshAllTabs, 0);
+                  });
+
+                  removeBtn.addEventListener("click", () => {
+                     if (tabCount <= 1) return;
+
+                     const radio = document.getElementById(`rn${tabCount}`);
+                     const label = container.querySelector(`label[for="rn${tabCount}"]`);
+                     const tab = label?.nextElementSibling;
+
+                     radio?.remove();
+                     label?.remove();
+                     tab?.remove();
+
+                     tabCount--;
+                     const prev = document.getElementById(`rn${tabCount}`);
+                     if (prev) prev.checked = true;
+
+                     updateRemoveVisibility();
+
+                     setTimeout(refreshAllTabs, 0);
+                  });
+
+               });
+            </script>
+            <script>
+               document.addEventListener("DOMContentLoaded", () => {
+
+               /* ================= HELPERS ================= */
+
+               function overlaps(aStart, aEnd, bStart, bEnd) {
+                  return aStart < bEnd && bStart < aEnd;
+               }
+
+               function isCodingBanned(plate, date) {
+                  if (!plate || !date) return false;
+
+                  // get last numeric character in the plate
+                  const m = plate.match(/(\d)(?!.*\d)/);
+                  if (!m) return false;
+
+                  const lastDigit = parseInt(m[1], 10);
+                  const day = date.getDay(); // 0=Sun ... 6=Sat
+
+                  const CODING = {
+                     1: [1,2], // Mon
+                     2: [3,4], // Tue
+                     3: [5,6], // Wed
+                     4: [7,8], // Thu
+                     5: [9,0]  // Fri
+                  };
+
+                  return CODING[day]?.includes(lastDigit) ?? false;
+               }
+
+               /* ================= CORE ================= */
+
+               function getTabs() {
+                  return document.querySelectorAll(".tab");
+               }
+
+               function filter(index) {
+                  const depEl = document.getElementById(`departure-${index}`);
+                  const retEl = document.getElementById(`return-${index}`);
+                  if (!depEl || !retEl || !depEl.value || !retEl.value) return;
+
+                  const depDate = new Date(depEl.value);
+                  const retDate = new Date(retEl.value);
+
+                  const tabs = getTabs();
+
+                  tabs.forEach((tab, i) => {
+                     if (i === index - 1) return;
+
+                     tab._dep = document.getElementById(`departure-${i+1}`)?.value
+                        ? new Date(document.getElementById(`departure-${i+1}`).value)
+                        : null;
+
+                     tab._ret = document.getElementById(`return-${i+1}`)?.value
+                        ? new Date(document.getElementById(`return-${i+1}`).value)
+                        : null;
+
+                     tab._vehicle = document.getElementById(`vehicle-${i+1}`)?.value || null;
+                     tab._driver  = document.getElementById(`driver-${i+1}`)?.value || null;
+                  });
+
+                  const dbBookings = <?= json_encode($existingBookings) ?>;
+                 /* -------- VEHICLES -------- */
+                  const vSelect = document.getElementById(`vehicle-${index}`);
+                  if (vSelect) {
+                     [...vSelect.options].forEach(opt => {
+                        if (!opt.value) return;
+
+                        let reason = "";
+
+                        if (isCodingBanned(opt.value, depDate)) {
+                           reason = "Coding restriction";
+                        }
+
+                        // TAB conflicts
+                        tabs.forEach(tab => {
+                           if (!reason && tab._vehicle === opt.value && tab._dep && tab._ret) {
+                              if (overlaps(depDate, retDate, tab._dep, tab._ret)) {
+                                 reason = "Time conflict (current request)";
+                              }
+                           }
+                        });
+
+                        // DATABASE conflicts
+                        dbBookings.forEach(b => {
+                           if (!reason && b.vehicle === opt.value) {
+                              const dbDep = new Date(b.departure);
+                              const dbRet = new Date(b.return);
+                              if (overlaps(depDate, retDate, dbDep, dbRet)) {
+                                 reason = "Time conflict (existing booking)";
+                              }
+                           }
+                        });
+
+                        opt.disabled = !!reason;
+                        opt.title = reason;
+                     });
+                  }
+                  /* -------- DRIVERS -------- */
+                  const dSelect = document.getElementById(`driver-${index}`);
+                  if (dSelect) {
+                     [...dSelect.options].forEach(opt => {
+                        if (!opt.value) return;
+
+                        let reason = "";
+
+                        // TAB conflicts
+                        tabs.forEach(tab => {
+                           if (!reason && tab._driver === opt.value && tab._dep && tab._ret) {
+                              if (overlaps(depDate, retDate, tab._dep, tab._ret)) {
+                                 reason = "Time conflict (current request)";
+                              }
+                           }
+                        });
+
+                        // DATABASE conflicts
+                        dbBookings.forEach(b => {
+                           if (!reason && b.driver === opt.value) {
+                              const dbDep = new Date(b.departure);
+                              const dbRet = new Date(b.return);
+                              if (overlaps(depDate, retDate, dbDep, dbRet)) {
+                                 reason = "Time conflict (existing booking)";
+                              }
+                           }
+                        });
+
+                        opt.disabled = !!reason;
+                        opt.title = reason;
+                     });
+                  }
+
+               }
+
+               /* ================= REFRESH ================= */
+
+               function refreshAllTabs() {
+                  const count = getTabs().length;
+                  for (let i = 1; i <= count; i++) {
+                     filter(i);
+                  }
+               }
+
+               /* ================= EVENTS ================= */
+
+               function attach(index) {
+                  ["departure", "return"].forEach(name => {
+                     document.getElementById(`${name}-${index}`)?.addEventListener("change", refreshAllTabs);
+                  });
+               }
+
+               /* FIRST TAB */
+               attach(1);
+
+               /* VEHICLE / DRIVER CHANGE */
+               document.addEventListener("change", e => {
+                  if (e.target.id?.startsWith("vehicle-") || e.target.id?.startsWith("driver-")) {
+                     refreshAllTabs();
+                  }
+               });
+
+               /* NEW TABS: when add button is clicked we attach in the other script,
+                  but also ensure after a short delay we re-run refreshAllTabs (safe) */
+               const addBtn = document.getElementById("add-tab");
+               addBtn.addEventListener("click", () => {
+                  setTimeout(() => {
+                     const newIndex = document.querySelectorAll(".tab").length;
+                     attach(newIndex);
+                     refreshAllTabs();
+                  }, 0);
+               });
+
+               /* REMOVE TAB: refresh after removal */
+               const removeBtn = document.getElementById("remove-tab");
+               removeBtn.addEventListener("click", () => {
+                  setTimeout(refreshAllTabs, 0);
+               });
+
+               });
+            </script>
                <span class="bottom-details">
                   <div class="vrf-details">
                      <div class="input-container">
@@ -1430,54 +1803,6 @@ function home()
                   </div>
                </span>
             </form>
-            <script>
-            // Map plate number last digit to coding day
-            function getCodingDay(plateNumber) {
-               const lastDigit = plateNumber.trim().slice(-1);
-               switch (lastDigit) {
-                  case '1':
-                  case '2':
-                        return 'Monday';
-                  case '3':
-                  case '4':
-                        return 'Tuesday';
-                  case '5':
-                  case '6':
-                        return 'Wednesday';
-                  case '7':
-                  case '8':
-                        return 'Thursday';
-                  case '9':
-                  case '0':
-                        return 'Friday';
-                  default:
-                        return 'Invalid';
-               }
-            }
-
-            // Listen to departureDate changes
-            document.getElementById('departureDate').addEventListener('change', function() {
-               const selectedDate = this.value;
-               const selectedDay = new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long' });
-
-               const vehicleSelect = document.getElementById('vehicleUsed');
-
-               // Clear existing options
-               vehicleSelect.innerHTML = '<option value="" disabled selected></option>';
-
-               // Loop through vehicles and add only allowed ones
-               vehicles.forEach(vehicle => {
-                  const codingDay = getCodingDay(vehicle.plate_number);
-
-                  if (codingDay !== selectedDay) {
-                        const option = document.createElement('option');
-                        option.value =  vehicle.brand + " " + vehicle.model;
-                        option.textContent = vehicle.brand + " " + vehicle.model;
-                        vehicleSelect.appendChild(option);
-                  }
-               });
-            });
-            </script>
             <?php
                include 'config.php';
                if (isset($_POST['vrfsubbtn'])) {
@@ -1488,10 +1813,7 @@ function home()
                    $purpose = htmlspecialchars($_POST['vrfpurpose']);
                    $date_filed = htmlspecialchars($_POST['vrfdate_filed']);
                    $budget_no = htmlspecialchars($_POST['vrfbudget_no']);
-                   $vehicle = isset($_POST['vrfvehicle']) && !empty($_POST['vrfvehicle']) ? htmlspecialchars($_POST['vrfvehicle']) : null;
-                   $driver = isset($_POST['vrfdriver']) && !empty($_POST['vrfdriver']) ? htmlspecialchars($_POST['vrfdriver']) : null;
                    $destination = htmlspecialchars($_POST['vrfdestination']);
-                   $departure = htmlspecialchars($_POST['vrfdeparture']);
                    $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
                    $passenger_count = isset($_POST['vrfpassenger_count']) ? htmlspecialchars($_POST['vrfpassenger_count']) : null;
                
@@ -1540,11 +1862,11 @@ function home()
                    try {
                        // Insert into vrftb
                        $stmt = $conn->prepare("INSERT INTO vrftb 
-                           (id, name, department, activity, purpose, date_filed, budget_no, vehicle, driver, destination, departure, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                           (id, name, department, activity, purpose, date_filed, budget_no, destination, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                        $stmt->bind_param(
-                           "sssssssssssssss", 
-                           $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $vehicle, $driver, $destination, $departure, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
+                           "ssssssssssss", 
+                           $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $destination, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
                        );
                        $stmt->execute();
                

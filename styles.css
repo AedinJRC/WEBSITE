@@ -36,7 +36,7 @@ main
       form.vehicle-reservation-form {
          padding: 20px; /* 30px * 2/3 */
          width: 800px; /* 1200px * 2/3 */
-         height: 586.67px; /* 880px * 2/3 */
+         height: 570px; /* 880px * 2/3 */
          border: 4px solid #555555; /* 6px * 2/3 */
          border-radius: 26.67px; /* 40px * 2/3 */
          img {
@@ -76,11 +76,6 @@ main
                width: 64px; /* 96px * 2/3 */
             }
          }
-         .bottom-details {
-            position: absolute;
-            inset: auto;
-            transform: translateY(110px);
-         }
          .vrf-details {
             font-size: 12px; /* 18px * 2/3 */
             margin-bottom: 0;
@@ -100,6 +95,7 @@ main
             font-family: 'Roboto', sans-serif;
             div.passenger-container {
                width: 250px;
+               transform: translateY(10px);
                span {
                   font-weight: bold;
                   letter-spacing: 2.67px; /* 4px * 2/3 */
@@ -110,7 +106,7 @@ main
                   display: flex;
                   flex-direction: column;
                   gap: 2.67px; /* 4px * 2/3 */
-                  height: 149.33px; /* 224px * 2/3 */
+                  height: 195px; /* 224px * 2/3 */
                   overflow-y: auto;
                   overflow-x: hidden;
                   scrollbar-width: thin;
@@ -223,6 +219,7 @@ main
             padding: 0 4px; /* 6px * 2/3 */
          }
          span.address {
+            margin-top: 8px;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -615,6 +612,111 @@ li
    scroll-behavior: smooth;
    overflow-y: auto;
    overflow-x: hidden;
+}
+.details-container 
+{
+   display: flex;
+   flex-wrap: wrap;
+   margin-top: 10px;
+   justify-content: right;
+   * {
+      transition: all 0.3s ease;
+   }
+   input[type="radio"] {
+      display: none;
+   }
+   input[type="radio"]:checked + label.tab-name + div.tab {
+      display: flex;
+   }
+   input[type="radio"]:checked + label.tab-name {
+      background-color: var(--light-gray);
+      border-bottom: var(--light-gray) 1px solid;
+   }
+   label.tab-name {
+      padding: 1px 3px;
+      border-radius: 4px 4px 0 0;
+      font-size: 10px;
+      background-color: var(--dark-gray);
+      transform: translate(-9px, 1px);
+      cursor: pointer;
+      border: #000 1px solid;
+      margin-left: -1px;
+      order:1;
+      user-select: none;         /* Standard */
+   }
+   label#tab-adder, label#tab-remover {
+      order:2;
+   }
+   label#tab-adder:hover, label#tab-remover:hover {
+      background-color: var(--light-gray);
+   }
+   button#add-tab {
+      display: none;
+   }
+   div.tab {
+      display: none;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      height: 48px;
+      order: 3;
+      padding: 8px;
+      background-color: var(--light-gray);
+      border: #000 1px solid;
+      border-radius: 8px;
+      div.input-container-2 {
+         position: relative;
+         display: flex;
+         flex-direction: column;
+         font-family: 'Roboto', sans-serif;
+         margin-bottom: 10px;
+         input, select {
+            font-size: 14px;
+            padding: 5px;
+            width: 170px;
+            border: 1px solid #555555;
+            border-radius: 8px;
+            outline: none;
+            appearance: none; /* Removes default browser styles */
+            background-color: white;
+         }
+         label {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-30%);
+            transition: all 0.3s ease;
+            font-size: 13px;
+            color: #777;
+            letter-spacing: 2px;
+            font-weight: bold;
+            pointer-events: none;
+         }
+         input:focus + label,
+         input.has-content + label,
+         select:focus + label,
+         select.has-content + label {
+            top: 0;
+            font-size: 8px;
+            color: black;
+            background: white;
+            padding: 0 4px;
+            border-radius: 4px;
+            border-top: var(--maroon) 1px solid;
+         }
+         input:focus, input.has-content, select:focus, select.has-content {
+            border-color: var(--maroon);
+         }
+         input[type="datetime-local"] {
+            color: transparent;
+            font-size: 12px;
+         }
+         input[type="datetime-local"]:focus,
+         input[type="datetime-local"].has-content {
+            color: #000;
+         }
+      }
+   }
 }
 .sidebar {
    transition: 0.2s;
