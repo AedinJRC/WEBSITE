@@ -1758,122 +1758,122 @@ function home()
             });
             </script>
             <?php
-include 'config.php';
+               include 'config.php';
 
 
-if (isset($_POST['vrfsubbtn'])) {
-    $id = htmlspecialchars($_POST['vrfid']);
-    $name = htmlspecialchars($_POST['vrfname']);
-    $department = htmlspecialchars($_POST['vrfdepartment']);
-    $activity = htmlspecialchars($_POST['vrfactivity']);
-    $purpose = htmlspecialchars($_POST['vrfpurpose']);
-    $date_filed = htmlspecialchars($_POST['vrfdate_filed']);
-    $budget_no = htmlspecialchars($_POST['vrfbudget_no']);
-    $destination = htmlspecialchars($_POST['vrfdestination']);
-    $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
-    $passenger_count = isset($_POST['vrfpassenger_count']) ? htmlspecialchars($_POST['vrfpassenger_count']) : null;
+               if (isset($_POST['vrfsubbtn'])) {
+                  $id = htmlspecialchars($_POST['vrfid']);
+                  $name = htmlspecialchars($_POST['vrfname']);
+                  $department = htmlspecialchars($_POST['vrfdepartment']);
+                  $activity = htmlspecialchars($_POST['vrfactivity']);
+                  $purpose = htmlspecialchars($_POST['vrfpurpose']);
+                  $date_filed = htmlspecialchars($_POST['vrfdate_filed']);
+                  $budget_no = htmlspecialchars($_POST['vrfbudget_no']);
+                  $destination = htmlspecialchars($_POST['vrfdestination']);
+                  $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
+                  $passenger_count = isset($_POST['vrfpassenger_count']) ? htmlspecialchars($_POST['vrfpassenger_count']) : null;
 
-    // File upload directory
-    $targetDir = "uploads/";
-    if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+                  // File upload directory
+                  $targetDir = "uploads/";
+                  if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
-    $allowedTypes = ['docx', 'pdf'];
+                  $allowedTypes = ['docx', 'pdf'];
 
-    // Handle letter attachment
-    $letterFileName = null;
-    if (!empty($_FILES["vrfletter_attachment"]["name"])) {
-        $letterFileName = basename($_FILES["vrfletter_attachment"]["name"]);
-        $letterFilePath = $targetDir . $letterFileName;
-        $letterFileType = strtolower(pathinfo($letterFilePath, PATHINFO_EXTENSION));
-        if (!in_array($letterFileType, $allowedTypes)) {
-            echo "<script>alert('Invalid file type for letter attachment. Only Word Documents or PDFs are allowed.');window.history.back();</script>";
-            exit;
-        }
-        move_uploaded_file($_FILES["vrfletter_attachment"]["tmp_name"], $letterFilePath);
-    }
+                  // Handle letter attachment
+                  $letterFileName = null;
+                  if (!empty($_FILES["vrfletter_attachment"]["name"])) {
+                     $letterFileName = basename($_FILES["vrfletter_attachment"]["name"]);
+                     $letterFilePath = $targetDir . $letterFileName;
+                     $letterFileType = strtolower(pathinfo($letterFilePath, PATHINFO_EXTENSION));
+                     if (!in_array($letterFileType, $allowedTypes)) {
+                           echo "<script>alert('Invalid file type for letter attachment. Only Word Documents or PDFs are allowed.');window.history.back();</script>";
+                           exit;
+                     }
+                     move_uploaded_file($_FILES["vrfletter_attachment"]["tmp_name"], $letterFilePath);
+                  }
 
-    // Handle passenger attachment
-    $passengerFileName = null;
-    if (!empty($_FILES["vrfpassenger_attachment"]["name"])) {
-        $passengerFileName = basename($_FILES["vrfpassenger_attachment"]["name"]);
-        $passengerFilePath = $targetDir . $passengerFileName;
-        $passengerFileType = strtolower(pathinfo($passengerFilePath, PATHINFO_EXTENSION));
-        if (!in_array($passengerFileType, $allowedTypes)) {
-            echo "<script>alert('Invalid file type for passenger attachment. Only Word Documents or PDFs are allowed.');window.history.back();</script>";
-            exit;
-        }
-        move_uploaded_file($_FILES["vrfpassenger_attachment"]["tmp_name"], $passengerFilePath);
-    }
+                  // Handle passenger attachment
+                  $passengerFileName = null;
+                  if (!empty($_FILES["vrfpassenger_attachment"]["name"])) {
+                     $passengerFileName = basename($_FILES["vrfpassenger_attachment"]["name"]);
+                     $passengerFilePath = $targetDir . $passengerFileName;
+                     $passengerFileType = strtolower(pathinfo($passengerFilePath, PATHINFO_EXTENSION));
+                     if (!in_array($passengerFileType, $allowedTypes)) {
+                           echo "<script>alert('Invalid file type for passenger attachment. Only Word Documents or PDFs are allowed.');window.history.back();</script>";
+                           exit;
+                     }
+                     move_uploaded_file($_FILES["vrfpassenger_attachment"]["tmp_name"], $passengerFilePath);
+                  }
 
-    try {
-        $conn->begin_transaction();
+                  try {
+                     $conn->begin_transaction();
 
-        // ===== INSERT vrftb =====
-        $stmt = $conn->prepare("INSERT INTO vrftb 
-            (id, name, department, activity, purpose, date_filed, budget_no, destination, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param(
-            "ssssssssssss",
-            $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $destination, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
-        );
-        if (!$stmt->execute()) throw new Exception("VRF insert failed: " . $stmt->error);
+                     // ===== INSERT vrftb =====
+                     $stmt = $conn->prepare("INSERT INTO vrftb 
+                           (id, name, department, activity, purpose, date_filed, budget_no, destination, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                     $stmt->bind_param(
+                           "ssssssssssss",
+                           $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $destination, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
+                     );
+                     if (!$stmt->execute()) throw new Exception("VRF insert failed: " . $stmt->error);
 
-        // ===== INSERT passengers =====
-        if (!empty($_POST['vrfpassenger_name'])) {
-            $passengerStmt = $conn->prepare("INSERT INTO passengerstb (vrfid, passenger_name) VALUES (?, ?)");
-            foreach ($_POST['vrfpassenger_name'] as $passenger_name) {
-                $passengerStmt->bind_param("ss", $id, $passenger_name);
-                if (!$passengerStmt->execute()) throw new Exception("Passenger insert failed: " . $passengerStmt->error);
-            }
-        }
+                     // ===== INSERT passengers =====
+                     if (!empty($_POST['vrfpassenger_name'])) {
+                           $passengerStmt = $conn->prepare("INSERT INTO passengerstb (vrfid, passenger_name) VALUES (?, ?)");
+                           foreach ($_POST['vrfpassenger_name'] as $passenger_name) {
+                              $passengerStmt->bind_param("ss", $id, $passenger_name);
+                              if (!$passengerStmt->execute()) throw new Exception("Passenger insert failed: " . $passengerStmt->error);
+                           }
+                     }
 
-        // ===== COUNT & UPDATE passenger_count if missing =====
-        if (empty($_POST['vrfpassenger_count'])) {
-            $stmt2 = $conn->prepare("SELECT COUNT(*) AS passenger_count FROM passengerstb WHERE vrfid = ?");
-            $stmt2->bind_param("s", $id);
-            $stmt2->execute();
-            $result = $stmt2->get_result();
-            $row = $result->fetch_assoc();
-            $passenger_count = $row['passenger_count'];
+                     // ===== COUNT & UPDATE passenger_count if missing =====
+                     if (empty($_POST['vrfpassenger_count'])) {
+                           $stmt2 = $conn->prepare("SELECT COUNT(*) AS passenger_count FROM passengerstb WHERE vrfid = ?");
+                           $stmt2->bind_param("s", $id);
+                           $stmt2->execute();
+                           $result = $stmt2->get_result();
+                           $row = $result->fetch_assoc();
+                           $passenger_count = $row['passenger_count'];
 
-            $stmt2 = $conn->prepare("UPDATE vrftb SET passenger_count = ? WHERE id = ?");
-            $stmt2->bind_param("is", $passenger_count, $id);
-            if (!$stmt2->execute()) throw new Exception("Updating passenger count failed: " . $stmt2->error);
-        }
-        // ===== INSERT vrf_detailstb =====
-        if (!empty($_POST['vrfdeparture']) && is_array($_POST['vrfdeparture'])) {
-            $detail_stmt = $conn->prepare(
-                "INSERT INTO vrf_detailstb (vrf_id, departure, `return`, vehicle, driver) VALUES (?, ?, ?, ?, ?)"
-            );
-            if (!$detail_stmt) throw new Exception("Prepare for vrf_detailstb failed: " . $conn->error);
+                           $stmt2 = $conn->prepare("UPDATE vrftb SET passenger_count = ? WHERE id = ?");
+                           $stmt2->bind_param("is", $passenger_count, $id);
+                           if (!$stmt2->execute()) throw new Exception("Updating passenger count failed: " . $stmt2->error);
+                     }
+                     // ===== INSERT vrf_detailstb =====
+                     if (!empty($_POST['vrfdeparture']) && is_array($_POST['vrfdeparture'])) {
+                           $detail_stmt = $conn->prepare(
+                              "INSERT INTO vrf_detailstb (vrf_id, departure, `return`, vehicle, driver) VALUES (?, ?, ?, ?, ?)"
+                           );
+                           if (!$detail_stmt) throw new Exception("Prepare for vrf_detailstb failed: " . $conn->error);
 
-            foreach ($_POST['vrfdeparture'] as $idx => $dep_raw) {
-                $ret_raw = $_POST['vrfreturn'][$idx]  ?? null;
-                $vehicle  = $_POST['vrfvehicle'][$idx] ?? null;
-                $driver   = $_POST['vrfdriver'][$idx]  ?? null;
+                           foreach ($_POST['vrfdeparture'] as $idx => $dep_raw) {
+                              $ret_raw = $_POST['vrfreturn'][$idx]  ?? null;
+                              $vehicle  = $_POST['vrfvehicle'][$idx] ?? null;
+                              $driver   = $_POST['vrfdriver'][$idx]  ?? null;
 
-                if (!$dep_raw || !$ret_raw || !$vehicle || !$driver) continue;
+                              if (!$dep_raw || !$ret_raw || !$vehicle || !$driver) continue;
 
-                // convert datetime-local to MySQL DATETIME
-                $dep = (new DateTime($dep_raw))->format('Y-m-d H:i:s');
-                $ret = (new DateTime($ret_raw))->format('Y-m-d H:i:s');
+                              // convert datetime-local to MySQL DATETIME
+                              $dep = (new DateTime($dep_raw))->format('Y-m-d H:i:s');
+                              $ret = (new DateTime($ret_raw))->format('Y-m-d H:i:s');
 
-                $detail_stmt->bind_param("sssss", $id, $dep, $ret, $vehicle, $driver);
-                if (!$detail_stmt->execute()) throw new Exception("Detail insert failed for tab {$idx}: " . $detail_stmt->error);
-            }
-            $detail_stmt->close();
-        }
+                              $detail_stmt->bind_param("sssss", $id, $dep, $ret, $vehicle, $driver);
+                              if (!$detail_stmt->execute()) throw new Exception("Detail insert failed for tab {$idx}: " . $detail_stmt->error);
+                           }
+                           $detail_stmt->close();
+                     }
 
-        $conn->commit();
-        echo "<script>alert('Reservation submitted successfully!');</script>";
+                     $conn->commit();
+                     echo "<script>alert('Reservation submitted successfully!');</script>";
 
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "<script>alert('Error submitting reservation: " . addslashes($e->getMessage()) . "'); window.history.back();</script>";
-        exit;
-    }
-}
-?>
+                  } catch (Exception $e) {
+                     $conn->rollback();
+                     echo "<script>alert('Error submitting reservation: " . addslashes($e->getMessage()) . "'); window.history.back();</script>";
+                     exit;
+                  }
+               }
+            ?>
 
          </div>
       <?php
