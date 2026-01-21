@@ -2007,6 +2007,7 @@ function home()
                                  $selectppicture->bind_param("s", $name);
                                  $selectppicture->execute();
                                  $resultppicture = $selectppicture->get_result();
+                                 
 
                                  if ($resultppicture->num_rows > 0) {
                                     $rowppicture = $resultppicture->fetch_assoc();
@@ -2028,35 +2029,46 @@ function home()
                            </div>
                            <div class="info-details">
                               <div>
-                                 <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
-                                 <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
-                                 <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
+                                 <div><div class="title">Activity</div></div>
+                                 <div><div class="title">Purpose:</div></div>
+                                 <div><div class="title">Budget No.:</div></div>
                               </div>
                               <div>
-                                 <div><div class="title">Departure Date:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("F j, Y"); ?></div></div>
-                                 <div><div class="title">Departure Time:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("g:iA"); ?></div></div>
-                                 <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
                               </div>
                               <div>
-                                 <div><div class="title">Driver:</div><div class="dikoalam">
+                                 <div><div class="title">Destination:</div></div>
+                                 <div><div class="title">Passenger count:</div></div>
+                                 <div><div class="title">Vehicle to be used:</div></div>
+                              </div>
+                              <div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
+                                 <div><div class="dikoalam">
                                     <?php 
-                                       $employeeid = $rowvrf['driver'];
-                                       $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
-                                       $resultdriver = $conn->query($selectdriver);
-                                       if ($resultdriver->num_rows > 0) {
-                                          $rowdriver = $resultdriver->fetch_assoc();
-                                          echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname'];
+                                       $vrfid = $rowvrf['id']; 
+                                       $selectdetails = "SELECT * FROM vrf_detailstb WHERE vrf_id = '$vrfid'";
+                                       $resultdetails = $conn->query($selectdetails);
+                                       if ($resultdetails->num_rows > 0) {
+                                          while($rowdetails = $resultdetails->fetch_assoc()) {  // ← Loop here
+                                             $plate_number = $rowdetails['vehicle']; 
+                                             $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
+                                             $resultvehicle = $conn->query($selectvehicle);
+                                             if ($resultvehicle->num_rows > 0) {
+                                                while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                                                   echo $rowvehicle['brand']." ".$rowvehicle['model'].", ";
+                                                }
+                                             } else {
+                                                echo $rowdetails['vehicle']."<br>";
+                                             }
+                                          }
                                        } else {
-                                          echo $rowvrf['driver'];
-                                       } 
+                                          echo "N/A";
+                                       }
                                     ?>
                                  </div></div>
-                                 <div><div class="title">Vehicle to be used:</div><div class="dikoalam">
-                                    <?php 
-                                       echo $rowvrf['vehicle']; 
-                                    ?>
-                                 </div></div>
-                                 <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
                               </div>
                            </div>
                         </div>

@@ -581,12 +581,13 @@ main
          font-size: 0.95vw;
          line-height: 1.2vw;
          display: flex;
+         justify-content: space-between;
          flex-direction: row;
          div 
          {
             display: flex;
             flex-direction: column;
-            width: 100%;
+            width: Auto;
             div 
             {
                display: flex;
