@@ -2052,18 +2052,20 @@ function home()
                                        $selectdetails = "SELECT * FROM vrf_detailstb WHERE vrf_id = '$vrfid'";
                                        $resultdetails = $conn->query($selectdetails);
                                        if ($resultdetails->num_rows > 0) {
-                                          while($rowdetails = $resultdetails->fetch_assoc()) {  // ← Loop here
+                                          $vehicles = [];
+                                          while($rowdetails = $resultdetails->fetch_assoc()) {
                                              $plate_number = $rowdetails['vehicle']; 
                                              $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
                                              $resultvehicle = $conn->query($selectvehicle);
                                              if ($resultvehicle->num_rows > 0) {
                                                 while($rowvehicle = $resultvehicle->fetch_assoc()) {
-                                                   echo $rowvehicle['brand']." ".$rowvehicle['model'].", ";
+                                                   $vehicles[] = $rowvehicle['brand']." ".$rowvehicle['model'];
                                                 }
                                              } else {
-                                                echo $rowdetails['vehicle']."<br>";
+                                                $vehicles[] = $rowdetails['vehicle'];
                                              }
                                           }
+                                          echo implode(", ", $vehicles);
                                        } else {
                                           echo "N/A";
                                        }
@@ -2109,11 +2111,7 @@ function home()
                                     <div class="input-container">
                                        <input name="vrfactivity" value="<?php echo $rowvrfid['activity'] ?>" type="text" id="activity" required readonly>
                                        <label for="activity">ACTIVITY:</label>
-                                    </div>
-                                    <div class="input-container">
-                                       <input type="text" name="vrfpurpose" value="<?php echo $rowvrfid['purpose'] ?>" id="purpose" required readonly>
-                                       <label for="purpose">PURPOSE:</label>
-                                    </div>
+                                    </div> 
                                  </div>
                                  <div class="vrf-details-column">
                                     <div class="input-container">
@@ -2124,181 +2122,84 @@ function home()
                                        <input name="vrfbudget_no" type="number" id="budgetNo" required readonly value="<?php echo $rowvrfid['budget_no']; ?>">
                                        <label for="budgetNo">BUDGET No.:</label>
                                     </div>
-                                    <?php
-                                       if (!in_array($_SESSION['role'], ['Secretary', 'Director'])) {
-                                          ?>
-                                             <div class="input-container">
-                                                <?php
-                                                   if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
-                                                   {
-                                                      ?>
-                                                         <a href="#vrespopup">      
-                                                      <?php
-                                                   }
-                                                ?>
-                                                   <input type="text" name="vrfvehicle" value="<?php 
-                                                   $plate_number = $rowvrfid['vehicle']; 
-                                                   $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
-                                                   $resultvehicle = $conn->query($selectvehicle);
-                                                   if ($resultvehicle->num_rows > 0) {
-                                                      $rowvehicle = $resultvehicle->fetch_assoc();
-                                                      echo $rowvehicle['brand']." ".$rowvehicle['model'];
-                                                   } else {
-                                                      echo $rowvrfid['vehicle'];
-                                                   }
-                                                   ?>" placeholder=" " id="vehicleUsed" readonly>
-                                                <?php
-                                                   if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
-                                                   {
-                                                      ?>
-                                                         </a>     
-                                                      <?php
-                                                   }
-                                                ?>
-                                                <label for="vehicleUsed">VEHICLE TO BE USED:</label>
-                                             </div>
-                                             <div class="input-container">
-                                                <?php
-                                                   if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
-                                                   {
-                                                      ?>
-                                                         <a href="#vrespopup">      
-                                                      <?php
-                                                   }
-                                                ?>
-                                                   <input type="text" name="vrfdriver" value="<?php 
-                                                   $employeeid = $rowvrfid['driver'];
-                                                   $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
-                                                   $resultdriver = $conn->query($selectdriver);
-                                                   if ($resultdriver->num_rows > 0) {
-                                                      $rowdriver = $resultdriver->fetch_assoc();
-                                                      echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname'];
-                                                   } else {
-                                                      echo $rowvrfid['driver'];
-                                                   }
-                                                   ?>" id="driver" readonly>
-                                                <?php
-                                                   if($rowvrf['vehicle'] == "" OR $rowvrf['vehicle'] == null)
-                                                   {
-                                                      ?>
-                                                         </a>     
-                                                      <?php
-                                                   }
-                                                ?>
-                                                <label for="driver">DRIVER:</label>
-                                             </div>
-                                          <?php
-                                       }
-                                       else
-                                       {
-                                          ?>
-                                             <div class="input-container">
-                                                <select name="vrfvehicle" id="vehicleUsed" required>
-                                                   <?php
-                                                      if ($_SESSION['role'] == "Secretary") {
-                                                         ?>
-                                                            <option value="" disabled selected></option>
-                                                         <?php
-                                                      }
-                                                      else {
-                                                         ?>
-                                                            <option value="<?php echo $rowvrfid['vehicle']; ?>"><?php echo $rowvrfid['vehicle']; ?></option>
-                                                         <?php
-                                                      }
-                                                      include("config.php");
-                                                      if ($_SESSION['role'] == "Secretary") {
-                                                         $vehicle = $rowvrfid['vehicle'];
-                                                         $stmt = $conn->prepare("SELECT * FROM carstb");
-                                                      }
-                                                      elseif ($_SESSION['role'] == "Director") {
-                                                         $vehicle = $rowvrfid['vehicle'];
-                                                         $stmt = $conn->prepare("SELECT * FROM carstb WHERE CONCAT(brand, ' ', model) != ?");
-                                                         $stmt->bind_param("s", $vehicle);
-                                                      }
-                                                      $stmt->execute();
-                                                      $resultvehicle = $stmt->get_result();
-                                                      if ($resultvehicle->num_rows > 0) {
-                                                         while($rowvehicle = $resultvehicle->fetch_assoc()) {
-                                                            $departure=$rowvrf['departure'];
-                                                            $plate_number=$rowvehicle['plate_number'];
-                                                            $day = date('l', strtotime($departure));
-                                                            $last_digit=substr(str_replace(' ', '', $plate_number), -1);
-                                                            switch ($last_digit) {
-                                                               case '1':
-                                                               case '2':
-                                                                  $coding_day = 'Monday';
-                                                                  break;
-                                                               case '3':
-                                                               case '4':
-                                                                  $coding_day = 'Tuesday';
-                                                                  break;
-                                                               case '5':
-                                                               case '6':
-                                                                  $coding_day = 'Wednesday';
-                                                                  break;
-                                                               case '7':
-                                                               case '8':
-                                                                  $coding_day = 'Thursday';
-                                                                  break;
-                                                               case '9':
-                                                               case '0':
-                                                                  $coding_day = 'Friday';
-                                                                  break;
-                                                               default:
-                                                                  $coding_day = 'Invalid'; // Safety check
-                                                                  break;
-                                                            }
-                                                            if ($day != $coding_day) {
-                                                               ?>
-                                                                  <option value="<?php echo $rowvehicle['brand']." ".$rowvehicle['model']; ?>"><?php echo $rowvehicle['brand']." ".$rowvehicle['model']; ?></option>
-                                                               <?php
-                                                            }
-                                                         }
-                                                      }
-                                                   ?>
-                                                </select>
-                                                <label for="vehicleUsed">VEHICLE TO BE USED:</label>
-                                             </div>
-                                             <div class="input-container">
-                                                <select name="vrfdriver" id="driver" required>
-                                                   <?php
-                                                      if ($_SESSION['role'] == "Secretary") {
-                                                         ?>
-                                                            <option value="" disabled selected></option>
-                                                         <?php
-                                                      }
-                                                      else {
-                                                         ?>
-                                                            <option value="<?php echo $rowvrfid['driver']; ?>"><?php echo $rowvrfid['driver']; ?></option>
-                                                         <?php
-                                                      }
-                                                      include 'config.php';
-                                                      $selectdriver = "SELECT * FROM usertb WHERE role = 'Driver'";
-                                                      $resultdriver = $conn->query($selectdriver);
-                                                      if ($resultdriver->num_rows > 0) {
-                                                         while($rowdriver = $resultdriver->fetch_assoc()) {
-                                                            ?>
-                                                               <option value="<?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?>"><?php echo "Mr. ".$rowdriver['fname']." ".$rowdriver['lname']; ?></option>
-                                                            <?php
-                                                         }
-                                                      }
-                                                   ?>
-                                                </select>
-                                                <label for="driver">DRIVER:</label>
-                                             </div>
-                                          <?php
-                                       }
-                                    ?>
+                                    <div class="input-container">
+                                       <input type="text" name="vrfpurpose" value="<?php echo $rowvrfid['purpose'] ?>" id="purpose" required readonly>
+                                       <label for="purpose">PURPOSE:</label>
+                                    </div>
                                  </div>
                               </div>
                               <span class="address">
                                  <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                                  <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
                               </span>
-                              <div class="vrf-details" style="margin-top:13.33px;">
+                              <div class="details-container">
+                                 <?php
+                                    include 'config.php';
+                                    $selectvrfdetails = "SELECT * FROM vrf_detailstb WHERE vrf_id = '".$_GET['vrfid']."'";
+                                    $resultvrfdetails = $conn->query($selectvrfdetails);
+                                    if ($resultvrfdetails->num_rows > 0) {
+                                       $tab_number = 1;
+                                       while($rowvrfdetails = $resultvrfdetails->fetch_assoc()) {
+                                          ?>
+                                             <input type="radio" id="rn<?php echo $tab_number ?>" name="mytabs" <?php echo ($tab_number == 1) ? 'checked' : ''; ?>>
+                                             <label class="tab-name" for="rn<?php echo $tab_number ?>"><?php echo $tab_number ?></label>
+                                             <div class="tab">
+                                                <div class="input-container-2">
+                                                   <input name="vrfdeparture[<?php echo $tab_number - 1 ?>]" type="datetime-local" id="departure-<?php echo $tab_number ?>" value="<?php echo $rowvrfdetails['departure']; ?>" required>
+                                                   <label for="departure-<?php echo $tab_number ?>">DEPARTURE:</label>
+                                                </div>
+
+                                                <div class="input-container-2">
+                                                   <input name="vrfreturn[<?php echo $tab_number - 1 ?>]" type="datetime-local" id="return-<?php echo $tab_number ?>" value="<?php echo $rowvrfdetails['return']; ?>" required>
+                                                   <label for="return-<?php echo $tab_number ?>">RETURN:</label>
+                                                </div>
+
+                                                <div class="input-container-2">
+                                                   <?php
+                                                      $plate_number = $rowvrfdetails['vehicle'];
+                                                      $selectvehicle = "SELECT brand, model FROM carstb WHERE plate_number = ?";
+                                                      $stmtVehicle = $conn->prepare($selectvehicle);
+                                                      $stmtVehicle->bind_param("s", $plate_number);
+                                                      $stmtVehicle->execute();
+                                                      $resultVehicle = $stmtVehicle->get_result();
+                                                      $vehicleDisplay = $plate_number;
+                                                      if ($resultVehicle->num_rows > 0) {
+                                                         $rowVehicle = $resultVehicle->fetch_assoc();
+                                                         $vehicleDisplay = $rowVehicle['brand'] . " " . $rowVehicle['model'];
+                                                      }
+                                                      $stmtVehicle->close();
+                                                   ?>
+                                                   <input name="vrfvehicle[<?php echo $tab_number - 1 ?>]" type="text" id="vehicle-<?php echo $tab_number ?>" value="<?php echo htmlspecialchars($vehicleDisplay); ?>" required readonly>
+                                                   <label for="vehicle-<?php echo $tab_number ?>">VEHICLE:</label>
+                                                </div>
+
+                                                <div class="input-container-2">
+                                                   <?php
+                                                      $employeeid = $rowvrfdetails['driver'];
+                                                      $selectdriver = "SELECT fname, lname FROM usertb WHERE employeeid = ?";
+                                                      $stmtDriver = $conn->prepare($selectdriver);
+                                                      $stmtDriver->bind_param("s", $employeeid);
+                                                      $stmtDriver->execute();
+                                                      $resultDriver = $stmtDriver->get_result();
+                                                      $driverDisplay = $employeeid;
+                                                      if ($resultDriver->num_rows > 0) {
+                                                         $rowDriver = $resultDriver->fetch_assoc();
+                                                         $driverDisplay = $rowDriver['fname'] . " " . $rowDriver['lname'];
+                                                      }
+                                                      $stmtDriver->close();
+                                                   ?>
+                                                   <input name="vrfdriver[<?php echo $tab_number - 1 ?>]" type="text" id="driver-<?php echo $tab_number ?>" value="<?php echo htmlspecialchars($driverDisplay); ?>" required readonly>
+                                                   <label for="driver-<?php echo $tab_number ?>">DRIVER:</label>
+                                                </div>
+                                             </div>
+                                          <?php
+                                          $tab_number++;
+                                       }
+                                    }
+                                 ?>
+                              </div>
+                              <div class="vrf-details">
                                  <div class="input-container">
-                                    <input name="vrfdeparture" value="<?php echo $rowvrfid['departure']; ?>" type="datetime-local" id="departureDate" required readonly>
-                                    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
                                     <div class="passenger-container">
                                        <span>NAME OF PASSENGER/S</span>
                                        <div id="passengerList">
@@ -2334,7 +2235,7 @@ function home()
                                     </div>
                                     
                                  </div>   
-                                 <span class="address" style="margin-top:-1.8vw">
+                                 <span class="address">
                                     <span style="text-align:center">TRANSPORTATION COST</span>
                                     <?php
                                        if($_SESSION['role'] == "Accountant")
@@ -2430,7 +2331,7 @@ function home()
                            <script>
                               // On DOM load, check each field and toggle .has-content if it has a value
                               document.addEventListener('DOMContentLoaded', function() {
-                              var fields = document.querySelectorAll('.input-container input, .input-container select');
+                              var fields = document.querySelectorAll('.input-container input, .input-container select, .input-container-2 input, .input-container-2 select');
                               function updateField(el) {
                                  if (el.value.trim() !== '') {
                                     el.classList.add('has-content');
