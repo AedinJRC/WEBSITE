@@ -1845,7 +1845,7 @@ function home()
                            $detail_stmt = $conn->prepare(
                               "INSERT INTO vrf_detailstb (vrf_id, departure, `return`, vehicle, driver) VALUES (?, ?, ?, ?, ?)"
                            );
-                           if (!$detail_stmt) throw new Exception("Prepare for vrf_detailstb failed: " . $conn->error);
+                           if (!$detail_stmt) throw new Exception("Prepare for vrf_detailstb failed.");
 
                            foreach ($_POST['vrfdeparture'] as $idx => $dep_raw) {
                               $ret_raw = $_POST['vrfreturn'][$idx]  ?? null;
@@ -1868,7 +1868,7 @@ function home()
                      echo "<script>alert('Reservation submitted successfully!');</script>";
 
                   } catch (Exception $e) {
-                     $conn->rollback();
+                     if (isset($conn)) $conn->rollback();
                      echo "<script>alert('Error submitting reservation: " . addslashes($e->getMessage()) . "'); window.history.back();</script>";
                      exit;
                   }
@@ -2132,11 +2132,48 @@ function home()
                                  <span>DESTINATION (PLEASE SPECIFY PLACE AND ADDRESS):</span>
                                  <textarea name="vrfdestination" maxlength="255" type="text"  id="destination" required readonly><?php echo $rowvrfid['destination'] ?></textarea>
                               </span>
-                              <div class="details-container">
+                              <?php
+                                 include 'config.php';
+                                 $selectvrfdetails = "SELECT * FROM vrf_detailstb WHERE vrf_id = '".$_GET['vrfid']."'";
+                                 $resultvrfdetails = $conn->query($selectvrfdetails);
+                                 
+                                 // Get all drivers and vehicles
+                                 $drivers = [];
+                                 $driverOptions = "";
+                                 $q = mysqli_query($conn, "SELECT * FROM usertb WHERE role='driver'");
+                                 while ($r = mysqli_fetch_assoc($q)) {
+                                    $drivers[] = $r;
+                                    $driverOptions .= "<option value='{$r['employeeid']}'>" . htmlspecialchars($r['fname'] .' '.$r['lname'] ) . "</option>";
+                                 }
+
+                                 $vehicles = [];
+                                 $vehicleOptions = "";
+                                 $q = mysqli_query($conn, "SELECT * FROM carstb");
+                                 while ($r = mysqli_fetch_assoc($q)) {
+                                    $vehicles[] = $r;
+                                    $vehicleOptions .= "<option value='{$r['plate_number']}'>" . htmlspecialchars($r['brand'].' '.$r['model']) . "</option>";
+                                 }
+                                 
+                                 // Get existing bookings for conflict detection
+                                 $existingBookings = [];
+                                 $q = mysqli_query(
+                                    $conn,
+                                    "SELECT departure, `return`, vehicle, driver FROM vrf_detailstb WHERE vrf_id != '".$_GET['vrfid']."'"
+                                 );
+                                 while ($r = mysqli_fetch_assoc($q)) {
+                                    $existingBookings[] = [
+                                       'departure' => $r['departure'],
+                                       'return'    => $r['return'],
+                                       'vehicle'   => $r['vehicle'],
+                                       'driver'    => $r['driver']
+                                    ];
+                                 }
+                              ?>
+                              <div class="details-container" 
+                                   data-vehicle-options="<?php echo htmlspecialchars($vehicleOptions); ?>"
+                                   data-driver-options="<?php echo htmlspecialchars($driverOptions); ?>"
+                                   data-existing-bookings="<?php echo htmlspecialchars(json_encode($existingBookings)); ?>">
                                  <?php
-                                    include 'config.php';
-                                    $selectvrfdetails = "SELECT * FROM vrf_detailstb WHERE vrf_id = '".$_GET['vrfid']."'";
-                                    $resultvrfdetails = $conn->query($selectvrfdetails);
                                     if ($resultvrfdetails->num_rows > 0) {
                                        $tab_number = 1;
                                        while($rowvrfdetails = $resultvrfdetails->fetch_assoc()) {
@@ -2145,51 +2182,71 @@ function home()
                                              <label class="tab-name" for="rn<?php echo $tab_number ?>"><?php echo $tab_number ?></label>
                                              <div class="tab">
                                                 <div class="input-container-2">
-                                                   <input name="vrfdeparture[<?php echo $tab_number - 1 ?>]" type="datetime-local" id="departure-<?php echo $tab_number ?>" value="<?php echo $rowvrfdetails['departure']; ?>" required>
+                                                   <input name="vrfdeparture[<?php echo $tab_number - 1 ?>]" type="datetime-local" id="departure-<?php echo $tab_number ?>" value="<?php echo $rowvrfdetails['departure']; ?>" required <?php echo (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])) ? '' : 'readonly'; ?>>
                                                    <label for="departure-<?php echo $tab_number ?>">DEPARTURE:</label>
                                                 </div>
 
                                                 <div class="input-container-2">
-                                                   <input name="vrfreturn[<?php echo $tab_number - 1 ?>]" type="datetime-local" id="return-<?php echo $tab_number ?>" value="<?php echo $rowvrfdetails['return']; ?>" required>
+                                                   <input name="vrfreturn[<?php echo $tab_number - 1 ?>]" type="datetime-local" id="return-<?php echo $tab_number ?>" value="<?php echo $rowvrfdetails['return']; ?>" required <?php echo (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])) ? '' : 'readonly'; ?>>
                                                    <label for="return-<?php echo $tab_number ?>">RETURN:</label>
                                                 </div>
 
                                                 <div class="input-container-2">
-                                                   <?php
-                                                      $plate_number = $rowvrfdetails['vehicle'];
-                                                      $selectvehicle = "SELECT brand, model FROM carstb WHERE plate_number = ?";
-                                                      $stmtVehicle = $conn->prepare($selectvehicle);
-                                                      $stmtVehicle->bind_param("s", $plate_number);
-                                                      $stmtVehicle->execute();
-                                                      $resultVehicle = $stmtVehicle->get_result();
-                                                      $vehicleDisplay = $plate_number;
-                                                      if ($resultVehicle->num_rows > 0) {
-                                                         $rowVehicle = $resultVehicle->fetch_assoc();
-                                                         $vehicleDisplay = $rowVehicle['brand'] . " " . $rowVehicle['model'];
-                                                      }
-                                                      $stmtVehicle->close();
-                                                   ?>
-                                                   <input name="vrfvehicle[<?php echo $tab_number - 1 ?>]" type="text" id="vehicle-<?php echo $tab_number ?>" value="<?php echo htmlspecialchars($vehicleDisplay); ?>" required readonly>
-                                                   <label for="vehicle-<?php echo $tab_number ?>">VEHICLE:</label>
+                                                   <?php if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])): ?>
+                                                      <select name="vrfvehicle[<?php echo $tab_number - 1 ?>]" id="vehicle-<?php echo $tab_number ?>" required>
+                                                         <option value="" disabled selected>Select Vehicle</option>
+                                                         <?php foreach ($vehicles as $v): ?>
+                                                            <option value="<?php echo $v['plate_number']; ?>" <?php echo ($rowvrfdetails['vehicle'] === $v['plate_number']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($v['brand'] . " " . $v['model']); ?></option>
+                                                         <?php endforeach; ?>
+                                                      </select>
+                                                      <label for="vehicle-<?php echo $tab_number ?>">VEHICLE:</label>
+                                                   <?php else: ?>
+                                                      <?php
+                                                         $selectvehicle = "SELECT brand, model FROM carstb WHERE plate_number = ?";
+                                                         $stmtVehicle = $conn->prepare($selectvehicle);
+                                                         $stmtVehicle->bind_param("s", $rowvrfdetails['vehicle']);
+                                                         $stmtVehicle->execute();
+                                                         $resultVehicle = $stmtVehicle->get_result();
+                                                         $vehicleDisplay = $rowvrfdetails['vehicle'];
+                                                         if ($resultVehicle->num_rows > 0) {
+                                                            $rowVehicle = $resultVehicle->fetch_assoc();
+                                                            $vehicleDisplay = $rowVehicle['brand'] . " " . $rowVehicle['model'];
+                                                         }
+                                                         $stmtVehicle->close();
+                                                      ?>
+                                                      <input name="vrfvehicle[<?php echo $tab_number - 1 ?>]" type="text" id="vehicle-<?php echo $tab_number ?>" value="<?php echo htmlspecialchars($vehicleDisplay); ?>" required readonly>
+                                                      <input type="hidden" name="vrfvehicle_actual[<?php echo $tab_number - 1 ?>]" value="<?php echo htmlspecialchars($rowvrfdetails['vehicle']); ?>">
+                                                      <label for="vehicle-<?php echo $tab_number ?>">VEHICLE:</label>
+                                                   <?php endif; ?>
                                                 </div>
 
                                                 <div class="input-container-2">
-                                                   <?php
-                                                      $employeeid = $rowvrfdetails['driver'];
-                                                      $selectdriver = "SELECT fname, lname FROM usertb WHERE employeeid = ?";
-                                                      $stmtDriver = $conn->prepare($selectdriver);
-                                                      $stmtDriver->bind_param("s", $employeeid);
-                                                      $stmtDriver->execute();
-                                                      $resultDriver = $stmtDriver->get_result();
-                                                      $driverDisplay = $employeeid;
-                                                      if ($resultDriver->num_rows > 0) {
-                                                         $rowDriver = $resultDriver->fetch_assoc();
-                                                         $driverDisplay = $rowDriver['fname'] . " " . $rowDriver['lname'];
-                                                      }
-                                                      $stmtDriver->close();
-                                                   ?>
-                                                   <input name="vrfdriver[<?php echo $tab_number - 1 ?>]" type="text" id="driver-<?php echo $tab_number ?>" value="<?php echo htmlspecialchars($driverDisplay); ?>" required readonly>
-                                                   <label for="driver-<?php echo $tab_number ?>">DRIVER:</label>
+                                                   <?php if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])): ?>
+                                                      <select name="vrfdriver[<?php echo $tab_number - 1 ?>]" id="driver-<?php echo $tab_number ?>" required>
+                                                         <option value="" disabled selected>Select Driver</option>
+                                                         <?php foreach ($drivers as $d): ?>
+                                                            <option value="<?php echo htmlspecialchars($d['employeeid']); ?>" <?php echo ($rowvrfdetails['driver'] === $d['employeeid']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['fname'] . " " . $d['lname']); ?></option>
+                                                         <?php endforeach; ?>
+                                                      </select>
+                                                      <label for="driver-<?php echo $tab_number ?>">DRIVER:</label>
+                                                   <?php else: ?>
+                                                      <?php
+                                                         $selectdriver = "SELECT fname, lname FROM usertb WHERE employeeid = ?";
+                                                         $stmtDriver = $conn->prepare($selectdriver);
+                                                         $stmtDriver->bind_param("s", $rowvrfdetails['driver']);
+                                                         $stmtDriver->execute();
+                                                         $resultDriver = $stmtDriver->get_result();
+                                                         $driverDisplay = $rowvrfdetails['driver'];
+                                                         if ($resultDriver->num_rows > 0) {
+                                                            $rowDriver = $resultDriver->fetch_assoc();
+                                                            $driverDisplay = $rowDriver['fname'] . " " . $rowDriver['lname'];
+                                                         }
+                                                         $stmtDriver->close();
+                                                      ?>
+                                                      <input name="vrfdriver[<?php echo $tab_number - 1 ?>]" type="text" id="driver-<?php echo $tab_number ?>" value="<?php echo htmlspecialchars($driverDisplay); ?>" required readonly>
+                                                      <input type="hidden" name="vrfdriver_actual[<?php echo $tab_number - 1 ?>]" value="<?php echo htmlspecialchars($rowvrfdetails['driver']); ?>">
+                                                      <label for="driver-<?php echo $tab_number ?>">DRIVER:</label>
+                                                   <?php endif; ?>
                                                 </div>
                                              </div>
                                           <?php
@@ -2197,7 +2254,17 @@ function home()
                                        }
                                     }
                                  ?>
+                                 <?php if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])): ?>
+                                    <label class="tab-name" id="tab-remover-<?php echo $_GET['vrfid']; ?>" for="remove-tab-<?php echo $_GET['vrfid']; ?>" style="display:none;">−</label>
+                                    <button type="button" id="remove-tab-<?php echo $_GET['vrfid']; ?>" class="remove-tab"></button>
+
+                                    <label class="tab-name" id="tab-adder-<?php echo $_GET['vrfid']; ?>" for="add-tab-<?php echo $_GET['vrfid']; ?>">+</label>
+                                    <button type="button" id="add-tab-<?php echo $_GET['vrfid']; ?>" class="add-tab"></button>
+                                 <?php endif; ?>
                               </div>
+                              <?php if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])): ?>
+                                 <!-- Empty script tag - handler moved outside loop -->
+                              <?php endif; ?>
                               <div class="vrf-details">
                                  <div class="input-container">
                                     <div class="passenger-container">
@@ -2329,6 +2396,33 @@ function home()
                               </div>
                            </form>
                            <script>
+                              // Form submission validation
+                              document.querySelector('.vehicle-reservation-form').addEventListener('submit', (e) => {
+                                 if (e.target.querySelector('[name="vrfappbtn"]') === document.activeElement) {
+                                    const container = document.querySelector('.details-container');
+                                    const tabs = container.querySelectorAll('.tab');
+                                    
+                                    let hasIncompleteTab = false;
+                                    tabs.forEach((tab, idx) => {
+                                       const dep = tab.querySelector('[name*="vrfdeparture"]')?.value || '';
+                                       const ret = tab.querySelector('[name*="vrfreturn"]')?.value || '';
+                                       const vehicle = tab.querySelector('[name*="vrfvehicle"]')?.value || '';
+                                       const driver = tab.querySelector('[name*="vrfdriver"]')?.value || '';
+                                       
+                                       // If any field has value, all must have values
+                                       if ((dep || ret || vehicle || driver) && !(dep && ret && vehicle && driver)) {
+                                          hasIncompleteTab = true;
+                                       }
+                                    });
+                                    
+                                    if (hasIncompleteTab) {
+                                       e.preventDefault();
+                                       alert('Please complete all fields in each tab before approving.');
+                                    }
+                                 }
+                              });
+                           </script>
+                           <script>
                               // On DOM load, check each field and toggle .has-content if it has a value
                               document.addEventListener('DOMContentLoaded', function() {
                               var fields = document.querySelectorAll('.input-container input, .input-container select, .input-container-2 input, .input-container-2 select');
@@ -2355,34 +2449,80 @@ function home()
                if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   if (isset($_POST['vrfappbtn'])) {
                      $id = htmlspecialchars($_GET['vrfid']);
-                     if($_SESSION['role']=='Immediate Head' OR $_SESSION['role']=='Director')
-                     {
-                        $updateStatus = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
-                     }
-                     elseif($_SESSION['role']=='Secretary' OR $_SESSION['role']=='Director')
-                     {
-                        $vehicle = $_POST['vrfvehicle'];
-                        $driver = $_POST['vrfdriver'];
-                        $updateStatus = "UPDATE vrftb SET vehicle='$vehicle', driver='$driver', $status='Approved' WHERE id = ?";
-                     }
-                     elseif($_SESSION['role']=='Accountant')
-                     {
-                        $total_cost = $_POST['vrftotal_cost'];
-                        $transportation_cost = $_POST['vrftransportation_cost'];
-                        $updateStatus = "UPDATE vrftb SET transportation_cost='$transportation_cost', total_cost='$total_cost', $status='Approved' WHERE id = ?";
-                     }
-                     $stmt = $conn->prepare($updateStatus);
-                     if ($stmt) {
+                     try {
+                        $conn->begin_transaction();
+                        
+                        // Handle GSO Secretary and Immediate Head updates to vrf_detailstb
+                        if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])) {
+                           include 'config.php';
+                           // First, delete existing records for this VRF
+                           $deleteStmt = $conn->prepare("DELETE FROM vrf_detailstb WHERE vrf_id = ?");
+                           $deleteStmt->bind_param("s", $id);
+                           $deleteStmt->execute();
+                           $deleteStmt->close();
+                           
+                           // Insert updated records
+                           if (!empty($_POST['vrfdeparture']) && is_array($_POST['vrfdeparture'])) {
+                              $detailStmt = $conn->prepare(
+                                 "INSERT INTO vrf_detailstb (vrf_id, departure, `return`, vehicle, driver) VALUES (?, ?, ?, ?, ?)"
+                              );
+                              if (!$detailStmt) throw new Exception("Prepare statement failed.");
+                              
+                              foreach ($_POST['vrfdeparture'] as $idx => $departure) {
+                                 if (empty($departure)) continue;
+                                 
+                                 $return = $_POST['vrfreturn'][$idx] ?? null;
+                                 
+                                 // Use actual value if available (from hidden field for readonly), otherwise use submitted value
+                                 $vehicle = $_POST['vrfvehicle_actual'][$idx] ?? $_POST['vrfvehicle'][$idx] ?? null;
+                                 $driver = $_POST['vrfdriver_actual'][$idx] ?? $_POST['vrfdriver'][$idx] ?? null;
+                                 
+                                 // Skip tabs with incomplete data
+                                 if (empty($return) || empty($vehicle) || empty($driver)) {
+                                    continue;
+                                 }
+                                 
+                                 $detailStmt->bind_param("sssss", $id, $departure, $return, $vehicle, $driver);
+                                 if (!$detailStmt->execute()) {
+                                    throw new Exception("Detail insert failed: " . $detailStmt->error);
+                                 }
+                              }
+                              $detailStmt->close();
+                           }
+                        }
+                        
+                        // Update VRF table status
+                        include 'config.php';
+                        if($_SESSION['role']=='Immediate Head' OR $_SESSION['role']=='Director')
+                        {
+                           $updateStatus = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
+                        }
+                        elseif($_SESSION['role']=='Secretary')
+                        {
+                           $updateStatus = "UPDATE vrftb SET $status='Approved' WHERE id = ?";
+                        }
+                        elseif($_SESSION['role']=='Accountant')
+                        {
+                           $total_cost = $_POST['vrftotal_cost'];
+                           $transportation_cost = $_POST['vrftransportation_cost'];
+                           $updateStatus = "UPDATE vrftb SET transportation_cost='$transportation_cost', total_cost='$total_cost', $status='Approved' WHERE id = ?";
+                        }
+                        
+                        $stmt = $conn->prepare($updateStatus);
+                        if (!$stmt) throw new Exception("Prepare update statement failed.");
                         $stmt->bind_param("s", $id);
-                        $stmt->execute();
+                        if (!$stmt->execute()) throw new Exception("Update failed: " . $stmt->error);
                         $stmt->close();
+                        
+                        $conn->commit();
                         echo "<script>
                                  alert('Reservation approved');
                                  window.history.back();
                               </script>";
-                     } else {
+                     } catch (Exception $e) {
+                        $conn->rollback();
                         echo "<script>
-                                 alert('Error updating status.');
+                                 alert('Error: " . addslashes($e->getMessage()) . "');
                               </script>";
                      }
                   } elseif (isset($_POST['vrfrejbtn'])) {
@@ -2406,6 +2546,234 @@ function home()
                }
             }
          ?>
+         <script>
+            // Comprehensive tab management with filtering and floating labels for pendingApproval
+            document.addEventListener("DOMContentLoaded", () => {
+               /* ================== UTILS ================== */
+               function overlaps(aStart, aEnd, bStart, bEnd) {
+                  return aStart < bEnd && bStart < aEnd;
+               }
+
+               function isCodingBanned(plate, date) {
+                  if (!plate || !date) return false;
+                  const m = plate.match(/(\d)(?!.*\d)/);
+                  if (!m) return false;
+                  const lastDigit = parseInt(m[1], 10);
+                  const day = date.getDay();
+                  const CODING = {1:[1,2],2:[3,4],3:[5,6],4:[7,8],5:[9,0]};
+                  return CODING[day]?.includes(lastDigit) ?? false;
+               }
+
+               function attachFloatingLabelLogic(scope = document) {
+                  scope.querySelectorAll(".input-container-2 input, .input-container-2 select").forEach(el => {
+                     if (el.value) el.classList.add("has-content");
+                     const evt = el.tagName === "SELECT" ? "change" : "input";
+                     el.addEventListener(evt, () => el.value ? el.classList.add("has-content") : el.classList.remove("has-content"));
+                  });
+               }
+
+               function getTabs(container) {
+                  return container.querySelectorAll(".tab");
+               }
+
+               /* ================== FILTERING LOGIC ================== */
+               function filter(container, index) {
+                  const depEl = container.querySelector(`#departure-${index}`);
+                  const retEl = container.querySelector(`#return-${index}`);
+                  if (!depEl || !retEl || !depEl.value || !retEl.value) return;
+
+                  const depDate = new Date(depEl.value);
+                  const retDate = new Date(retEl.value);
+
+                  // Build tab cache
+                  const tabs = getTabs(container);
+                  tabs.forEach((tab, i) => {
+                     tab._dep = container.querySelector(`#departure-${i+1}`)?.value ? new Date(container.querySelector(`#departure-${i+1}`).value) : null;
+                     tab._ret = container.querySelector(`#return-${i+1}`)?.value ? new Date(container.querySelector(`#return-${i+1}`).value) : null;
+                     tab._vehicle = container.querySelector(`#vehicle-${i+1}`)?.value || null;
+                     tab._driver = container.querySelector(`#driver-${i+1}`)?.value || null;
+                  });
+
+                  // Get existing bookings from page (stored in container or query DB)
+                  const existingBookings = JSON.parse(container.dataset.existingBookings || '[]');
+
+                  // FILTER VEHICLES
+                  const vSelect = container.querySelector(`#vehicle-${index}`);
+                  if (vSelect) {
+                     [...vSelect.options].forEach(opt => {
+                        if (!opt.value) return;
+                        let reason = "";
+                        if (isCodingBanned(opt.value, depDate)) reason = "Coding restriction";
+
+                        tabs.forEach(tab => {
+                           if (!reason && tab._vehicle === opt.value && tab._dep && tab._ret) {
+                              if (overlaps(depDate, retDate, tab._dep, tab._ret)) reason = "Time conflict (current request)";
+                           }
+                        });
+
+                        existingBookings.forEach(b => {
+                           if (!reason && b.vehicle === opt.value) {
+                              const dbDep = new Date(b.departure);
+                              const dbRet = new Date(b.return);
+                              if (overlaps(depDate, retDate, dbDep, dbRet)) reason = "Time conflict (existing booking)";
+                           }
+                        });
+
+                        opt.disabled = !!reason;
+                        opt.title = reason;
+                     });
+                  }
+
+                  // FILTER DRIVERS
+                  const dSelect = container.querySelector(`#driver-${index}`);
+                  if (dSelect) {
+                     [...dSelect.options].forEach(opt => {
+                        if (!opt.value) return;
+                        let reason = "";
+
+                        tabs.forEach(tab => {
+                           if (!reason && tab._driver === opt.value && tab._dep && tab._ret) {
+                              if (overlaps(depDate, retDate, tab._dep, tab._ret)) reason = "Time conflict (current request)";
+                           }
+                        });
+
+                        existingBookings.forEach(b => {
+                           if (!reason && b.driver === opt.value) {
+                              const dbDep = new Date(b.departure);
+                              const dbRet = new Date(b.return);
+                              if (overlaps(depDate, retDate, dbDep, dbRet)) reason = "Time conflict (existing booking)";
+                           }
+                        });
+
+                        opt.disabled = !!reason;
+                        opt.title = reason;
+                     });
+                  }
+               }
+
+               function refreshAllTabs(container) {
+                  const count = getTabs(container).length;
+                  for (let i = 1; i <= count; i++) filter(container, i);
+               }
+
+               function attachReturnMinLogic(container, tabIndex) {
+                  const depEl = container.querySelector(`#departure-${tabIndex}`);
+                  const retEl = container.querySelector(`#return-${tabIndex}`);
+                  if (!depEl || !retEl) return;
+
+                  depEl.addEventListener("change", () => {
+                     if (depEl.value) {
+                        retEl.min = depEl.value;
+                        if (retEl.value && retEl.value < depEl.value) {
+                           retEl.value = depEl.value;
+                        }
+                     }
+                  });
+               }
+
+               function attachChangeEvents(container, index) {
+                  ["departure", "return", "vehicle", "driver"].forEach(name => {
+                     const el = container.querySelector(`#${name}-${index}`);
+                     if (el) el.addEventListener("change", () => refreshAllTabs(container));
+                  });
+               }
+
+               /* ================== INITIALIZE EXISTING TABS ================== */
+               document.querySelectorAll(".details-container").forEach(container => {
+                  attachFloatingLabelLogic(container);
+                  refreshAllTabs(container);
+                  const tabCount = getTabs(container).length;
+                  for (let i = 1; i <= tabCount; i++) {
+                     attachReturnMinLogic(container, i);
+                     attachChangeEvents(container, i);
+                  }
+               });
+
+               /* ================== ADD TAB BUTTONS ================== */
+               document.querySelectorAll("[id^='add-tab-']").forEach(addBtn => {
+                  addBtn.addEventListener("click", () => {
+                     const vrfId = addBtn.id.replace("add-tab-", "");
+                     const container = addBtn.closest(".details-container");
+                     const removeLabel = document.getElementById(`tab-remover-${vrfId}`);
+                     
+                     let tabCount = getTabs(container).length;
+                     tabCount++;
+                     const tabId = `rn${tabCount}`;
+
+                     const vehicleOptions = container.dataset.vehicleOptions || "";
+                     const driverOptions = container.dataset.driverOptions || "";
+
+                     const template = `
+                        <input type="radio" id="${tabId}" name="mytabs">
+                        <label class="tab-name" for="${tabId}">${tabCount}</label>
+                        <div class="tab">
+                           <div class="input-container-2">
+                              <input type="datetime-local" name="vrfdeparture[${tabCount-1}]" id="departure-${tabCount}" required>
+                              <label for="departure-${tabCount}">DEPARTURE:</label>
+                           </div>
+                           <div class="input-container-2">
+                              <input type="datetime-local" name="vrfreturn[${tabCount-1}]" id="return-${tabCount}" required>
+                              <label for="return-${tabCount}">RETURN:</label>
+                           </div>
+                           <div class="input-container-2">
+                              <select name="vrfvehicle[${tabCount-1}]" id="vehicle-${tabCount}" required>
+                                 <option value="" disabled selected></option>
+                                 ${vehicleOptions}
+                              </select>
+                              <label for="vehicle-${tabCount}">VEHICLE:</label>
+                           </div>
+                           <div class="input-container-2">
+                              <select name="vrfdriver[${tabCount-1}]" id="driver-${tabCount}" required>
+                                 <option value="" disabled selected></option>
+                                 ${driverOptions}
+                              </select>
+                              <label for="driver-${tabCount}">DRIVER:</label>
+                           </div>
+                        </div>
+                     `;
+
+                     removeLabel.insertAdjacentHTML("beforebegin", template);
+                     const newTab = container.querySelector(`label[for="${tabId}"]`)?.nextElementSibling;
+                     if (newTab) attachFloatingLabelLogic(newTab);
+
+                     attachReturnMinLogic(container, tabCount);
+                     attachChangeEvents(container, tabCount);
+
+                     document.getElementById(tabId).checked = true;
+                     removeLabel.style.display = tabCount >= 2 ? "inline-block" : "none";
+                     
+                     setTimeout(() => refreshAllTabs(container), 0);
+                  });
+               });
+
+               /* ================== REMOVE TAB BUTTONS ================== */
+               document.querySelectorAll("[id^='remove-tab-']").forEach(removeBtn => {
+                  removeBtn.addEventListener("click", () => {
+                     const vrfId = removeBtn.id.replace("remove-tab-", "");
+                     const container = removeBtn.closest(".details-container");
+                     const removeLabel = document.getElementById(`tab-remover-${vrfId}`);
+                     
+                     let tabCount = getTabs(container).length;
+                     if (tabCount <= 1) return;
+
+                     const radio = container.querySelector(`#rn${tabCount}`);
+                     const label = container.querySelector(`label[for="rn${tabCount}"]`);
+                     const tab = label?.nextElementSibling;
+
+                     radio?.remove();
+                     label?.remove();
+                     tab?.remove();
+
+                     tabCount--;
+                     const prev = container.querySelector(`#rn${tabCount}`);
+                     if (prev) prev.checked = true;
+
+                     removeLabel.style.display = tabCount >= 2 ? "inline-block" : "none";
+                     setTimeout(() => refreshAllTabs(container), 0);
+                  });
+               });
+            });
+         </script>
       <?php
    }
    function reservationApproved()
