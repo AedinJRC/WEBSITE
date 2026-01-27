@@ -1,4 +1,4 @@
-<?php
+﻿<?php
    date_default_timezone_set('Asia/Manila');
    session_start();
    ob_start();
@@ -1763,6 +1763,21 @@ function home()
 
                if (isset($_POST['vrfsubbtn'])) {
                   $id = htmlspecialchars($_POST['vrfid']);
+                  
+                  // Check if ID already exists, increment if needed (handles refresh/concurrent submissions)
+                  $checkStmt = $conn->prepare("SELECT id FROM vrftb WHERE id = ?");
+                  while (true) {
+                     $checkStmt->bind_param("s", $id);
+                     $checkStmt->execute();
+                     $result = $checkStmt->get_result();
+                     if ($result->num_rows == 0) break; // ID is unique, use it
+                     
+                     // ID exists, increment the last 2 digits
+                     $lastTwo = (int)substr($id, -2) + 1;
+                     $id = substr($id, 0, -2) . str_pad($lastTwo, 2, '0', STR_PAD_LEFT);
+                  }
+                  $checkStmt->close();
+                  
                   $name = htmlspecialchars($_POST['vrfname']);
                   $department = htmlspecialchars($_POST['vrfdepartment']);
                   $activity = htmlspecialchars($_POST['vrfactivity']);
@@ -2194,7 +2209,7 @@ function home()
                                                 <div class="input-container-2">
                                                    <?php if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])): ?>
                                                       <select name="vrfvehicle[<?php echo $tab_number - 1 ?>]" id="vehicle-<?php echo $tab_number ?>" required>
-                                                         <option value="" disabled selected>Select Vehicle</option>
+                                                         <option value="" disabled selected></option>
                                                          <?php foreach ($vehicles as $v): ?>
                                                             <option value="<?php echo $v['plate_number']; ?>" <?php echo ($rowvrfdetails['vehicle'] === $v['plate_number']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($v['brand'] . " " . $v['model']); ?></option>
                                                          <?php endforeach; ?>
@@ -2223,7 +2238,7 @@ function home()
                                                 <div class="input-container-2">
                                                    <?php if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])): ?>
                                                       <select name="vrfdriver[<?php echo $tab_number - 1 ?>]" id="driver-<?php echo $tab_number ?>" required>
-                                                         <option value="" disabled selected>Select Driver</option>
+                                                         <option value="" disabled selected></option>
                                                          <?php foreach ($drivers as $d): ?>
                                                             <option value="<?php echo htmlspecialchars($d['employeeid']); ?>" <?php echo ($rowvrfdetails['driver'] === $d['employeeid']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['fname'] . " " . $d['lname']); ?></option>
                                                          <?php endforeach; ?>
@@ -2399,6 +2414,15 @@ function home()
                               // Form submission validation
                               document.querySelector('.vehicle-reservation-form').addEventListener('submit', (e) => {
                                  if (e.target.querySelector('[name="vrfappbtn"]') === document.activeElement) {
+                                    // Re-enable disabled options so they get submitted
+                                    document.querySelectorAll('select').forEach(select => {
+                                       Array.from(select.options).forEach(opt => {
+                                          if (opt.disabled && opt.selected) {
+                                             opt.disabled = false;
+                                          }
+                                       });
+                                    });
+                                    
                                     const container = document.querySelector('.details-container');
                                     const tabs = container.querySelectorAll('.tab');
                                     
@@ -2451,47 +2475,38 @@ function home()
                      $id = htmlspecialchars($_GET['vrfid']);
                      try {
                         $conn->begin_transaction();
-                        
                         // Handle GSO Secretary and Immediate Head updates to vrf_detailstb
                         if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])) {
                            include 'config.php';
+                           
                            // First, delete existing records for this VRF
                            $deleteStmt = $conn->prepare("DELETE FROM vrf_detailstb WHERE vrf_id = ?");
                            $deleteStmt->bind_param("s", $id);
                            $deleteStmt->execute();
                            $deleteStmt->close();
-                           
-                           // Insert updated records
                            if (!empty($_POST['vrfdeparture']) && is_array($_POST['vrfdeparture'])) {
-                              $detailStmt = $conn->prepare(
+                              $detail_stmt = $conn->prepare(
                                  "INSERT INTO vrf_detailstb (vrf_id, departure, `return`, vehicle, driver) VALUES (?, ?, ?, ?, ?)"
                               );
-                              if (!$detailStmt) throw new Exception("Prepare statement failed.");
-                              
-                              foreach ($_POST['vrfdeparture'] as $idx => $departure) {
-                                 if (empty($departure)) continue;
-                                 
-                                 $return = $_POST['vrfreturn'][$idx] ?? null;
-                                 
-                                 // Use actual value if available (from hidden field for readonly), otherwise use submitted value
-                                 $vehicle = $_POST['vrfvehicle_actual'][$idx] ?? $_POST['vrfvehicle'][$idx] ?? null;
-                                 $driver = $_POST['vrfdriver_actual'][$idx] ?? $_POST['vrfdriver'][$idx] ?? null;
-                                 
-                                 // Skip tabs with incomplete data
-                                 if (empty($return) || empty($vehicle) || empty($driver)) {
-                                    continue;
-                                 }
-                                 
-                                 $detailStmt->bind_param("sssss", $id, $departure, $return, $vehicle, $driver);
-                                 if (!$detailStmt->execute()) {
-                                    throw new Exception("Detail insert failed: " . $detailStmt->error);
-                                 }
+                              if (!$detail_stmt) throw new Exception("Prepare for vrf_detailstb failed.");
+
+                              foreach ($_POST['vrfdeparture'] as $idx => $dep_raw) {
+                                 $ret_raw = $_POST['vrfreturn'][$idx]  ?? null;
+                                 $vehicle  = $_POST['vrfvehicle'][$idx] ?? null;
+                                 $driver   = $_POST['vrfdriver'][$idx]  ?? null;
+
+                                 if (!$dep_raw || !$ret_raw || !$vehicle || !$driver) continue;
+
+                                 // convert datetime-local to MySQL DATETIME
+                                 $dep = (new DateTime($dep_raw))->format('Y-m-d H:i:s');
+                                 $ret = (new DateTime($ret_raw))->format('Y-m-d H:i:s');
+
+                                 $detail_stmt->bind_param("sssss", $id, $dep, $ret, $vehicle, $driver);
+                                 if (!$detail_stmt->execute()) throw new Exception("Detail insert failed for tab {$idx}: " . $detail_stmt->error);
                               }
-                              $detailStmt->close();
-                           }
+                              $detail_stmt->close();
+                           }      
                         }
-                        
-                        // Update VRF table status
                         include 'config.php';
                         if($_SESSION['role']=='Immediate Head' OR $_SESSION['role']=='Director')
                         {
