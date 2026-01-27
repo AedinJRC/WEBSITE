@@ -1763,6 +1763,7 @@ function home()
 
                if (isset($_POST['vrfsubbtn'])) {
                   $id = htmlspecialchars($_POST['vrfid']);
+                  $originalId = $id; // Store original ID to check if it was changed
                   
                   // Check if ID already exists, increment if needed (handles refresh/concurrent submissions)
                   $checkStmt = $conn->prepare("SELECT id FROM vrftb WHERE id = ?");
@@ -1777,6 +1778,11 @@ function home()
                      $id = substr($id, 0, -2) . str_pad($lastTwo, 2, '0', STR_PAD_LEFT);
                   }
                   $checkStmt->close();
+                  
+                  // Show alert if ID was changed due to duplicate
+                  if ($id !== $originalId) {
+                     echo "<script>alert('Another request with ID " . htmlspecialchars($originalId) . " was found. Your request ID has been changed to " . htmlspecialchars($id) . ".');</script>";
+                  }
                   
                   $name = htmlspecialchars($_POST['vrfname']);
                   $department = htmlspecialchars($_POST['vrfdepartment']);
