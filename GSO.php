@@ -1118,8 +1118,8 @@ function home()
             <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
                <img src="PNG/CSA_Logo.png" alt="">
                <span class="header">
-                  <span id="csab">Colegio San Agustin-Bi�an</span>
-                  <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Bi�an City, Philippines</span>
+                  <span id="csab">Colegio San Agustin-Biñan</span>
+                  <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                   <span id="vrf">VEHICLE RESERVATION FORM</span>
                   <span id="fid">
                      <span id="fid">Form ID:</span>
@@ -1629,7 +1629,7 @@ function home()
                               removeButton.classList.add("remove-passenger");
                               removeButton.style = "position:absolute; transform:translateX(224px)";
                               removeButton.type = "button";
-                              removeButton.textContent = "�";
+                              removeButton.textContent = "×";
                               removeButton.onclick = function () 
                               {
                                  inputContainer.remove();
@@ -1704,7 +1704,7 @@ function home()
 
                               // Create a remove button
                               const removeButton = document.createElement("button");
-                              removeButton.textContent = "�";
+                              removeButton.textContent = "×";
                               removeButton.style = "position:absolute; transform:translateY(30px)";
                               removeButton.onclick = function () 
                               {
@@ -2099,11 +2099,11 @@ function home()
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?papp=a" class="closepopup">�</a>
+                              <a href="GSO.php?papp=a" class="closepopup">&times</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
-                                 <span id="csab">Colegio San Agustin-Bi�an</span>
-                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Bi�an City, Philippines</span>
+                                 <span id="csab">Colegio San Agustin-Biñan</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                                  <span id="vrf">VEHICLE RESERVATION FORM</span>
                                  <span id="fid">
                                     <span id="fid">Form ID:
@@ -2302,7 +2302,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">�</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">&times</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -2953,11 +2953,11 @@ function home()
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?rapp=a" class="closepopup">�</a>
+                              <a href="GSO.php?rapp=a" class="closepopup">×</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
-                                 <span id="csab">Colegio San Agustin-Bi�an</span>
-                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Bi�an City, Philippines</span>
+                                 <span id="csab">Colegio San Agustin-Biñan</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                                  <span id="vrf">VEHICLE RESERVATION FORM</span>
                                  <span id="fid">
                                     <span id="fid">Form ID:
@@ -3084,7 +3084,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">�</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -3375,11 +3375,11 @@ function home()
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?creq=a" class="closepopup">�</a>
+                              <a href="GSO.php?creq=a" class="closepopup">×</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
-                                 <span id="csab">Colegio San Agustin-Bi�an</span>
-                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Bi�an City, Philippines</span>
+                                 <span id="csab">Colegio San Agustin-Biñan</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
                                  <span id="vrf">VEHICLE RESERVATION FORM</span>
                                  <span id="fid">
                                     <span id="fid">Form ID:
@@ -3506,7 +3506,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">�</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
