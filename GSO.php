@@ -163,20 +163,20 @@ if (window.innerWidth < 992) {
             <ul class="nav-list">
                <li style="height: 2.5vw;"></li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar" title="Calendar" data-id="calendar">
                      <img src="PNG/Calendar.png" alt="Calendar">
                      <span>Calendar</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                        <li><a href="GSO.php?vsch=a" title="Vehicle Schedules"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a" title="Vehicle Reservation Form"><span>Vehicle Reservation Form</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests" title="Requests" data-id="requests">
                      <img src="PNG/Pie.png" alt="Requests">
                      <span>Requests</span>
                      <?php
@@ -215,7 +215,7 @@ if (window.innerWidth < 992) {
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                        <li><a href="GSO.php?papp=a" title="Pending Approval"><span>Pending Approval </span>
                            <?php
                               if($pending_count>0)
                               {
@@ -231,48 +231,48 @@ if (window.innerWidth < 992) {
                               }
                            ?>
                         </a></li>
-                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                        <li><a href="GSO.php?rapp=a" title="Reservation Approved"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a" title="Cancelled Requests"><span>Cancelled Requests</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle" title="Vehicles" data-id="vehicle">
                      <img src="PNG/Vehicle.png" alt="Vehicle">
                      <span>Vehicles</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
-                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                        <li><a href="GSO.php?mveh=a" title="Manage Vehicle"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a" title="Add Vehicle"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a" title="Maintenance Checklist"><span>Maintenance Checklist</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account" title="Accounts" data-id="account">
                      <img src="PNG/Account.png" alt="Report">
                      <span>Accounts</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
-                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                        <li><a href="GSO.php?macc=a" title="Manage Accounts"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a" title="Manage Departments"><span>Manage Departments</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report" title="Report" data-id="report">
                      <img src="PNG/File.png" alt="Report">
                      <span>Report</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                        <li><a href="GSO.php?srep=a" title="Summary Report"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a" title="Maintenance Report"><span>Maintenance Report</span></a></li>
                      </div>
                   </ul>
                </li>
@@ -285,20 +285,20 @@ if (window.innerWidth < 992) {
             <ul class="nav-list">
                <li style="height: 2.5vw;"></li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar" title="Calendar" data-id="calendar">
                      <img src="PNG/Calendar.png" alt="Calendar">
                      <span>Calendar</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                        <li><a href="GSO.php?vsch=a" title="Vehicle Schedules"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a" title="Vehicle Reservation Form"><span>Vehicle Reservation Form</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests" title="Requests" data-id="requests">
                      <img src="PNG/Pie.png" alt="Requests">
                      <span>Requests</span>
                      <?php
@@ -337,7 +337,7 @@ if (window.innerWidth < 992) {
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                        <li><a href="GSO.php?papp=a" title="Pending Approval"><span>Pending Approval </span>
                            <?php
                               if($pending_count>0)
                               {
@@ -353,20 +353,20 @@ if (window.innerWidth < 992) {
                               }
                            ?>
                         </a></li>
-                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                        <li><a href="GSO.php?rapp=a" title="Reservation Approved"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a" title="Cancelled Requests"><span>Cancelled Requests</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report" title="Report" data-id="report">
                      <img src="PNG/File.png" alt="Report">
                      <span>Report</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?srep=a" title="Summary Report"><span>Summary Report</span></a></li>
                      </div>
                   </ul>
                </li>
@@ -379,20 +379,20 @@ if (window.innerWidth < 992) {
             <ul class="nav-list">
                <li style="height: 2.5vw;"></li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar" title="Calendar" data-id="calendar">
                      <img src="PNG/Calendar.png" alt="Calendar">
                      <span>Calendar</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                        <li><a href="GSO.php?vsch=a" title="Vehicle Schedules"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a" title="Vehicle Reservation Form"><span>Vehicle Reservation Form</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests" title="Requests" data-id="requests">
                      <img src="PNG/Pie.png" alt="Requests">
                      <span>Requests</span>
                      <?php
@@ -431,7 +431,7 @@ if (window.innerWidth < 992) {
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                        <li><a href="GSO.php?papp=a" title="Pending Approval"><span>Pending Approval </span>
                            <?php
                               if($pending_count>0)
                               {
@@ -447,48 +447,48 @@ if (window.innerWidth < 992) {
                               }
                            ?>
                         </a></li>
-                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                        <li><a href="GSO.php?rapp=a" title="Reservation Approved"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a" title="Cancelled Requests"><span>Cancelled Requests</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle" title="Vehicles" data-id="vehicle">
                      <img src="PNG/Vehicle.png" alt="Vehicle">
                      <span>Vehicles</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
-                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                        <li><a href="GSO.php?mveh=a" title="Manage Vehicle"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a" title="Add Vehicle"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a" title="Maintenance Checklist"><span>Maintenance Checklist</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account" title="Accounts" data-id="account">
                      <img src="PNG/Account.png" alt="Report">
                      <span>Accounts</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
-                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                        <li><a href="GSO.php?macc=a" title="Manage Accounts"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a" title="Manage Departments"><span>Manage Departments</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report" title="Report" data-id="report">
                      <img src="PNG/File.png" alt="Report">
                      <span>Report</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                        <li><a href="GSO.php?srep=a" title="Summary Report"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a" title="Maintenance Report"><span>Maintenance Report</span></a></li>
                      </div>
                   </ul>
                </li>
@@ -501,20 +501,20 @@ if (window.innerWidth < 992) {
             <ul class="nav-list">
                <li style="height: 2.5vw;"></li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar" title="Calendar" data-id="calendar">
                      <img src="PNG/Calendar.png" alt="Calendar">
                      <span>Calendar</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                        <li><a href="GSO.php?vsch=a" title="Vehicle Schedules"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a" title="Vehicle Reservation Form"><span>Vehicle Reservation Form</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests" title="Requests" data-id="requests">
                      <img src="PNG/Pie.png" alt="Requests">
                      <span>Requests</span>
                      <?php
@@ -553,7 +553,7 @@ if (window.innerWidth < 992) {
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                        <li><a href="GSO.php?papp=a" title="Pending Approval"><span>Pending Approval </span>
                            <?php
                               if($pending_count>0)
                               {
@@ -569,48 +569,48 @@ if (window.innerWidth < 992) {
                               }
                            ?>
                         </a></li>
-                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                        <li><a href="GSO.php?rapp=a" title="Reservation Approved"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a" title="Cancelled Requests"><span>Cancelled Requests</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle" title="Vehicles" data-id="vehicle">
                      <img src="PNG/Vehicle.png" alt="Vehicle">
                      <span>Vehicles</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
-                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                        <li><a href="GSO.php?mveh=a" title="Manage Vehicle"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a" title="Add Vehicle"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a" title="Maintenance Checklist"><span>Maintenance Checklist</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account" title="Accounts" data-id="account">
                      <img src="PNG/Account.png" alt="Report">
                      <span>Accounts</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
-                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                        <li><a href="GSO.php?macc=a" title="Manage Accounts"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a" title="Manage Departments"><span>Manage Departments</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report" title="Report" data-id="report">
                      <img src="PNG/File.png" alt="Report">
                      <span>Report</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                        <li><a href="GSO.php?srep=a" title="Summary Report"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a" title="Maintenance Report"><span>Maintenance Report</span></a></li>
                      </div>
                   </ul>
                </li>
@@ -623,20 +623,20 @@ if (window.innerWidth < 992) {
             <ul class="nav-list">
                <li style="height: 2.5vw;"></li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar" title="Calendar" data-id="calendar">
                      <img src="PNG/Calendar.png" alt="Calendar">
                      <span>Calendar</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                        <li><a href="GSO.php?vsch=a" title="Vehicle Schedules"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a" title="Vehicle Reservation Form"><span>Vehicle Reservation Form</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests" title="Requests" data-id="requests">
                      <img src="PNG/Pie.png" alt="Requests">
                      <span>Requests</span>
                      <?php
@@ -675,7 +675,7 @@ if (window.innerWidth < 992) {
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                        <li><a href="GSO.php?papp=a" title="Pending Approval"><span>Pending Approval </span>
                            <?php
                               if($pending_count>0)
                               {
@@ -691,20 +691,20 @@ if (window.innerWidth < 992) {
                               }
                            ?>
                         </a></li>
-                        <li><a href="GSO.php?rapp=a"><span>Reservation Approved</span></a></li>
-                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span></a></li>
+                        <li><a href="GSO.php?rapp=a" title="Reservation Approved"><span>Reservation Approved</span></a></li>
+                        <li><a href="GSO.php?creq=a" title="Cancelled Requests"><span>Cancelled Requests</span></a></li>
                      </div>
                   </ul>
                </li
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report" title="Report" data-id="report">
                      <img src="PNG/File.png" alt="Report">
                      <span>Report</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?srep=a" title="Summary Report"><span>Summary Report</span></a></li>
                      </div>
                   </ul>
                </li>
@@ -717,27 +717,27 @@ if (window.innerWidth < 992) {
             <ul class="nav-list">
                <li style="height: 2.5vw;"></li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar" title="Calendar" data-id="calendar">
                      <img src="PNG/Calendar.png" alt="Calendar">
                      <span>Calendar</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                        <li><a href="GSO.php?vsch=a" title="Vehicle Schedules"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a" title="Vehicle Reservation Form"><span>Vehicle Reservation Form</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report" title="Report" data-id="report">
                      <img src="PNG/File.png" alt="Report">
                      <span>Report</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?srep=a" title="Summary Report"><span>Summary Report</span></a></li>
                      </div>
                   </ul>
                </li>
@@ -750,27 +750,27 @@ if (window.innerWidth < 992) {
             <ul class="nav-list">
                <li style="height: 2.5vw;"></li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle" title="Vehicles" data-id="vehicle">
                      <img src="PNG/Vehicle.png" alt="Vehicle">
                      <span>Vehicles</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                        <li><a href="GSO.php?mche=a" title="Maintenance Checklist"><span>Maintenance Checklist</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report" title="Report" data-id="report">
                      <img src="PNG/File.png" alt="Report">
                      <span>Report</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                        <li><a href="GSO.php?srep=a" title="Summary Report"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a" title="Maintenance Report"><span>Maintenance Report</span></a></li>
                      </div>
                   </ul>
                </li>
@@ -783,20 +783,20 @@ if (window.innerWidth < 992) {
             <ul class="nav-list">
                <li style="height: 2.5vw;"></li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="calendar" title="Calendar" data-id="calendar">
                      <img src="PNG/Calendar.png" alt="Calendar">
                      <span>Calendar</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?vsch=a"><span>Vehicle Schedules</span></a></li>
-                        <li><a href="GSO.php?vres=a"><span>Vehicle Reservation Form</span></a></li>
+                        <li><a href="GSO.php?vsch=a" title="Vehicle Schedules"><span>Vehicle Schedules</span></a></li>
+                        <li><a href="GSO.php?vres=a" title="Vehicle Reservation Form"><span>Vehicle Reservation Form</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="requests" title="Requests" data-id="requests">
                      <img src="PNG/Pie.png" alt="Requests">
                      <span>Requests</span>
                      <?php
@@ -838,7 +838,7 @@ if (window.innerWidth < 992) {
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?papp=a"><span>Pending Approval </span>
+                        <li><a href="GSO.php?papp=a" title="Pending Approval"><span>Pending Approval </span>
                            <?php
                               if($pending_count>0)
                               {
@@ -855,7 +855,7 @@ if (window.innerWidth < 992) {
                            ?>
                         </a></li>
                         <li><a href="GSO.php?rapp=a"><span>Reservation Approved </span></a></li>
-                        <li><a href="GSO.php?creq=a"><span>Cancelled Requests</span>
+                        <li><a href="GSO.php?creq=a" title="Cancelled Requests"><span>Cancelled Requests</span>
                            <?php
                               if($cancel_count>0)
                               {
@@ -874,42 +874,42 @@ if (window.innerWidth < 992) {
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="vehicle" title="Vehicles" data-id="vehicle">
                      <img src="PNG/Vehicle.png" alt="Vehicle">
                      <span>Vehicles</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?mveh=a"><span>Manage Vehicle</span></a></li>
-                        <li><a href="GSO.php?aveh=a"><span>Add Vehicle</span></a></li>
-                        <li><a href="GSO.php?mche=a"><span>Maintenance Checklist</span></a></li>
+                        <li><a href="GSO.php?mveh=a" title="Manage Vehicle"><span>Manage Vehicle</span></a></li>
+                        <li><a href="GSO.php?aveh=a" title="Add Vehicle"><span>Add Vehicle</span></a></li>
+                        <li><a href="GSO.php?mche=a" title="Maintenance Checklist"><span>Maintenance Checklist</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="account" title="Accounts" data-id="account">
                      <img src="PNG/Account.png" alt="Report">
                      <span>Accounts</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?macc=a"><span>Manage Accounts</span></a></li>
-                        <li><a href="GSO.php?mdep=a"><span>Manage Departments</span></a></li>
+                        <li><a href="GSO.php?macc=a" title="Manage Accounts"><span>Manage Accounts</span></a></li>
+                        <li><a href="GSO.php?mdep=a" title="Manage Departments"><span>Manage Departments</span></a></li>
                      </div>
                   </ul>
                </li>
                <li>
-                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report">
+                  <button onclick="toggleDropdown(this)" class="dropdown-btn" id="report" title="Report" data-id="report">
                      <img src="PNG/File.png" alt="Report">
                      <span>Report</span>
                      <img src="PNG/Down.png" alt="DropDown">
                   </button>
                   <ul class="dropdown-container">
                      <div>
-                        <li><a href="GSO.php?srep=a"><span>Summary Report</span></a></li>
-                        <li><a href="GSO.php?mrep=a"><span>Maintenance Report</span></a></li>
+                        <li><a href="GSO.php?srep=a" title="Summary Report"><span>Summary Report</span></a></li>
+                        <li><a href="GSO.php?mrep=a" title="Maintenance Report"><span>Maintenance Report</span></a></li>
                      </div>
                   </ul>
                </li>
@@ -1118,8 +1118,8 @@ function home()
             <form class="vehicle-reservation-form" action="GSO.php?vres=a" method="post" enctype="multipart/form-data">
                <img src="PNG/CSA_Logo.png" alt="">
                <span class="header">
-                  <span id="csab">Colegio San Agustin-Biñan</span>
-                  <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                  <span id="csab">Colegio San Agustin-Bi�an</span>
+                  <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Bi�an City, Philippines</span>
                   <span id="vrf">VEHICLE RESERVATION FORM</span>
                   <span id="fid">
                      <span id="fid">Form ID:</span>
@@ -1318,7 +1318,7 @@ function home()
                      </div>
                   </div>
 
-                  <label class="tab-name" id="tab-remover" for="remove-tab" style="display:none;">−</label>
+                  <label class="tab-name" id="tab-remover" for="remove-tab" style="display:none;">-</label>
                   <button type="button" id="remove-tab" class="remove-tab"></button>
 
                   <label class="tab-name" id="tab-adder" for="add-tab">+</label>
@@ -1394,7 +1394,7 @@ function home()
                         `;
                      }
 
-                     /* ================== RETURN ≥ DEPARTURE LOGIC ================== */
+                     /* ================== RETURN = DEPARTURE LOGIC ================== */
                      function attachReturnMinLogic(tabIndex) {
                         const depEl = document.getElementById(`departure-${tabIndex}`);
                         const retEl = document.getElementById(`return-${tabIndex}`);
@@ -1629,7 +1629,7 @@ function home()
                               removeButton.classList.add("remove-passenger");
                               removeButton.style = "position:absolute; transform:translateX(224px)";
                               removeButton.type = "button";
-                              removeButton.textContent = "×";
+                              removeButton.textContent = "�";
                               removeButton.onclick = function () 
                               {
                                  inputContainer.remove();
@@ -1704,7 +1704,7 @@ function home()
 
                               // Create a remove button
                               const removeButton = document.createElement("button");
-                              removeButton.textContent = "×";
+                              removeButton.textContent = "�";
                               removeButton.style = "position:absolute; transform:translateY(30px)";
                               removeButton.onclick = function () 
                               {
@@ -1731,7 +1731,7 @@ function home()
                               <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:17px;cursor: not-allowed;" step="0.01" min="0" readonly></a>
                               <label for="total_cost">TOTAL COST</label>
                               <div>
-                                 <label id="pesoSign">₱</label>
+                                 <label id="pesoSign">?</label>
                               </div>
                            </div>
                         </span>
@@ -2099,11 +2099,11 @@ function home()
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?papp=a" class="closepopup">×</a>
+                              <a href="GSO.php?papp=a" class="closepopup">�</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
-                                 <span id="csab">Colegio San Agustin-Biñan</span>
-                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                                 <span id="csab">Colegio San Agustin-Bi�an</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Bi�an City, Philippines</span>
                                  <span id="vrf">VEHICLE RESERVATION FORM</span>
                                  <span id="fid">
                                     <span id="fid">Form ID:
@@ -2276,7 +2276,7 @@ function home()
                                     }
                                  ?>
                                  <?php if (in_array($_SESSION['role'], ['Secretary', 'Immediate Head'])): ?>
-                                    <label class="tab-name" id="tab-remover-<?php echo $_GET['vrfid']; ?>" for="remove-tab-<?php echo $_GET['vrfid']; ?>" style="display:none;">−</label>
+                                    <label class="tab-name" id="tab-remover-<?php echo $_GET['vrfid']; ?>" for="remove-tab-<?php echo $_GET['vrfid']; ?>" style="display:none;">-</label>
                                     <button type="button" id="remove-tab-<?php echo $_GET['vrfid']; ?>" class="remove-tab"></button>
 
                                     <label class="tab-name" id="tab-adder-<?php echo $_GET['vrfid']; ?>" for="add-tab-<?php echo $_GET['vrfid']; ?>">+</label>
@@ -2302,7 +2302,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">�</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -2335,7 +2335,7 @@ function home()
                                                 <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.5vw;" step="0.01" min="0" required>
                                                 <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                                 <div>
-                                                   <label id="pesoSign">₱</label>
+                                                   <label id="pesoSign">?</label>
                                                 </div>
                                              </div>
                                              </span>
@@ -2366,7 +2366,7 @@ function home()
                                                 ?>
                                                 <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                                 <div>
-                                                   <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;\"" ?> id="pesoSign">₱</label>
+                                                   <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;\"" ?> id="pesoSign">?</label>
                                                 </div>
                                              </div>
                                              </span>
@@ -2904,31 +2904,48 @@ function home()
                            </div>
                            <div class="info-details">
                               <div>
-                                 <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
-                                 <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
-                                 <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
+                                 <div><div class="title">Activity</div></div>
+                                 <div><div class="title">Purpose:</div></div>
+                                 <div><div class="title">Budget No.:</div></div>
                               </div>
                               <div>
-                                 <div><div class="title">Departure Date:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("F j, Y"); ?></div></div>
-                                 <div><div class="title">Departure Time:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("g:iA"); ?></div></div>
-                                 <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
                               </div>
                               <div>
-                                 <div><div class="title">Driver:</div><div class="dikoalam">
+                                 <div><div class="title">Destination:</div></div>
+                                 <div><div class="title">Passenger count:</div></div>
+                                 <div><div class="title">Vehicle to be used:</div></div>
+                              </div>
+                              <div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
+                                 <div><div class="dikoalam">
                                     <?php 
-                                       $employeeid = $rowvrf['driver'];
-                                       $selectdriver = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
-                                       $resultdriver = $conn->query($selectdriver);
-                                       if ($resultdriver->num_rows > 0) {
-                                          $rowdriver = $resultdriver->fetch_assoc();
-                                          echo $rowdriver['fname']." ".$rowdriver['lname'];
+                                       $vrfid = $rowvrf['id']; 
+                                       $selectdetails = "SELECT * FROM vrf_detailstb WHERE vrf_id = '$vrfid'";
+                                       $resultdetails = $conn->query($selectdetails);
+                                       if ($resultdetails->num_rows > 0) {
+                                          $vehicles = [];
+                                          while($rowdetails = $resultdetails->fetch_assoc()) {
+                                             $plate_number = $rowdetails['vehicle']; 
+                                             $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
+                                             $resultvehicle = $conn->query($selectvehicle);
+                                             if ($resultvehicle->num_rows > 0) {
+                                                while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                                                   $vehicles[] = $rowvehicle['brand']." ".$rowvehicle['model'];
+                                                }
+                                             } else {
+                                                $vehicles[] = $rowdetails['vehicle'];
+                                             }
+                                          }
+                                          echo implode(", ", $vehicles);
                                        } else {
-                                          echo $rowvrf['driver'];
-                                       } 
+                                          echo "N/A";
+                                       }
                                     ?>
                                  </div></div>
-                                 <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
-                                 <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
                               </div>
                            </div>
                         </div>
@@ -2936,11 +2953,11 @@ function home()
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?rapp=a" class="closepopup">×</a>
+                              <a href="GSO.php?rapp=a" class="closepopup">�</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
-                                 <span id="csab">Colegio San Agustin-Biñan</span>
-                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                                 <span id="csab">Colegio San Agustin-Bi�an</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Bi�an City, Philippines</span>
                                  <span id="vrf">VEHICLE RESERVATION FORM</span>
                                  <span id="fid">
                                     <span id="fid">Form ID:
@@ -3067,7 +3084,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">�</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -3096,7 +3113,7 @@ function home()
                                           <a href="#"><input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.3vw;cursor: not-allowed;" step="0.01" min="0" readonly></a>
                                           <label for="total_cost" style="margin-left:13px">TOTAL COST</label>
                                           <div>
-                                             <label id="pesoSign">₱</label>
+                                             <label id="pesoSign">?</label>
                                           </div>
                                        </div>
                                     </span> -->
@@ -3123,7 +3140,7 @@ function home()
                                           ?>
                                           <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                           <div>
-                                             <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
+                                             <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">?</label>
                                           </div>
                                        </div>
                                     </span>
@@ -3309,19 +3326,48 @@ function home()
                            </div>
                            <div class="info-details">
                               <div>
-                                 <div><div class="title">Activity:</div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
-                                 <div><div class="title">Purpose:</div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
-                                 <div><div class="title">Budget No.:</div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
+                                 <div><div class="title">Activity</div></div>
+                                 <div><div class="title">Purpose:</div></div>
+                                 <div><div class="title">Budget No.:</div></div>
                               </div>
                               <div>
-                                 <div><div class="title">Departure Date:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("F j, Y"); ?></div></div>
-                                 <div><div class="title">Departure Time:</div><div class="dikoalam"><?php echo (new DateTime($rowvrf['departure']))->format("g:iA"); ?></div></div>
-                                 <div><div class="title">Destination:</div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['activity']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['purpose']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['budget_no']; ?></div></div>
                               </div>
                               <div>
-                                 <div><div class="title">Driver:</div><div class="dikoalam"><?php echo $rowvrf['driver']; ?></div></div>
-                                 <div><div class="title">Vehicle to be used:</div><div class="dikoalam"><?php echo $rowvrf['vehicle']; ?></div></div>
-                                 <div><div class="title">Passenger count:</div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
+                                 <div><div class="title">Destination:</div></div>
+                                 <div><div class="title">Passenger count:</div></div>
+                                 <div><div class="title">Vehicle to be used:</div></div>
+                              </div>
+                              <div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['destination']; ?></div></div>
+                                 <div><div class="dikoalam"><?php echo $rowvrf['passenger_count'] ?></div></div>
+                                 <div><div class="dikoalam">
+                                    <?php 
+                                       $vrfid = $rowvrf['id']; 
+                                       $selectdetails = "SELECT * FROM vrf_detailstb WHERE vrf_id = '$vrfid'";
+                                       $resultdetails = $conn->query($selectdetails);
+                                       if ($resultdetails->num_rows > 0) {
+                                          $vehicles = [];
+                                          while($rowdetails = $resultdetails->fetch_assoc()) {
+                                             $plate_number = $rowdetails['vehicle']; 
+                                             $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
+                                             $resultvehicle = $conn->query($selectvehicle);
+                                             if ($resultvehicle->num_rows > 0) {
+                                                while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                                                   $vehicles[] = $rowvehicle['brand']." ".$rowvehicle['model'];
+                                                }
+                                             } else {
+                                                $vehicles[] = $rowdetails['vehicle'];
+                                             }
+                                          }
+                                          echo implode(", ", $vehicles);
+                                       } else {
+                                          echo "N/A";
+                                       }
+                                    ?>
+                                 </div></div>
                               </div>
                            </div>
                         </div>
@@ -3329,11 +3375,11 @@ function home()
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?creq=a" class="closepopup">×</a>
+                              <a href="GSO.php?creq=a" class="closepopup">�</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
-                                 <span id="csab">Colegio San Agustin-Biñan</span>
-                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Biñan City, Philippines</span>
+                                 <span id="csab">Colegio San Agustin-Bi�an</span>
+                                 <span id="swe">Southwoods Ecocentrum, Brgy. San Francisco, 4024 Bi�an City, Philippines</span>
                                  <span id="vrf">VEHICLE RESERVATION FORM</span>
                                  <span id="fid">
                                     <span id="fid">Form ID:
@@ -3460,7 +3506,7 @@ function home()
                                                          <div class="input-container" style="position:relative;">
                                                             <input type="text" name="vrfpassenger_name[]" value="<?php echo $rowpassenger['passenger_name']; ?>" required readonly>
                                                             <label for="passengerName">PASSENGER#<?php echo $passenger_number ?></label>
-                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">×</button>
+                                                            <button class="remove-passenger" type="button" style="position:absolute; transform:translateX(224px);display:none;">�</button>
                                                          </div>
                                                       <?php
                                                       $passenger_number++;
@@ -3505,7 +3551,7 @@ function home()
                                        ?>
                                        <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                        <div>
-                                          <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
+                                          <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">?</label>
                                        </div>
                                     </div>
                                     </span>
@@ -3599,3 +3645,7 @@ function home()
       include 'maintenanceReport.php';
    }
 ?>
+
+
+
+
