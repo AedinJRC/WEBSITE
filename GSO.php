@@ -1635,6 +1635,12 @@ function home()
                                  inputContainer.remove();
                                  updateRemoveButtons();
                                  updatePassengerLabels();
+                                 
+                                 // Show attachment button if no passengers remain
+                                 const remainingPassengers = passengerList.querySelectorAll(".passenger-entry");
+                                 if (remainingPassengers.length === 0) {
+                                    attachmentButton.style.display = "inline-block";
+                                 }
                               };
 
                               inputContainer.appendChild(input);
