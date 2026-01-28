@@ -1284,6 +1284,15 @@ function home()
                         'driver'    => $r['driver']
                      ];
                   }
+
+                  // Set departure minimum date based on role
+                  if ($_SESSION['role'] == 'Secretary' OR $_SESSION['role'] == 'GSO_Director' OR $_SESSION['role'] == 'Admin') {
+                     $date=date("Y-m-d\T06:00");
+                  }
+                  else
+                  {
+                     $date=date("Y-m-d\T06:00", strtotime("+7 days"));
+                  }
                ?>
                <div class="details-container">
 
