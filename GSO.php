@@ -2,6 +2,14 @@
    date_default_timezone_set('Asia/Manila');
    session_start();
    ob_start();
+   
+   // Handle logout
+   if (isset($_GET['logout']) && $_GET['logout'] == 1) {
+      session_destroy();
+      header("Location: index.php");
+      exit();
+   }
+   
    if ($_SESSION['role'] == null) {
       header("Location: logout.php");
       exit();
@@ -978,7 +986,7 @@ if (window.innerWidth < 992) {
         <span id="role"><?php echo $_SESSION['role']; ?></span>
     </div>
 
-    <a href="index.php">
+    <a href="GSO.php?logout=1">
         <button type="button">
             <img id="logout-img" src="PNG/Logout.png" alt="Logout">
         </button>
@@ -1752,9 +1760,19 @@ function home()
                         </span>
                         <div class="subbtn-container">
                            <input type="file" name="vrfletter_attachment" class="attachment" id="fileInput">
-                           <label for="fileInput" class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
+                           <label for="fileInput" class="attachment-label" id="attachmentLabel" <?php echo !empty($_FILES["vrfletter_attachment"]["name"]) ? 'style="color: maroon;"' : ''; ?>><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label>
                            <button class="subbtn" type="submit" name="vrfsubbtn">Submit</button>
                         </div>
+                        <script>
+                           document.getElementById('fileInput').addEventListener('change', function() {
+                              const label = document.getElementById('attachmentLabel');
+                              if (this.files.length > 0) {
+                                 label.style.color = 'maroon';
+                              } else {
+                                 label.style.color = '';
+                              }
+                           });
+                        </script>
                      </span>
                   </div>
                </span>
