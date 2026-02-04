@@ -451,6 +451,7 @@ function generateColorFromString($string) {
   transition: opacity 0.5s ease;
 }
 
+
     </style>
 </head>
 <body>
@@ -593,10 +594,6 @@ function generateColorFromString($string) {
                         <input name="vrfactivity" type="text" id="activity" required readonly>
                         <label for="activity">ACTIVITY:</label>
                     </div>
-                    <div class="input-container">
-                        <input type="text" name="vrfpurpose" id="purpose" required readonly>
-                        <label for="purpose">PURPOSE:</label>
-                    </div>
                 </div>
                 <div class="vrf-details-column">
                     <div class="input-container">
@@ -608,6 +605,10 @@ function generateColorFromString($string) {
                         <label for="budgetNo">BUDGET No.:</label>
                     </div>
                     <div class="input-container">
+                        <input type="text" name="vrfpurpose" id="purpose" required readonly>
+                        <label for="purpose">PURPOSE:</label>
+                    </div>
+                    <div class="input-container">
                         <input type="text" name="vrfvehicle" id="vehicleUsed" required readonly>
                         <label for="vehicleUsed">VEHICLE TO BE USED:</label>
                     </div>
@@ -615,18 +616,210 @@ function generateColorFromString($string) {
                         <input type="text" name="vrfdriver" id="driver" required readonly>
                         <label for="driver">DRIVER:</label>
                     </div>
+                    <div class="input-container">
+                        <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
+                        <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
+                    </div>
                 </div>
             </div>
             <span class="address">
                 <span>DESTINATION:</span>
                 <textarea name="vrfdestination" maxlength="255" id="destination" required readonly></textarea>
             </span>
-            <div class="vrf-details" style="margin-top:1vw;">
-                <div class="input-container">
-                    <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
-                    <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
-                </div>
-            </div>
+            <div class="details-container"
+     style="
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        justify-content: right;
+        margin-bottom: 4px;
+     ">
+
+   <div class="input-container-2"
+        style="
+           position: relative;
+           display: flex;
+           flex-direction: column;
+           font-family: 'Roboto', sans-serif;
+           margin-bottom: 10px;
+           margin-right: 8px;
+        ">
+      <input
+         type="datetime-local"
+         name="vrfdeparture"
+         id="departure"
+         min="2026-01-30T06:00"
+         required
+         style="
+            font-size: 14px;
+            padding: 5px;
+            width: 170px;
+            border: 1px solid #555555;
+            border-radius: 8px;
+            outline: none;
+            appearance: none;
+            background-color: white;
+            color: transparent;
+         "
+      >
+      <label for="departure"
+             style="
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-30%);
+                transition: all 0.3s ease;
+                font-size: 13px;
+                color: #777;
+                letter-spacing: 2px;
+                font-weight: bold;
+                pointer-events: none;
+             ">
+         DEPARTURE:
+      </label>
+   </div>
+
+   <div class="input-container-2"
+        style="
+           position: relative;
+           display: flex;
+           flex-direction: column;
+           font-family: 'Roboto', sans-serif;
+           margin-bottom: 10px;
+           margin-right: 8px;
+        ">
+      <input
+         type="datetime-local"
+         name="vrfreturn"
+         id="return"
+         min="2026-01-30T06:00"
+         required
+         style="
+            font-size: 14px;
+            padding: 5px;
+            width: 170px;
+            border: 1px solid #555555;
+            border-radius: 8px;
+            outline: none;
+            appearance: none;
+            background-color: white;
+            color: transparent;
+         "
+      >
+      <label for="return"
+             style="
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-30%);
+                transition: all 0.3s ease;
+                font-size: 13px;
+                color: #777;
+                letter-spacing: 2px;
+                font-weight: bold;
+                pointer-events: none;
+             ">
+         RETURN:
+      </label>
+   </div>
+
+   <div class="input-container-2"
+        style="
+           position: relative;
+           display: flex;
+           flex-direction: column;
+           font-family: 'Roboto', sans-serif;
+           margin-bottom: 10px;
+           margin-right: 8px;
+        ">
+      <select
+         name="vrfvehicle"
+         id="vehicle"
+         required
+         style="
+            font-size: 14px;
+            padding: 5px;
+            width: 170px;
+            border: 1px solid #555555;
+            border-radius: 8px;
+            outline: none;
+            appearance: none;
+            background-color: white;
+         ">
+         <option value="" disabled selected></option>
+         <option value="DAM 6747">Toyota Rush</option>
+         <option value="DAV 8382">Isuzu Travis</option>
+         <option value="FAD 5799">Toyota Innova</option>
+         <option value="NED 1154">Nissan Urvan</option>
+         <option value="TII 979">Toyota Coaster</option>
+         <option value="TQV 581">Toyota Grandia</option>
+         <option value="WEO 163">Honda Civic</option>
+         <option value="ZTY 362">Hino Bus</option>
+      </select>
+      <label for="vehicle"
+             style="
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-30%);
+                transition: all 0.3s ease;
+                font-size: 13px;
+                color: #777;
+                letter-spacing: 2px;
+                font-weight: bold;
+                pointer-events: none;
+             ">
+         VEHICLE:
+      </label>
+   </div>
+
+   <div class="input-container-2"
+        style="
+           position: relative;
+           display: flex;
+           flex-direction: column;
+           font-family: 'Roboto', sans-serif;
+           margin-bottom: 10px;
+        ">
+      <select
+         name="vrfdriver"
+         id="driver"
+         required
+         style="
+            font-size: 14px;
+            padding: 5px;
+            width: 170px;
+            border: 1px solid #555555;
+            border-radius: 8px;
+            outline: none;
+            appearance: none;
+            background-color: white;
+         ">
+         <option value="" disabled selected></option>
+         <option value="dexther">Dexther Abuan</option>
+         <option value="leon">Leon Mandigal</option>
+         <option value="noel">Noel Gutierrez</option>
+         <option value="tanie">Tanie Duran</option>
+      </select>
+      <label for="driver"
+             style="
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-30%);
+                transition: all 0.3s ease;
+                font-size: 13px;
+                color: #777;
+                letter-spacing: 2px;
+                font-weight: bold;
+                pointer-events: none;
+             ">
+         DRIVER:
+      </label>
+   </div>
+
+</div>
+
         </form>
     </div>
 </div>

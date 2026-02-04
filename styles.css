@@ -894,11 +894,15 @@ li
    #pending-notif
    {
       display: inline-block;
+      position: absolute;
       background-color: var(--maroon);
-      height: 18px;
-      width: 18px;
+      height: 2vw;
+      width: 2vw;
       border-radius: 100%;
-      border: solid 4px var(--yellow);
+      border: solid 0.3vw var(--yellow);
+      transform: translateY(-0.2vw);
+      z-index: -10;
+      transition: 0.3s;
    }
 }
 .sidebar.active {
@@ -911,7 +915,7 @@ li
    height: 100vh;
    width: var(--sidebar-width);
    background-color: var(--light-gray);
-
+   
    span, a {
       display: inline;
       overflow-wrap: break-word;
@@ -1034,7 +1038,10 @@ li
    #pending-notif
    {
       position: absolute;
-      transform:translateX(10.6vw)
+      transform:translateX(10.6vw);
+      width: 1.1vw;
+      height: 1.1vw;
+      z-index: 1000;
    }
    #pending-number
    {

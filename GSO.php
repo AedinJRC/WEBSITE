@@ -26,6 +26,92 @@
       }
       $_SESSION['timeout'] = time();
    }
+
+   // Handle AJAX search requests
+   if (isset($_GET['ajax_search'])) {
+      include 'config.php';
+      header('Content-Type: application/json');
+      
+      $searchTerm = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
+      $pageType = isset($_GET['page']) ? $_GET['page'] : '';
+      
+      // Build search query (searches in name, department, activity, purpose, budget_no, destination)
+      $searchFilter = "";
+      if (!empty($searchTerm)) {
+         $searchFilter = " AND (name LIKE '%$searchTerm%' OR department LIKE '%$searchTerm%' OR activity LIKE '%$searchTerm%' OR purpose LIKE '%$searchTerm%' OR budget_no LIKE '%$searchTerm%' OR destination LIKE '%$searchTerm%' OR id LIKE '%$searchTerm%')";
+      }
+      
+      $results = [];
+      
+      if ($pageType === 'pending') {
+         // Same logic as pendingApproval function
+         if($_SESSION['role']=='Secretary'||$_SESSION['role']=='Admin') {
+            $status2 = "(immediatehead_status='Approved' AND gsoassistant_status='Pending') OR (immediatehead_status='Approved' AND gsoassistant_status='Seen')";
+            $status="gsoassistant_status";
+         } elseif($_SESSION['role']=='Immediate Head') {
+            $status2 = "department='". $_SESSION['department'] ."' AND ((immediatehead_status='Pending') OR (immediatehead_status='Seen'))";
+            $status="immediatehead_status";
+         } elseif($_SESSION['role']=='Director') {
+            $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+            $status="gsodirector_status";
+         } elseif($_SESSION['role']=='Accountant') {
+            $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
+            $status="accounting_status";
+         }
+         
+         $query = "SELECT * FROM vrftb WHERE $status2 $searchFilter ORDER BY date_filed DESC, id DESC";
+         
+      } elseif ($pageType === 'approved') {
+         // Same logic as reservationApproved function
+         if($_SESSION['role']=='Secretary') {
+            $status='gsoassistant_status';
+         } elseif($_SESSION['role']=='Immediate Head') {
+            $status='immediatehead_status';
+         } elseif($_SESSION['role']=='Director') {
+            $status='gsodirector_status';
+         } elseif($_SESSION['role']=='Accountant') {
+            $status='accounting_status';
+         }
+         
+         $showOld = isset($_GET['show_old']) && $_GET['show_old'] == 1;
+         if ($showOld) {
+            $query = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' $searchFilter ORDER BY date_filed DESC, id DESC";
+         } else {
+            $query = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' AND updated_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) $searchFilter ORDER BY date_filed DESC, id DESC";
+         }
+         
+      } elseif ($pageType === 'cancelled') {
+         // Same logic as cancelledRequests function
+         if($_SESSION['role']=='Secretary') {
+            $status='gsoassistant_status';
+         } elseif($_SESSION['role']=='Immediate Head') {
+            $status='immediatehead_status';
+         } elseif($_SESSION['role']=='Director') {
+            $status='gsodirector_status';
+         } elseif($_SESSION['role']=='Accountant') {
+            $status='accounting_status';
+         }
+         
+         $showOld = isset($_GET['show_old']) && $_GET['show_old'] == 1;
+         if ($showOld) {
+            $query = "SELECT * FROM vrftb WHERE gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes' $searchFilter ORDER BY date_filed DESC, id DESC";
+         } else {
+            $query = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND (gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes') $searchFilter ORDER BY date_filed DESC, id DESC";
+         }
+      }
+      
+      if (isset($query)) {
+         $result = $conn->query($query);
+         if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+               $results[] = $row;
+            }
+         }
+      }
+      
+      echo json_encode($results);
+      exit;
+   }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1953,7 +2039,7 @@ function home()
    function pendingApproval()
    {
       ?>
-         <input class="search" type="text" id="search" placeholder="Search reservation">
+         <input class="search" type="text" id="search" data-page="pending" placeholder="Search reservation">
          <div class="maintitle">
             <h1>Pending Approval</h1>
             <?php
@@ -1989,6 +2075,7 @@ function home()
          </div>
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
+         <div id="pending-results">
          <?php
             include 'config.php';
             $selectvrf = "SELECT * FROM vrftb WHERE $status2 ORDER BY date_filed DESC, id DESC";
@@ -2509,6 +2596,10 @@ function home()
                      </div>
                   <?php
                }
+            }
+            ?>
+            </div>
+            <?php
                if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   if (isset($_POST['vrfappbtn'])) {
                      $id = htmlspecialchars($_GET['vrfid']);
@@ -2598,7 +2689,6 @@ function home()
                      }
                   }
                }
-            }
          ?>
          <script>
             // Comprehensive tab management with filtering and floating labels for pendingApproval
@@ -2833,7 +2923,7 @@ function home()
    function reservationApproved()
    {
       ?>
-         <input class="search" type="text" id="search" placeholder="Search reservation">
+         <input class="search" type="text" id="search" data-page="approved" placeholder="Search reservation">
          <div class="maintitle">
             <h1>Reservation Approved</h1>
             <?php
@@ -2864,10 +2954,25 @@ function home()
          </div>
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
+         <div style="text-align: center; margin-bottom: 2vh;">
+            <a href="GSO.php?rapp=a&show_old=<?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '0' : '1'; ?>" style="text-decoration: none;">
+               <button type="button" style="padding: 0.8vh 1.6vh; background-color: <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '#80050d' : '#ffffff'; ?>; color: <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '#ffffff' : '#80050d'; ?>; border: 0.2vh solid #80050d; border-radius: 0.8vh; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                  <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? 'Showing All Records' : 'Show Records Within Month'; ?>
+               </button>
+            </a>
+         </div>
          <?php
-            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
+            $showOld = isset($_GET['show_old']) && $_GET['show_old'] == 1;
+            if ($showOld) {
+               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
+            } else {
+               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' AND updated_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY date_filed DESC, id DESC";
+            }
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
+            ?>
+            <div id="approved-results">
+            <?php
                while($rowvrf = $resultvrf->fetch_assoc()) {
                   ?>
                      <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
@@ -3328,13 +3433,14 @@ function home()
                   <?php
                }
             }
-         ?>
+            ?>
+            </div>
       <?php
    }
    function cancelledRequests()
    {
       ?>
-         <input class="search" type="text" id="search" placeholder="Search reservation">
+         <input class="search" type="text" id="search" data-page="cancelled" placeholder="Search reservation">
          <div class="maintitle">
             <h1>Cancelled Requests</h1>
             <?php
@@ -3365,10 +3471,25 @@ function home()
          </div>
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
+         <div style="text-align: center; margin-bottom: 2vh;">
+            <a href="GSO.php?creq=a&show_old=<?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '0' : '1'; ?>" style="text-decoration: none;">
+               <button type="button" style="padding: 0.8vh 1.6vh; background-color: <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '#80050d' : '#ffffff'; ?>; color: <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '#ffffff' : '#80050d'; ?>; border: 0.2vh solid #80050d; border-radius: 0.8vh; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                  <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? 'Showing All Records' : 'Show Records Within Month'; ?>
+               </button>
+            </a>
+         </div>
          <?php
-            $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes' ORDER BY date_filed DESC, id DESC";
+            $showOld = isset($_GET['show_old']) && $_GET['show_old'] == 1;
+            if ($showOld) {
+               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes' ORDER BY date_filed DESC, id DESC";
+            } else {
+               $selectvrf = "SELECT * FROM vrftb WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND (gsoassistant_status='Rejected' OR immediatehead_status='Rejected' OR gsodirector_status='Rejected' OR accounting_status='Rejected' OR user_cancelled='Yes') ORDER BY date_filed DESC, id DESC";
+            }
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
+            ?>
+            <div id="cancelled-results">
+            <?php
                while($rowvrf = $resultvrf->fetch_assoc()) {
                   ?>
                      <a href="GSO.php?creq=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
@@ -3614,7 +3735,7 @@ function home()
                                     ];
                                  }
                               ?>
-                              <div class="details-container" 
+                              <div class="details-container" >
                                    data-vehicle-options="<?php echo htmlspecialchars($vehicleOptions); ?>"
                                    data-driver-options="<?php echo htmlspecialchars($driverOptions); ?>"
                                    data-existing-bookings="<?php echo htmlspecialchars(json_encode($existingBookings)); ?>">
@@ -3819,7 +3940,8 @@ function home()
                   <?php
                }
             }
-         ?>
+            ?>
+            </div>
       <?php
    }
    function maintenanceChecklist()
@@ -3854,7 +3976,247 @@ function home()
    {
       include 'maintenanceReport.php';
    }
+
+   // Helper function to render a single reservation item
+   function renderReservationItem($rowvrf, $status, $pageType) {
+      $conn = new mysqli('localhost', 'root', '', 'vrms');
+      $updated_at = strtotime($rowvrf['updated_at']);
+      $now = time();
+      $interval = $now - $updated_at;
+      
+      if ($interval < 60) {
+          $timeAgo = 'Just now';
+      } elseif ($interval < 3600) {
+          $minutes = floor($interval / 60);
+          $timeAgo = $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+      } elseif ($interval < 86400) {
+          $hours = floor($interval / 3600);
+          $timeAgo = $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+      } else {
+          $days = floor($interval / 86400);
+          $timeAgo = $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
+      }
+      
+      $pageParam = $pageType === 'pending' ? 'papp' : ($pageType === 'approved' ? 'rapp' : 'creq');
+      $linkHref = "GSO.php?" . $pageParam . "=a&vrfid=" . $rowvrf['id'] . "#vrespopup";
+      
+      // Get profile picture
+      $name = $rowvrf['name'];
+      $selectppicture = $conn->prepare("SELECT * FROM usertb WHERE CONCAT(fname, ' ', lname) = ?");
+      $selectppicture->bind_param("s", $name);
+      $selectppicture->execute();
+      $resultppicture = $selectppicture->get_result();
+      
+      $profilePicture = "default.png";
+      if ($resultppicture->num_rows > 0) {
+         $rowppicture = $resultppicture->fetch_assoc();
+         if ($rowppicture['ppicture'] != null) {
+            $profilePicture = $rowppicture['ppicture'];
+         }
+      }
+      
+      $bgStyle = ($rowvrf[$status] == "Seen") ? 'style="background-color:#eeeeee;"' : '';
+      $circleHTML = ($rowvrf[$status] == "Pending") ? '<div class="circle"></div>' : '';
+      
+      // Get vehicle details
+      $vrfid = $rowvrf['id'];
+      $selectdetails = "SELECT * FROM vrf_detailstb WHERE vrf_id = '$vrfid'";
+      $resultdetails = $conn->query($selectdetails);
+      $vehicles = [];
+      if ($resultdetails->num_rows > 0) {
+         while($rowdetails = $resultdetails->fetch_assoc()) {
+            $plate_number = $rowdetails['vehicle'];
+            $selectvehicle = "SELECT * FROM carstb WHERE plate_number = '$plate_number'";
+            $resultvehicle = $conn->query($selectvehicle);
+            if ($resultvehicle->num_rows > 0) {
+               while($rowvehicle = $resultvehicle->fetch_assoc()) {
+                  $vehicles[] = $rowvehicle['brand']." ".$rowvehicle['model'];
+               }
+            } else {
+               $vehicles[] = $rowdetails['vehicle'];
+            }
+         }
+      }
+      $vehiclesHTML = !empty($vehicles) ? implode(", ", $vehicles) : "N/A";
+      
+      $dateFormatted = date("m/d/Y", strtotime($rowvrf['date_filed']));
+      
+      $html = <<<HTML
+<a href="$linkHref" class="link" style="text-decoration:none;">
+   <div class="info-box" $bgStyle>
+      <div class="pending">
+         $circleHTML
+         <span class="time">$timeAgo</span>
+      </div>
+      <div class="info-heading">
+         <img src="uploads/{$profilePicture}" alt="Profile">
+         <span class="info-heading-text">
+            <span class="name">{$rowvrf['name']}</span>
+            <span class="department">{$rowvrf['department']}</span>
+            <span class="date">Date: {$dateFormatted}</span>
+         </span>
+      </div>
+      <div class="info-details">
+         <div>
+            <div><div class="title">Activity</div></div>
+            <div><div class="title">Purpose:</div></div>
+            <div><div class="title">Budget No.:</div></div>
+         </div>
+         <div>
+            <div><div class="dikoalam">{$rowvrf['activity']}</div></div>
+            <div><div class="dikoalam">{$rowvrf['purpose']}</div></div>
+            <div><div class="dikoalam">{$rowvrf['budget_no']}</div></div>
+         </div>
+         <div>
+            <div><div class="title">Destination:</div></div>
+            <div><div class="title">Passenger count:</div></div>
+            <div><div class="title">Vehicle to be used:</div></div>
+         </div>
+         <div>
+            <div><div class="dikoalam">{$rowvrf['destination']}</div></div>
+            <div><div class="dikoalam">{$rowvrf['passenger_count']}</div></div>
+            <div><div class="dikoalam">$vehiclesHTML</div></div>
+         </div>
+      </div>
+   </div>
+</a>
+HTML;
+      return $html;
+   }
 ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+   // Get all search inputs
+   const searchInputs = document.querySelectorAll('input[data-page]');
+   
+   searchInputs.forEach(searchInput => {
+      searchInput.addEventListener('input', function(e) {
+         const searchTerm = this.value.trim();
+         const pageType = this.getAttribute('data-page');
+         const containerMap = {
+            'pending': 'pending-results',
+            'approved': 'approved-results',
+            'cancelled': 'cancelled-results'
+         };
+         const containerId = containerMap[pageType];
+         const container = document.getElementById(containerId);
+         
+         if (!container) return;
+         
+         // If search is empty, reload the page to show default results
+         if (searchTerm === '') {
+            location.reload();
+            return;
+         }
+         
+         // Make AJAX request
+         fetch(`GSO.php?ajax_search=1&page=${pageType}&search=${encodeURIComponent(searchTerm)}` + (pageType !== 'pending' ? '&show_old=' + (new URLSearchParams(window.location.search).get('show_old') || '0') : ''))
+            .then(response => response.json())
+            .then(data => {
+               // Clear existing results
+               container.innerHTML = '';
+               
+               if (data.length === 0) {
+                  container.innerHTML = '<p style="padding: 20px; text-align: center; color: #999;">No results found</p>';
+                  return;
+               }
+               
+               // Render each result
+               data.forEach(item => {
+                  const itemHTML = renderResultItem(item, pageType);
+                  container.innerHTML += itemHTML;
+               });
+            })
+            .catch(error => {
+               console.error('Search error:', error);
+            });
+      });
+   });
+   
+   // Function to render a single result item
+   function renderResultItem(rowvrf, pageType) {
+      const status = getStatusFieldForRole(pageType);
+      const dateFormatted = new Date(rowvrf['date_filed']).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      const updated_at = new Date(rowvrf['updated_at']).getTime() / 1000;
+      const now = Math.floor(Date.now() / 1000);
+      const interval = now - updated_at;
+      
+      let timeAgo = 'Just now';
+      if (interval >= 60 && interval < 3600) {
+         const minutes = Math.floor(interval / 60);
+         timeAgo = minutes + ' minute' + (minutes > 1 ? 's' : '') + ' ago';
+      } else if (interval >= 3600 && interval < 86400) {
+         const hours = Math.floor(interval / 3600);
+         timeAgo = hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+      } else if (interval >= 86400) {
+         const days = Math.floor(interval / 86400);
+         timeAgo = days + ' day' + (days > 1 ? 's' : '') + ' ago';
+      }
+      
+      const pageParam = pageType === 'pending' ? 'papp' : (pageType === 'approved' ? 'rapp' : 'creq');
+      const linkHref = `GSO.php?${pageParam}=a&vrfid=${rowvrf['id']}#vrespopup`;
+      const bgStyle = (rowvrf[status] == "Seen") ? 'style="background-color:#eeeeee;"' : '';
+      const circleHTML = (rowvrf[status] == "Pending") ? '<div class="circle"></div>' : '';
+      
+      return `
+         <a href="${linkHref}" class="link" style="text-decoration:none;">
+            <div class="info-box" ${bgStyle}>
+               <div class="pending">
+                  ${circleHTML}
+                  <span class="time">${timeAgo}</span>
+               </div>
+               <div class="info-heading">
+                  <img src="uploads/default.png" alt="Profile">
+                  <span class="info-heading-text">
+                     <span class="name">${rowvrf['name']}</span>
+                     <span class="department">${rowvrf['department']}</span>
+                     <span class="date">Date: ${dateFormatted}</span>
+                  </span>
+               </div>
+               <div class="info-details">
+                  <div>
+                     <div><div class="title">Activity</div></div>
+                     <div><div class="title">Purpose:</div></div>
+                     <div><div class="title">Budget No.:</div></div>
+                  </div>
+                  <div>
+                     <div><div class="dikoalam">${rowvrf['activity']}</div></div>
+                     <div><div class="dikoalam">${rowvrf['purpose']}</div></div>
+                     <div><div class="dikoalam">${rowvrf['budget_no']}</div></div>
+                  </div>
+                  <div>
+                     <div><div class="title">Destination:</div></div>
+                     <div><div class="title">Passenger count:</div></div>
+                     <div><div class="title">Vehicle to be used:</div></div>
+                  </div>
+                  <div>
+                     <div><div class="dikoalam">${rowvrf['destination']}</div></div>
+                     <div><div class="dikoalam">${rowvrf['passenger_count']}</div></div>
+                     <div><div class="dikoalam">N/A</div></div>
+                  </div>
+               </div>
+            </div>
+         </a>
+      `;
+   }
+   
+   // Get the status field based on role and page type
+   function getStatusFieldForRole(pageType) {
+      // This is a simplified version - in production, you'd want to pass this from PHP
+      // For now, we'll use common field names
+      const statusMap = {
+         'pending': 'gsoassistant_status',
+         'approved': 'gsoassistant_status',
+         'cancelled': 'gsoassistant_status'
+      };
+      return statusMap[pageType];
+   }
+});
+</script>
+<?php
+?>
+
 
 
 
