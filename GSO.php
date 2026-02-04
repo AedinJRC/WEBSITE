@@ -2508,19 +2508,19 @@ function home()
                                        {
                                           ?>
                                              <span style="transform: translateX(60px);">
-                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
+                                             <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrfid['transportation_cost'] ?></textarea>
                                              <div class="input-container">   
                                                 <?php
-                                                   if($rowvrf['total_cost'] == 0.00)
+                                                   if($rowvrfid['total_cost'] == 0.00)
                                                    {
                                                       ?>
                                                          <a href="#vrespopup">      
                                                       <?php
                                                    }
                                                 ?>
-                                                   <input name="vrftotal_cost" type="number" id="totalCost" value="<?php if($rowvrf['total_cost'] == 0.00) {echo"";} else {echo $rowvrf['total_cost'];}?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                                   <input name="vrftotal_cost" type="number" id="totalCost" value="<?php if($rowvrfid['total_cost'] == 0.00) {echo"";} else {echo $rowvrf['total_cost'];}?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
                                                 <?php
-                                                   if($rowvrf['total_cost'] == 0.00)
+                                                   if($rowvrfid['total_cost'] == 0.00)
                                                    {
                                                       ?>
                                                          </a>      
@@ -2529,7 +2529,7 @@ function home()
                                                 ?>
                                                 <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                                 <div>
-                                                   <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;\"" ?> id="pesoSign">?</label>
+                                                   <label <?php if($rowvrfid['total_cost'] != 0.00)echo "style=\"visibility:visible;\"" ?> id="pesoSign">₱</label>
                                                 </div>
                                              </div>
                                              </span>
@@ -3361,19 +3361,19 @@ function home()
                                     </span> -->
                                     <span style="text-align:center">TRANSPORTATION COST</span>
                                     <span style="transform: translateX(60px);">
-                                       <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
+                                       <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrfid['transportation_cost'] ?></textarea>
                                        <div class="input-container">   
                                           <?php
-                                             if($rowvrf['total_cost'] == 0.00)
+                                             if($rowvrfid['total_cost'] == 0.00)
                                              {
                                                 ?>
                                                    <a href="#vrespopup">      
                                                 <?php
                                              }
                                           ?>
-                                             <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                             <input name="vrftotal_cost" type="number" id="totalCost" value="<?php if($rowvrfid['total_cost'] != 0.00) echo $rowvrfid['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
                                           <?php
-                                             if($rowvrf['total_cost'] == 0.00)
+                                             if($rowvrfid['total_cost'] == 0.00)
                                              {
                                                 ?>
                                                    </a>      
@@ -3382,7 +3382,7 @@ function home()
                                           ?>
                                           <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                           <div>
-                                             <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">?</label>
+                                             <label <?php if($rowvrfid['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
                                           </div>
                                        </div>
                                     </span>
@@ -3543,14 +3543,14 @@ function home()
                      }
                      else
                      { 
-                        ?> <div class="info-box" style="background-color:#eeeeee;"> <?php 
+                        ?> <div class="info-box"> <?php 
                      }
                         ?>
                            <div class="pending">
                               <?php
                                  if($rowvrf[$status] == "Pending" OR $rowvrf['user_cancelled'] == 'Yes')
                                  {
-                                    echo '<div class="circle"></div>';
+                                    echo '';
                                  }
                               ?>
                               <span class="time">
@@ -3778,7 +3778,7 @@ function home()
                                     ];
                                  }
                               ?>
-                              <div class="details-container" >
+                              <div class="details-container" 
                                    data-vehicle-options="<?php echo htmlspecialchars($vehicleOptions); ?>"
                                    data-driver-options="<?php echo htmlspecialchars($driverOptions); ?>"
                                    data-existing-bookings="<?php echo htmlspecialchars(json_encode($existingBookings)); ?>">
@@ -3904,7 +3904,7 @@ function home()
                                  <span class="address">
                                     <span style="text-align:center">TRANSPORTATION COST</span>
                                     <span style="transform: translateX(60px);">
-                                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrf['transportation_cost'] ?></textarea>
+                                    <textarea name="vrftransportation_cost" maxlength="255" type="text" id="transportation-cost" readonly><?php echo $rowvrfid['transportation_cost'] ?></textarea>
                                     <div class="input-container">   
                                        <?php
                                           if($rowvrf['total_cost'] == 0.00)
@@ -3914,7 +3914,7 @@ function home()
                                              <?php
                                           }
                                        ?>
-                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php echo $rowvrf['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
+                                          <input name="vrftotal_cost" type="number" id="totalCost" value="<?php if($rowvrfid['total_cost'] != 0.00) echo $rowvrfid['total_cost']; ?>" style="padding-left:1.5vw;" step="0.01" min="0" readonly>
                                        <?php
                                           if($rowvrf['total_cost'] == 0.00)
                                           {
@@ -3925,7 +3925,7 @@ function home()
                                        ?>
                                        <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                        <div>
-                                          <label <?php if($rowvrf['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">?</label>
+                                          <label <?php if($rowvrfid['total_cost'] != 0.00)echo "style=\"visibility:visible;color:black;font-weight:100;\"" ?> id="pesoSign">₱</label>
                                        </div>
                                     </div>
                                     </span>
@@ -3954,14 +3954,76 @@ function home()
                                     </script>
                                     <div class="subbtn-container">
                                        <a style="transform:translate(0,1vw)" href="uploads/<?php echo $rowvrfid['letter_attachment']; ?>" target="_blank"><label  class="attachment-label"><img class="attachment-img" src="PNG/File.png" for="fileInput" alt="">LETTER ATTACHMENT</label></a>
+                                       <!-- <button class="appbtn changeschedulebtn" type="submit" name="vrfchangeschedbtn">Change Schedule</button> -->
                                     </div>
                                  </span>
                               </div>
                            </form>
+                           <?php
+                              if (isset($_POST['vrfchangeschedbtn'])) {
+
+                              }
+                           ?>
                            <script>
                               // On DOM load, check each field and toggle .has-content if it has a value
                               document.addEventListener('DOMContentLoaded', function() {
                               var fields = document.querySelectorAll('.input-container input, .input-container select');
+                              function updateField(el) {
+                                 if (el.value.trim() !== '') {
+                                    el.classList.add('has-content');
+                                 } else {
+                                    el.classList.remove('has-content');
+                                 }
+                              }
+                              fields.forEach(function(field) {
+                                 // Initial check on page load
+                                 updateField(field);
+                                 // On user input or change, update class
+                                 field.addEventListener('input', function() { updateField(field); });
+                                 field.addEventListener('change', function() { updateField(field); });
+                              });
+                              });
+                           </script>
+                           <script>
+                              // Form submission validation
+                              document.querySelector('.vehicle-reservation-form').addEventListener('submit', (e) => {
+                                 if (e.target.querySelector('[name="vrfappbtn"]') === document.activeElement) {
+                                    // Re-enable disabled options so they get submitted
+                                    document.querySelectorAll('select').forEach(select => {
+                                       Array.from(select.options).forEach(opt => {
+                                          if (opt.disabled && opt.selected) {
+                                             opt.disabled = false;
+                                          }
+                                       });
+                                    });
+                                    
+                                    const container = document.querySelector('.details-container');
+                                    const tabs = container.querySelectorAll('.tab');
+                                    
+                                    let hasIncompleteTab = false;
+                                    tabs.forEach((tab, idx) => {
+                                       const dep = tab.querySelector('[name*="vrfdeparture"]')?.value || '';
+                                       const ret = tab.querySelector('[name*="vrfreturn"]')?.value || '';
+                                       const vehicle = tab.querySelector('[name*="vrfvehicle"]')?.value || '';
+                                       const driver = tab.querySelector('[name*="vrfdriver"]')?.value || '';
+                                       
+                                       // If any field has value, all must have values
+                                       if ((dep || ret || vehicle || driver) && !(dep && ret && vehicle && driver)) {
+                                          hasIncompleteTab = true;
+                                       }
+                                    });
+                                    
+                                    if (hasIncompleteTab) {
+                                       e.preventDefault();
+                                       alert('Please complete all fields in each tab before approving.');
+                                    }
+                                 }
+                              });
+                           </script>
+                           <script>
+                              // On DOM load, check each field and toggle .has-content if it has a value
+                              document.addEventListener('DOMContentLoaded', function() {
+                              var fields = document.querySelectorAll('.input-container input, .input-container select, .input-container-2 input, .input-container-2 select');
                               function updateField(el) {
                                  if (el.value.trim() !== '') {
                                     el.classList.add('has-content');
