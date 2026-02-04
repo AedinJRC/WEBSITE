@@ -1245,65 +1245,103 @@ function home()
                </span>
                <div class="vrf-details">
                   <div class="vrf-details-column">
+                     <?php
+                     include_once 'config.php';
+
+                     // Preload users (for Secretary logic)
+                     $users = [];
+                     $resUsers = $conn->query("SELECT fname, lname, department FROM usertb ORDER BY lname ASC");
+                     while ($row = $resUsers->fetch_assoc()) {
+                     $users[] = $row;
+                     }
+
+                     // Preload departments
+                     $departments = [];
+                     $resDepts = $conn->query("SELECT department FROM departmentstb ORDER BY department ASC");
+                     while ($row = $resDepts->fetch_assoc()) {
+                     $departments[] = $row['department'];
+                     }
+                     ?>
+
+                     <!-- NAME -->
                      <div class="input-container">
-                        <?php
-                           if ($_SESSION['role'] != 'Secretary') 
-                           {
-                              ?>
-                                 <input name="vrfname" value="<?php if($_SESSION['role']!="Secretary") {echo $_SESSION['fname']." ".$_SESSION['lname'];}?>" type="text" id="name" readonly> 
-                              <?php
-                           }
-                           else
-                           {
-                              ?>
-                                 <select name="vrfname" id="department" required>
-                                    <option value="" disabled selected></option>
-                                    <?php
-                                       include 'config.php';
-                                       $selectdepartment = "SELECT * FROM usertb ORDER BY lname ASC";
-                                       $resultdepartment = $conn->query($selectdepartment);
-                                       if ($resultdepartment->num_rows > 0) {
-                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
-                                             echo "<option value='".$rowdepartment['lname'].", ".$rowdepartment['fname']."'>".$rowdepartment['lname'].", ".$rowdepartment['fname']."</option>";
-                                          }
-                                       }
-                                    ?>
-                                 </select>
-                              <?php    
-                           }
-                        ?>
-                        
-                        <label for="name">NAME:</label>
+                     <?php if ($_SESSION['role'] != 'Secretary') { ?>
+                        <input name="vrfname"
+                              value="<?php echo $_SESSION['fname'].' '.$_SESSION['lname']; ?>"
+                              type="text"
+                              id="name"
+                              readonly>
+                     <?php } else { ?>
+                        <select name="vrfname" id="sec_name" required>
+                           <option value="" disabled selected></option>
+                           <?php foreach ($users as $u): ?>
+                           <option value="<?php echo htmlspecialchars($u['fname'].' '.$u['lname']); ?>"
+                                    data-dept="<?php echo htmlspecialchars($u['department']); ?>">
+                              <?php echo htmlspecialchars($u['fname'].' '.$u['lname']); ?>
+                           </option>
+                           <?php endforeach; ?>
+                        </select>
+                     <?php } ?>
+                     <label for="name">NAME:</label>
                      </div>
+
+                     <!-- DEPARTMENT -->
                      <div class="input-container">
-                        <?php
-                           if ($_SESSION['role'] != 'Secretary') 
-                           {
-                              ?>
-                                 <input name="vrfdepartment" value="<?php echo $_SESSION['department'] ?>" type="text" id="department" readonly>
-                              <?php
-                           }
-                           else
-                           {
-                              ?>
-                                 <select name="vrfdepartment" id="department" required>
-                                    <option value="" disabled selected></option>
-                                    <?php
-                                       include 'config.php';
-                                       $selectdepartment = "SELECT * FROM departmentstb ORDER BY department ASC";
-                                       $resultdepartment = $conn->query($selectdepartment);
-                                       if ($resultdepartment->num_rows > 0) {
-                                          while($rowdepartment = $resultdepartment->fetch_assoc()) {
-                                             echo "<option value='".$rowdepartment['department']."'>".$rowdepartment['department']."</option>";
-                                          }
-                                       }
-                                    ?>
-                                 </select>
-                              <?php    
-                           }
-                        ?>
-                        <label for="department">DEPARTMENT:</label>
+                     <?php if ($_SESSION['role'] != 'Secretary') { ?>
+                        <input name="vrfdepartment"
+                              value="<?php echo $_SESSION['department']; ?>"
+                              type="text"
+                              id="department"
+                              readonly>
+                     <?php } else { ?>
+                        <select name="vrfdepartment" id="sec_department" required>
+                           <option value="" disabled selected></option>
+                           <?php foreach ($departments as $dept): ?>
+                           <option value="<?php echo htmlspecialchars($dept); ?>">
+                              <?php echo htmlspecialchars($dept); ?>
+                           </option>
+                           <?php endforeach; ?>
+                        </select>
+                     <?php } ?>
+                     <label for="department">DEPARTMENT:</label>
                      </div>
+
+                     <?php if ($_SESSION['role'] == 'Secretary') { ?>
+                     <script>
+                     const nameSelect = document.getElementById("sec_name");
+                     const deptSelect = document.getElementById("sec_department");
+
+                     // Keep a copy of all name options (for filtering)
+                     const allNameOptions = Array.from(nameSelect.options);
+
+                     // If NAME picked first → auto-fill & lock department
+                     nameSelect.addEventListener("change", () => {
+                        const selected = nameSelect.options[nameSelect.selectedIndex];
+                        const dept = selected.getAttribute("data-dept");
+
+                        if (dept) {
+                           deptSelect.value = dept; // lock department after auto-fill
+                        }
+                     });
+
+                     // If DEPARTMENT picked first → filter names by department
+                     deptSelect.addEventListener("change", () => {
+                        const dept = deptSelect.value;
+
+                        // Reset name options
+                        nameSelect.innerHTML = "";
+                        allNameOptions.forEach(opt => {
+                           if (!opt.value) {
+                           nameSelect.appendChild(opt.cloneNode(true));
+                           return;
+                           }
+                           if (opt.getAttribute("data-dept") === dept) {
+                           nameSelect.appendChild(opt.cloneNode(true));
+                           }
+                        });
+                     });
+                     </script>
+                     <?php } ?>
                      <div class="input-container">
                         <input name="vrfactivity" type="text" id="activity" required>
                         <label for="activity">ACTIVITY:</label>
@@ -1912,6 +1950,11 @@ function home()
                   $destination = htmlspecialchars($_POST['vrfdestination']);
                   $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
                   $passenger_count = isset($_POST['vrfpassenger_count']) ? htmlspecialchars($_POST['vrfpassenger_count']) : null;
+                  $immediatehead_status = 'Pending'; // default
+                  if (isset($_SESSION['role']) && $_SESSION['role'] === 'Immediate Head') {
+                     $immediatehead_status = 'Approved';
+                  }
+
 
                   // File upload directory
                   $targetDir = "uploads/";
@@ -1950,11 +1993,11 @@ function home()
 
                      // ===== INSERT vrftb =====
                      $stmt = $conn->prepare("INSERT INTO vrftb 
-                           (id, name, department, activity, purpose, date_filed, budget_no, destination, transportation_cost, passenger_count, letter_attachment, passenger_attachment) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                           (id, name, department, activity, purpose, date_filed, budget_no, destination, transportation_cost, passenger_count, letter_attachment, passenger_attachment, immediatehead_status) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                      $stmt->bind_param(
-                           "ssssssssssss",
-                           $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $destination, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName
+                           "sssssssssssss",
+                           $id, $name, $department, $activity, $purpose, $date_filed, $budget_no, $destination, $transportation_cost, $passenger_count, $letterFileName, $passengerFileName, $immediatehead_status
                      );
                      if (!$stmt->execute()) throw new Exception("VRF insert failed: " . $stmt->error);
 

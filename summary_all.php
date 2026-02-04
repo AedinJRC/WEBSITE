@@ -47,20 +47,17 @@ if ($total_result && $row = $total_result->fetch_assoc()) {
 
 $sql = "
 SELECT d.*, v.*
-FROM vrf_detailstb d
-INNER JOIN vrftb v ON d.vrf_id = v.id
-WHERE v.gsodirector_status = 'Approved'
-  AND v.user_cancelled = 'No'
+FROM vrftb v
+LEFT JOIN vrf_detailstb d ON d.vrf_id = v.id
+WHERE (v.user_cancelled IS NULL OR v.user_cancelled = 'No')
 ";
 
-// Role-based conditions
 if ($_SESSION['role'] == 'Immediate Head') {
-    $sql .= " AND (v.immediatehead_status='Approved' OR v.immediatehead_status='Rejected') AND v.department = '$department'";
+    $sql .= " AND v.department = '$department'";
 } else {
     $sql .= " AND v.name = '$full_name'";
 }
 
-// Optional status filter
 if ($status_filter != '') {
     $sql .= " AND v.gsodirector_status = '$status_filter'";
 }
