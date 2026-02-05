@@ -2498,7 +2498,7 @@ function home()
                                                 <input name="vrftotal_cost" type="number" id="totalCost"  style="padding-left:1.5vw;" step="0.01" min="0" required>
                                                 <label for="total_cost" style="margin-left:1vw">TOTAL COST</label>
                                                 <div>
-                                                   <label id="pesoSign">?</label>
+                                                   <label id="pesoSign">₱</label>
                                                 </div>
                                              </div>
                                              </span>

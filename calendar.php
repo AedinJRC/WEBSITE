@@ -10,14 +10,14 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
     $currentYear = date('Y');
 }
 
-// Query the database for events in the selected month and year based on the departure date
+// Prepare the SQL statement to fetch events
 $sql = "
 SELECT 
     vd.id AS detail_id,
     vd.vehicle,
     vd.driver,
     vd.departure,
-    vd.return,
+    vd.`return`,
 
     vt.id AS vrf_id,
     vt.name,
@@ -48,23 +48,20 @@ $result = $stmt->get_result();
 $events = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-
-        // same color for departure & return
+        // Generate a color based on the detail_id
         $color = generateColorFromString($row['detail_id']);
 
-        // get DATE only (ignore time)
+        // Format departure and return dates
         $departureDate = date('Y-m-d', strtotime($row['departure']));
-        $returnDate = !empty($row['return'])
-            ? date('Y-m-d', strtotime($row['return']))
-            : null;
+        $returnDate = !empty($row['return']) ? date('Y-m-d', strtotime($row['return'])) : null;
 
         // ================= DEPARTURE EVENT =================
         $events[] = [
             'id' => $row['detail_id'] . '_dep',
             'activity' => $row['activity'] . (
                 ($returnDate && $departureDate === $returnDate)
-                    ? ''               // same day → no label
-                    : ' (Departure)'   // different day
+                ? '' // same day → no label
+                : ' (Departure)'
             ),
             'departure' => $row['departure'],
             'name' => $row['name'],
@@ -106,9 +103,10 @@ if ($result->num_rows > 0) {
     }
 }
 
+// Function to generate a color from a string (hash)
 function generateColorFromString($string) {
-    $hash = md5($string); // create hash from string
-    $color = substr($hash, 0, 6); 
+    $hash = md5($string);
+    $color = substr($hash, 0, 6);
     return '#' . $color;
 }
 ?>
@@ -410,7 +408,7 @@ function generateColorFromString($string) {
 }
 
 .vehicle-reservation-form {
-    max-height: 420px; 
+    max-height: 375px; 
 }
 .center-container {
             display: flex;
@@ -451,8 +449,99 @@ function generateColorFromString($string) {
   transition: opacity 0.5s ease;
 }
 
+/* ===== FIX: details section collapsing to 0 height ===== */
+
+.details-container {
+    display: block !important;
+    width: 100%;
+    height: auto !important;
+    min-height: 1px !important;
+    overflow: visible !important;
+}
+
+.details-container .tab {
+    display: flex !important;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 50px !important;
+    min-height: 1px !important;
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transform: translateY(-10px);
+}
+
+.details-container .input-container-2 {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column;
+    width: 170px;            /* adjust if you want wider inputs */
+    margin-bottom: 10px;
+    transform: translateY(2px);
+}
+
+.details-container .input-container-2 input,
+.details-container .input-container-2 select {
+    font-size: 14px;
+    padding: 6px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    outline: none;
+    background-color: #fff;
+}
+
+.details-container .input-container-2 label {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    font-size: 13px;
+    color: #777;
+    font-weight: bold;
+    pointer-events: none;
+    
+    transform: translateY(-8px) !important;
+}
+
+.details-container .input-container-2 input:focus + label,
+.details-container .input-container-2 input.has-content + label {
+    top: 0 !important;
+    font-size: 8px !important;
+    color: #000 !important;
+    background: #fff !important;
+    padding: 0 4px !important;
+    border-radius: 4px !important;
+    
+    transform: translateY(-4px) !important;
+}
+
+.details-container input[type="datetime-local"] {
+    color: transparent !important;
+    font-size: 12px !important;
+}
+
+.details-container input[type="datetime-local"]:focus,
+.details-container input[type="datetime-local"].has-content {
+    color: #000 !important;
+}
+
+
 
     </style>
+</head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calendar with Events</title>
+<!-- Include styles and fonts here -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+/* ... your CSS styles ... (omitted here for brevity, include your existing styles) ... */
+</style>
 </head>
 <body>
 
@@ -468,42 +557,38 @@ function generateColorFromString($string) {
         </a>
     </div>
 
-     <div class="nav-top">
+    <!-- Month and Year Selector -->
+    <div class="nav-top">
       <form method="GET" class="calendar-jump">
-    <input type="hidden" name="vsch" value="a">
-
-    <div class="select-wrapper">
-    <select name="month" onchange="this.form.submit()">
-        <?php
-        for ($m = 1; $m <= 12; $m++) {
-            $selected = ($m == $currentMonth) ? 'selected' : '';
-            echo "<option value='$m' $selected>" . date('F', mktime(0,0,0,$m,1)) . "</option>";
-        }
-        ?>
-    </select>
-
-     <i class="fa-solid fa-chevron-down select-icon"></i>
+        <input type="hidden" name="vsch" value="a" />
+        <div class="select-wrapper">
+          <select name="month" onchange="this.form.submit()">
+            <?php
+            for ($m = 1; $m <= 12; $m++) {
+                $selected = ($m == $currentMonth) ? 'selected' : '';
+                echo "<option value='$m' $selected>" . date('F', mktime(0,0,0,$m,1)) . "</option>";
+            }
+            ?>
+          </select>
+          <i class="fa-solid fa-chevron-down select-icon"></i>
+        </div>
+        <div class="select-wrapper">
+          <select name="year" onchange="this.form.submit()">
+            <?php
+            $startYear = 2020;
+            $endYear = date('Y') + 5;
+            for ($y = $startYear; $y <= $endYear; $y++) {
+                $selected = ($y == $currentYear) ? 'selected' : '';
+                echo "<option value='$y' $selected>$y</option>";
+            }
+            ?>
+          </select>
+          <i class="fa-solid fa-chevron-down select-icon"></i>
+        </div>
+      </form>
     </div>
 
-     <div class="select-wrapper">
-    <select name="year" onchange="this.form.submit()">
-        <?php
-        $startYear = 2020;
-        $endYear = date('Y') + 5;
-
-        for ($y = $startYear; $y <= $endYear; $y++) {
-            $selected = ($y == $currentYear) ? 'selected' : '';
-            echo "<option value='$y' $selected>$y</option>";
-        }
-        ?>
-    </select>
-       <i class="fa-solid fa-chevron-down select-icon"></i>
-    </div>
-</form>
-
-</div>
-
-    <!-- Calendar -->
+    <!-- Calendar Grid -->
     <div class="calendar">
         <div class="calendar-header">S</div>
         <div class="calendar-header">M</div>
@@ -532,37 +617,42 @@ function generateColorFromString($string) {
                        date('Y', strtotime($event['departure'])) == $currentYear;
             });
 
-     foreach ($eventsOnDay as $event) {
-    $color = $event['color']; // <- use this
+            foreach ($eventsOnDay as $event) {
+                $color = $event['color'];
 
-    echo "<a href='#' 
-              class='event'
-              title='{$event['activity']}'
-              data-name='{$event['name']}'
-              data-id='{$event['vrf_id']}'
-              data-activity='{$event['activity']}'
-              data-department='{$event['department']}'
-              data-purpose='{$event['purpose']}'
-              data-date_filed='{$event['date_filed']}'
-              data-budget_no='{$event['budget_no']}'
-              data-driver='{$event['driver']}'
-              data-vehicle='{$event['vehicle']}'
-              data-destination='{$event['destination']}'
-              data-departure='{$event['departure']}'
-              data-passenger_count='{$event['passenger_count']}'
-              data-passenger_attachment='{$event['passenger_attachment']}'
-              data-letter_attachment='{$event['letter_attachment']}'
-              style='background-color: $color'>
-             {$event['activity']}
-         </a>";
-}
+                // Prepare data-return attribute if return exists
+                $returnAttr = !empty($event['departure']) ? "data-return='{$event['departure']}'" : '';
+
+                echo "<a href='#' 
+                    class='event'
+                    title='{$event['activity']}'
+                    data-name='{$event['name']}'
+                    data-id='{$event['vrf_id']}'
+                    data-activity='{$event['activity']}'
+                    data-department='{$event['department']}'
+                    data-purpose='{$event['purpose']}'
+                    data-date_filed='{$event['date_filed']}'
+                    data-budget_no='{$event['budget_no']}'
+                    data-driver='{$event['driver']}'
+                    data-vehicle='{$event['vehicle']}'
+                    data-destination='{$event['destination']}'
+                    data-departure='{$event['departure']}'
+                    {$returnAttr}
+                    data-passenger_count='{$event['passenger_count']}'
+                    data-passenger_attachment='{$event['passenger_attachment']}'
+                    data-letter_attachment='{$event['letter_attachment']}'
+                    style='background-color: $color'>
+                    {$event['activity']}
+                </a>";
+            }
+
             echo "</div>";
         }
         ?>
     </div>
-  
 </div>
 
+<!-- Vehicle Reservation Button -->
 <div class="center-container">
     <li>
         <a href="GSO.php?vres=a" class="request-btn-callendar">Vehicle Reservation Form</a>
@@ -608,218 +698,35 @@ function generateColorFromString($string) {
                         <input type="text" name="vrfpurpose" id="purpose" required readonly>
                         <label for="purpose">PURPOSE:</label>
                     </div>
-                    <div class="input-container">
-                        <input type="text" name="vrfvehicle" id="vehicleUsed" required readonly>
-                        <label for="vehicleUsed">VEHICLE TO BE USED:</label>
-                    </div>
-                    <div class="input-container">
-                        <input type="text" name="vrfdriver" id="driver" required readonly>
-                        <label for="driver">DRIVER:</label>
-                    </div>
-                    <div class="input-container">
-                        <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
-                        <label for="departureDate">DATE/TIME OF DEPARTURE:</label>
-                    </div>
                 </div>
             </div>
             <span class="address">
                 <span>DESTINATION:</span>
                 <textarea name="vrfdestination" maxlength="255" id="destination" required readonly></textarea>
             </span>
-            <div class="details-container"
-     style="
-        display: flex;
-        flex-wrap: wrap;
-        margin-top: 10px;
-        justify-content: right;
-        margin-bottom: 4px;
-     ">
-
-   <div class="input-container-2"
-        style="
-           position: relative;
-           display: flex;
-           flex-direction: column;
-           font-family: 'Roboto', sans-serif;
-           margin-bottom: 10px;
-           margin-right: 8px;
-        ">
-      <input
-         type="datetime-local"
-         name="vrfdeparture"
-         id="departure"
-         min="2026-01-30T06:00"
-         required
-         style="
-            font-size: 14px;
-            padding: 5px;
-            width: 170px;
-            border: 1px solid #555555;
-            border-radius: 8px;
-            outline: none;
-            appearance: none;
-            background-color: white;
-            color: transparent;
-         "
-      >
-      <label for="departure"
-             style="
-                position: absolute;
-                left: 10px;
-                top: 50%;
-                transform: translateY(-30%);
-                transition: all 0.3s ease;
-                font-size: 13px;
-                color: #777;
-                letter-spacing: 2px;
-                font-weight: bold;
-                pointer-events: none;
-             ">
-         DEPARTURE:
-      </label>
-   </div>
-
-   <div class="input-container-2"
-        style="
-           position: relative;
-           display: flex;
-           flex-direction: column;
-           font-family: 'Roboto', sans-serif;
-           margin-bottom: 10px;
-           margin-right: 8px;
-        ">
-      <input
-         type="datetime-local"
-         name="vrfreturn"
-         id="return"
-         min="2026-01-30T06:00"
-         required
-         style="
-            font-size: 14px;
-            padding: 5px;
-            width: 170px;
-            border: 1px solid #555555;
-            border-radius: 8px;
-            outline: none;
-            appearance: none;
-            background-color: white;
-            color: transparent;
-         "
-      >
-      <label for="return"
-             style="
-                position: absolute;
-                left: 10px;
-                top: 50%;
-                transform: translateY(-30%);
-                transition: all 0.3s ease;
-                font-size: 13px;
-                color: #777;
-                letter-spacing: 2px;
-                font-weight: bold;
-                pointer-events: none;
-             ">
-         RETURN:
-      </label>
-   </div>
-
-   <div class="input-container-2"
-        style="
-           position: relative;
-           display: flex;
-           flex-direction: column;
-           font-family: 'Roboto', sans-serif;
-           margin-bottom: 10px;
-           margin-right: 8px;
-        ">
-      <select
-         name="vrfvehicle"
-         id="vehicle"
-         required
-         style="
-            font-size: 14px;
-            padding: 5px;
-            width: 170px;
-            border: 1px solid #555555;
-            border-radius: 8px;
-            outline: none;
-            appearance: none;
-            background-color: white;
-         ">
-         <option value="" disabled selected></option>
-         <option value="DAM 6747">Toyota Rush</option>
-         <option value="DAV 8382">Isuzu Travis</option>
-         <option value="FAD 5799">Toyota Innova</option>
-         <option value="NED 1154">Nissan Urvan</option>
-         <option value="TII 979">Toyota Coaster</option>
-         <option value="TQV 581">Toyota Grandia</option>
-         <option value="WEO 163">Honda Civic</option>
-         <option value="ZTY 362">Hino Bus</option>
-      </select>
-      <label for="vehicle"
-             style="
-                position: absolute;
-                left: 10px;
-                top: 50%;
-                transform: translateY(-30%);
-                transition: all 0.3s ease;
-                font-size: 13px;
-                color: #777;
-                letter-spacing: 2px;
-                font-weight: bold;
-                pointer-events: none;
-             ">
-         VEHICLE:
-      </label>
-   </div>
-
-   <div class="input-container-2"
-        style="
-           position: relative;
-           display: flex;
-           flex-direction: column;
-           font-family: 'Roboto', sans-serif;
-           margin-bottom: 10px;
-        ">
-      <select
-         name="vrfdriver"
-         id="driver"
-         required
-         style="
-            font-size: 14px;
-            padding: 5px;
-            width: 170px;
-            border: 1px solid #555555;
-            border-radius: 8px;
-            outline: none;
-            appearance: none;
-            background-color: white;
-         ">
-         <option value="" disabled selected></option>
-         <option value="dexther">Dexther Abuan</option>
-         <option value="leon">Leon Mandigal</option>
-         <option value="noel">Noel Gutierrez</option>
-         <option value="tanie">Tanie Duran</option>
-      </select>
-      <label for="driver"
-             style="
-                position: absolute;
-                left: 10px;
-                top: 50%;
-                transform: translateY(-30%);
-                transition: all 0.3s ease;
-                font-size: 13px;
-                color: #777;
-                letter-spacing: 2px;
-                font-weight: bold;
-                pointer-events: none;
-             ">
-         DRIVER:
-      </label>
-   </div>
-
-</div>
-
+             <span class="address">
+                <span>RESERVATION DETAILS:</span>
+            </span>
+            <div class="details-container">
+                <div class="tab">
+                    <div class="input-container-2">
+                        <input type="text" name="vrfvehicle" id="vehicleUsed" required readonly>
+                        <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                    </div>
+                    <div class="input-container-2">
+                        <input type="text" name="vrfdriver" id="driver" required readonly>
+                        <label for="driver">DRIVER:</label>
+                    </div>
+                    <div class="input-container-2">
+                        <input name="vrfdeparture" type="datetime-local" id="departureDate" required readonly>
+                        <label for="departureDate">DEPARTURE:</label>
+                    </div>
+                    <div class="input-container-2">
+                        <input name="vrfreturn" type="datetime-local" id="returnDate" required readonly>
+                        <label for="returnDate">RETURN:</label>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 </div>
@@ -831,6 +738,18 @@ document.addEventListener("DOMContentLoaded", function () {
     var closeModal = document.querySelector(".closepopup");
 
     var eventLinks = document.querySelectorAll(".event");
+
+    function applyHasContent(containerSelector) {
+        document.querySelectorAll(containerSelector + ' input, ' + containerSelector + ' select, ' + containerSelector + ' textarea')
+            .forEach(function(field) {
+                if (field.value && field.value.trim() !== '') {
+                    field.classList.add('has-content');
+                } else {
+                    field.classList.remove('has-content');
+                }
+            });
+    }
+
     eventLinks.forEach(function (eventLink) {
         eventLink.addEventListener("click", function (e) {
             e.preventDefault();
@@ -846,8 +765,8 @@ document.addEventListener("DOMContentLoaded", function () {
             var driver = eventLink.getAttribute("data-driver");
             var vehicle = eventLink.getAttribute("data-vehicle");
             var destination = eventLink.getAttribute("data-destination");
+            var returnDate = eventLink.getAttribute("data-return");
 
-                    // Update form fields
             document.getElementById("formIdDisplay").textContent = id;
             document.getElementById("departureDate").value = departure;
             document.getElementById("fullname").value = name;
@@ -858,16 +777,12 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("budgetNo").value = budgetNo;
             document.getElementById("vehicleUsed").value = vehicle;
             document.getElementById("driver").value = driver;
-            document.getElementById("destination").value = destination;
+            document.getElementById("returnDate").value = returnDate || '';
+            document.getElementById("destination").value = destination || '';
 
-            // ✅ Trigger the has-content check after setting values
-            document.querySelectorAll('.input-container input, .input-container select').forEach(function(field) {
-                if (field.value.trim() !== '') {
-                    field.classList.add('has-content');
-                } else {
-                    field.classList.remove('has-content');
-                }
-            });
+            // 🔥 APPLY has-content to BOTH form sections
+            applyHasContent('.input-container');
+            applyHasContent('.input-container-2');
 
             modal.style.display = "flex";
         });
@@ -884,36 +799,35 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // >>> Your requested script <<< //
-    var fields = document.querySelectorAll('.input-container input, .input-container select');
-    function updateField(el) {
-        if (el.value.trim() !== '') {
-            el.classList.add('has-content');
-        } else {
-            el.classList.remove('has-content');
-        }
-    }
-    fields.forEach(function(field) {
-        updateField(field);
-        field.addEventListener('input', function() { updateField(field); });
-        field.addEventListener('change', function() { updateField(field); });
-    });
+    // 🔁 Live update for manual changes (if any fields become editable later)
+    document.querySelectorAll('.input-container input, .input-container select, .input-container textarea, .input-container-2 input, .input-container-2 select, .input-container-2 textarea')
+        .forEach(function(field) {
+            function update() {
+                if (field.value && field.value.trim() !== '') {
+                    field.classList.add('has-content');
+                } else {
+                    field.classList.remove('has-content');
+                }
+            }
+
+            update();
+            field.addEventListener('input', update);
+            field.addEventListener('change', update);
+        });
 });
 
- // Apply fade transition to all <a> tags with class "request-btn-callendar"
-  document.querySelectorAll('a.request-btn-callendar').forEach(link => {
+// Fade transition
+document.querySelectorAll('a.request-btn-callendar').forEach(link => {
     link.addEventListener('click', function (e) {
-      e.preventDefault(); // prevent instant jump
-      document.body.classList.add('fade-out');
-
-      setTimeout(() => {
-        window.location.href = this.href;
-      }, 500); // wait for transition to finish
+        e.preventDefault();
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+            window.location.href = this.href;
+        }, 500);
     });
-  });
-
-
+});
 </script>
+
 
 </body>
 </html>
