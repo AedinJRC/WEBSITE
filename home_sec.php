@@ -1,8 +1,9 @@
-<?php   
+<?php
 include('config.php');
 
+
 $statusFilter = isset($_GET['status']) ? $_GET['status'] : 'Pending';
-$searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+$searchTerm   = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 $sql = "
 SELECT 
@@ -22,18 +23,29 @@ WHERE
 $params = [];
 $param_types = "";
 
-// ================== GSODIRECTOR STATUS LOGIC ==================
+/* =========================================================
+   ROLE-BASED ACCESS
+   Secretary & Director → ALL
+   Others → OWN RECORDS ONLY
+========================================================= */
+if ($_SESSION['role'] !== 'Secretary' && $_SESSION['role'] !== 'Director') {
+    // Filter by the logged-in user's full name
+    $sql .= " AND v.name = ?";
+    $params[] = $_SESSION['fname'] . ' ' . $_SESSION['lname']; // concatenate first + last name from session
+    $param_types .= "s"; // string!
+}
+
+
+/* ================== GSODIRECTOR STATUS ================== */
 if ($statusFilter === 'Pending') {
-    $sql .= " AND (v.gsodirector_status='Pending' OR v.gsodirector_status='Seen')";
+    $sql .= " AND (v.gsodirector_status = 'Pending' OR v.gsodirector_status = 'Seen')";
 } else {
-    $sql .= " AND v.gsodirector_status=?";
+    $sql .= " AND v.gsodirector_status = ?";
     $params[] = $statusFilter;
     $param_types .= "s";
 }
-// ===============================================================
 
-
-// SEARCH LOGIC
+/* ====================== SEARCH ========================== */
 if ($searchTerm !== '') {
     $sql .= " AND (
         v.name LIKE ? OR 
@@ -44,18 +56,18 @@ if ($searchTerm !== '') {
         d.driver LIKE ?
     )";
 
-    $param_types .= "ssssss";
-    $searchWildcard = "%" . $searchTerm . "%";
+    $searchWildcard = "%{$searchTerm}%";
     for ($i = 0; $i < 6; $i++) {
         $params[] = $searchWildcard;
+        $param_types .= "s";
     }
 }
 
 $sql .= " ORDER BY d.departure ASC";
 
+/* ================== PREPARE & EXECUTE =================== */
 $stmt = $conn->prepare($sql);
 
-// Bind only if there are params
 if (!empty($params)) {
     $stmt->bind_param($param_types, ...$params);
 }
@@ -63,6 +75,7 @@ if (!empty($params)) {
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -95,6 +108,10 @@ $result = $stmt->get_result();
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--gray-light);
     color: var(--gray-dark);
+  }
+
+  .height{
+      height: 70vh;
   }
 
   .container {
@@ -433,6 +450,8 @@ table {
 </head>
 <body>
 
+<div  class="height">
+
 <div class="container" role="main" aria-label="Vehicle Requests Overview">
   <h2 class="section-title">Vehicle Requests Overview</h2>
   <p class="section-subtitle">Viewing requests with status</p>
@@ -517,8 +536,12 @@ table {
     </table>
   </div>
 </div>
+</div>
 
-<div class="image-card-container">
+<?php
+if ($_SESSION["role"] == "Secretary" || $_SESSION["role"] == "Director") {
+?>
+    <div class="image-card-container">
   <a href="GSO.php?mveh=a" class="image-card">
     <img src="PNG/check_s.png" alt="Dashboard">
     <div class="card-text">Manage Vehicle</div>
@@ -539,6 +562,11 @@ table {
     <div class="card-text">Pending Approval</div>
   </a>
 </div>
+<?php
+}
+?>
+
+
 
 <script>
   function filterStatus() {

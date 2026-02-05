@@ -336,7 +336,7 @@ tbody tr:hover {
             
                 echo "<div class='card'>";
                 echo "<h2>".$row["name"]." - ".$row["department"]."</h2>";
-                echo "<p><strong>Form ID:</strong> ".$row["id"]."</p>";
+                echo "<p><strong>:</strong> ".$row["id"]."</p>";
                 echo "<p><strong>Activity:</strong> ".$row["activity"]."</p>";
                 echo "<p><strong>Purpose:</strong> ".$row["purpose"]."</p>";
                 echo "<p><strong>Date Filed:</strong> ".$row["date_filed"]."</p>";
