@@ -198,7 +198,15 @@
             {
                ?> #account { background-color: white; font-weight: bold;} <?php
             }
+            elseif(isset($_GET["mdep"]) and !empty($_GET["mdep"]))
+            {
+               ?> #account { background-color: white; font-weight: bold;} <?php
+            }
             elseif(isset($_GET["srep"]) and !empty($_GET["srep"]))
+            {
+               ?> #report { background-color: white; font-weight: bold;} <?php
+            }
+            elseif(isset($_GET["mrep"]) and !empty($_GET["mrep"]))
             {
                ?> #report { background-color: white; font-weight: bold;} <?php
             }

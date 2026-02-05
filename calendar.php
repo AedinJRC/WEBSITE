@@ -10,7 +10,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
     $currentYear = date('Y');
 }
 
-// Prepare the SQL statement to fetch events
+// Updated SQL query with joins and concatenation of driver name and vehicle info
 $sql = "
 SELECT 
     vd.id AS detail_id,
@@ -18,7 +18,6 @@ SELECT
     vd.driver,
     vd.departure,
     vd.`return`,
-
     vt.id AS vrf_id,
     vt.name,
     vt.department,
@@ -29,9 +28,15 @@ SELECT
     vt.destination,
     vt.passenger_count,
     vt.passenger_attachment,
-    vt.letter_attachment
+    vt.letter_attachment,
+    -- Concatenate driver first and last name
+    CONCAT(u.fname, ' ', u.lname) AS driver_fullname,
+    -- Concatenate vehicle brand and model
+    CONCAT(c.brand, ' ', c.model) AS vehicle_description
 FROM vrf_detailstb vd
 INNER JOIN vrftb vt ON vd.vrf_id = vt.id
+LEFT JOIN usertb u ON vd.driver = u.employeeid
+LEFT JOIN carstb c ON vd.vehicle = c.plate_number
 WHERE 
     vt.gsodirector_status = 'Approved'
     AND vt.user_cancelled = 'No'
@@ -55,6 +60,8 @@ if ($result->num_rows > 0) {
         $departureDate = date('Y-m-d', strtotime($row['departure']));
         $returnDate = !empty($row['return']) ? date('Y-m-d', strtotime($row['return'])) : null;
 
+        $driverName = isset($row['driver_fullname']) ? $row['driver_fullname'] : 'Unknown Driver';
+        $vehicleDesc = isset($row['vehicle_description']) ? $row['vehicle_description'] : 'Unknown Vehicle';
         // ================= DEPARTURE EVENT =================
         $events[] = [
             'id' => $row['detail_id'] . '_dep',
@@ -70,8 +77,8 @@ if ($result->num_rows > 0) {
             'purpose' => $row['purpose'],
             'date_filed' => $row['date_filed'],
             'budget_no' => $row['budget_no'],
-            'driver' => $row['driver'],
-            'vehicle' => $row['vehicle'],
+            'driver' => $driverName,
+            'vehicle' => $vehicleDesc,
             'destination' => $row['destination'],
             'passenger_count' => $row['passenger_count'],
             'passenger_attachment' => $row['passenger_attachment'],
@@ -91,8 +98,8 @@ if ($result->num_rows > 0) {
                 'purpose' => $row['purpose'],
                 'date_filed' => $row['date_filed'],
                 'budget_no' => $row['budget_no'],
-                'driver' => $row['driver'],
-                'vehicle' => $row['vehicle'],
+                'driver' => $driverName,
+                'vehicle' => $vehicleDesc,
                 'destination' => $row['destination'],
                 'passenger_count' => $row['passenger_count'],
                 'passenger_attachment' => $row['passenger_attachment'],
