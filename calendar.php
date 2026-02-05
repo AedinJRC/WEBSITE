@@ -718,7 +718,7 @@ function generateColorFromString($string) {
                 <div class="tab">
                     <div class="input-container-2">
                         <input type="text" name="vrfvehicle" id="vehicleUsed" required readonly>
-                        <label for="vehicleUsed">VEHICLE TO BE USED:</label>
+                        <label for="vehicleUsed">VEHICLE:</label>
                     </div>
                     <div class="input-container-2">
                         <input type="text" name="vrfdriver" id="driver" required readonly>

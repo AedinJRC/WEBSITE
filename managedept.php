@@ -46,7 +46,7 @@
         
         .alert.error {
             background-color: #fee2e2;
-            color: #b91c1c;
+            color: var(--maroon);
         }
         
         .form-group {
@@ -77,15 +77,15 @@
         }
         
         input[type="text"]:focus {
-            border-color: #ef4444;
+            border-color: var(--maroon);
             box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
         }
         
         button[type="submit"].add-btn {
             padding: 10px 16px;
-            background-color: #16a34a;
-            color: white;
-            font-weight: 500;
+            background-color: var(--yellow);
+            color: var(--maroon);
+            font-weight: 600;
             border: none;
             border-radius: 0 8px 8px 0;
             cursor: pointer;
@@ -93,7 +93,7 @@
         }
         
         button[type="submit"].add-btn:hover {
-            background-color: #15803d;
+            background-color: #d2a655;
         }
         
         table {
@@ -102,7 +102,7 @@
         }
         
         thead {
-            background-color: #b91c1c;
+            background-color: var(--maroon);
         }
         
         th {
@@ -131,7 +131,7 @@
         
         .delete-btn {
             padding: 6px 12px;
-            background-color: #dc2626;
+            background-color: var(--maroon);
             color: white;
             font-size: 0.875rem;
             font-weight: 500;
@@ -142,7 +142,7 @@
         }
         
         .delete-btn:hover {
-            background-color: #b91c1c;
+            background-color: #5e0b10;
         }
         
         @media (max-width: 768px) {

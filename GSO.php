@@ -1209,6 +1209,39 @@ if (window.innerWidth < 992) {
       });
       });
    </script>
+   <script>
+   function flashTitlePending(pageTitle, newTitle) {
+      document.title = (document.title === pageTitle) ? newTitle : pageTitle;
+   }
+</script>
+
+<?php
+$hasNew = false;
+$count = 0;
+
+$selectvrf = "SELECT * FROM vrftb 
+   WHERE $status2 
+   ORDER BY date_filed DESC, id DESC";
+
+$resultvrf = $conn->query($selectvrf);
+
+if ($resultvrf && $resultvrf->num_rows > 0) {
+   $hasNew = true;
+   $count = $resultvrf->num_rows;
+}
+?>
+
+<?php if ($hasNew): ?>
+<script>
+   const originalTitle = document.title;
+   const newTitle = "(<?php echo $count; ?>) Pending Approval | VRF";
+
+   setInterval(function () {
+      flashTitlePending(originalTitle, newTitle);
+   }, 1000);
+</script>
+<?php endif; ?>
+
 </body>
 </html>
 <?php
