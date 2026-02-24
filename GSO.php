@@ -162,16 +162,6 @@
                   {
                      color: #333333;
                   }
-                  .icon
-                  {
-                     div
-                     {
-                        span.title
-                        {
-                           transform: translateX(-2.1vw);
-                        }
-                     }
-                  }
                <?php
             }
             elseif(isset($_GET["eveh"]) and !empty($_GET["eveh"]))
