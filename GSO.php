@@ -290,8 +290,11 @@ if (window.innerWidth < 992) {
                         else if($_SESSION['role']=='Accountant')
                         {
                            $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
-
                            $status="accounting_status";
+                        }
+                        else if ($_SESSION['role'] == 'User') {
+                           $status2 = "name='" . $_SESSION['name'] . "' AND department='" . $_SESSION['department'] . "' AND ((immediatehead_status='Pending') OR (gsoassistant_status='Pending') OR (gsodirector_status='Pending') OR (accounting_status='Pending') OR (immediatehead_status='Seen') OR (gsoassistant_status='Seen') OR (gsodirector_status='Seen') OR (accounting_status='Seen'))";
+                           $status = "immediatehead_status"; // This can be any status column since we're checking for all pending/seen statuses   
                         }
                         include 'config.php';
                         $selectpending = "SELECT * FROM vrftb WHERE $status2";
@@ -425,6 +428,10 @@ if (window.innerWidth < 992) {
 
                            $status="accounting_status";
                         }
+                        else if ($_SESSION['role'] == 'User') {
+                           $status2 = "name='" . $_SESSION['name'] . "' AND department='" . $_SESSION['department'] . "' AND ((immediatehead_status='Pending') OR (gsoassistant_status='Pending') OR (gsodirector_status='Pending') OR (accounting_status='Pending') OR (immediatehead_status='Seen') OR (gsoassistant_status='Seen') OR (gsodirector_status='Seen') OR (accounting_status='Seen'))";
+                           $status = "immediatehead_status"; // This can be any status column since we're checking for all pending/seen statuses   
+                        }
                         include 'config.php';
                         $selectpending = "SELECT * FROM vrftb WHERE $status2";
                         $resultpending = $conn->query($selectpending);
@@ -518,6 +525,10 @@ if (window.innerWidth < 992) {
                            $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
 
                            $status="accounting_status";
+                        }
+                        else if ($_SESSION['role'] == 'User') {
+                           $status2 = "name='" . $_SESSION['name'] . "' AND department='" . $_SESSION['department'] . "' AND ((immediatehead_status='Pending') OR (gsoassistant_status='Pending') OR (gsodirector_status='Pending') OR (accounting_status='Pending') OR (immediatehead_status='Seen') OR (gsoassistant_status='Seen') OR (gsodirector_status='Seen') OR (accounting_status='Seen'))";
+                           $status = "immediatehead_status"; // This can be any status column since we're checking for all pending/seen statuses   
                         }
                         include 'config.php';
                         $selectpending = "SELECT * FROM vrftb WHERE $status2";
@@ -641,6 +652,10 @@ if (window.innerWidth < 992) {
 
                            $status="accounting_status";
                         }
+                        else if ($_SESSION['role'] == 'User') {
+                           $status2 = "name='" . $_SESSION['name'] . "' AND department='" . $_SESSION['department'] . "' AND ((immediatehead_status='Pending') OR (gsoassistant_status='Pending') OR (gsodirector_status='Pending') OR (accounting_status='Pending') OR (immediatehead_status='Seen') OR (gsoassistant_status='Seen') OR (gsodirector_status='Seen') OR (accounting_status='Seen'))";
+                           $status = "immediatehead_status"; // This can be any status column since we're checking for all pending/seen statuses   
+                        }
                         include 'config.php';
                         $selectpending = "SELECT * FROM vrftb WHERE $status2";
                         $resultpending = $conn->query($selectpending);
@@ -762,6 +777,10 @@ if (window.innerWidth < 992) {
                            $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
 
                            $status="accounting_status";
+                        }
+                        else if ($_SESSION['role'] == 'User') {
+                           $status2 = "name='" . $_SESSION['name'] . "' AND department='" . $_SESSION['department'] . "' AND ((immediatehead_status='Pending') OR (gsoassistant_status='Pending') OR (gsodirector_status='Pending') OR (accounting_status='Pending') OR (immediatehead_status='Seen') OR (gsoassistant_status='Seen') OR (gsodirector_status='Seen') OR (accounting_status='Seen'))";
+                           $status = "immediatehead_status"; // This can be any status column since we're checking for all pending/seen statuses   
                         }
                         include 'config.php';
                         $selectpending = "SELECT * FROM vrftb WHERE $status2";
@@ -922,6 +941,10 @@ if (window.innerWidth < 992) {
                            $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
 
                            $status="accounting_status";
+                        }
+                        else if ($_SESSION['role'] == 'User') {
+                           $status2 = "name='" . $_SESSION['name'] . "' AND department='" . $_SESSION['department'] . "' AND ((immediatehead_status='Pending') OR (gsoassistant_status='Pending') OR (gsodirector_status='Pending') OR (accounting_status='Pending') OR (immediatehead_status='Seen') OR (gsoassistant_status='Seen') OR (gsodirector_status='Seen') OR (accounting_status='Seen'))";
+                           $status = "immediatehead_status"; // This can be any status column since we're checking for all pending/seen statuses   
                         }
                         include 'config.php';
                         $selectpending = "SELECT * FROM vrftb WHERE $status2";
@@ -4172,20 +4195,26 @@ if ($_SESSION['role'] == 'User') {
                   ?>
                      <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if($rowvrf[$status] != "Seen")
-                     { 
-                        ?> <div class="info-box"> <?php 
+                     if($_SESSION['role'] != 'User')
+                     {
+                        if($rowvrf[$status] != "Seen")
+                        { 
+                           ?> <div class="info-box"> <?php 
+                        }
                      }
                      else
                      { 
-                        ?> <div class="info-box" style="background-color:#eeeeee;"> <?php 
+                        ?> <div class="info-box" <?php if ($_SESSION['role'] != 'User') echo "style='background-color:#eeeeee;'"; ?>> <?php 
                      }
                         ?>
                            <div class="pending">
                               <?php
-                                 if($rowvrf[$status] == "Pending")
+                                 if($_SESSION['role'] != 'User')
                                  {
-                                    echo '<div class="circle"></div>';
+                                    if($rowvrf[$status] == "Pending")
+                                    {
+                                       echo '<div class="circle"></div>';
+                                    }
                                  }
                               ?>
                               <span class="time">
