@@ -930,8 +930,12 @@ if (window.innerWidth < 992) {
                         else if($_SESSION['role']=='Accountant')
                         {
                            $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
-
                            $status="accounting_status";
+                        }
+                        else 
+                        {
+                           $status2 = "(accounting_status='Approved' AND gsodirector_status='Pending') OR (accounting_status='Approved' AND gsodirector_status='Seen')";
+                           $status="gsodirector_status";
                         }
                         include 'config.php';
                         $selectpending = "SELECT * FROM vrftb WHERE $status2";
