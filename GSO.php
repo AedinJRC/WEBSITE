@@ -1206,31 +1206,35 @@ if (window.innerWidth < 992) {
 </script>
 
 <?php
-$hasNew = false;
-$count = 0;
+if($_SESSION['role'] != 'User')
+   {
+      $hasNew = false;
+      $count = 0;
 
-$selectvrf = "SELECT * FROM vrftb 
-   WHERE $status2 
-   ORDER BY date_filed DESC, id DESC";
+      $selectvrf = "SELECT * FROM vrftb 
+         WHERE $status2 
+         ORDER BY date_filed DESC, id DESC";
 
-$resultvrf = $conn->query($selectvrf);
+      $resultvrf = $conn->query($selectvrf);
 
-if ($resultvrf && $resultvrf->num_rows > 0) {
-   $hasNew = true;
-   $count = $resultvrf->num_rows;
-}
+      if ($resultvrf && $resultvrf->num_rows > 0) {
+         $hasNew = true;
+         $count = $resultvrf->num_rows;
+      }
+      ?>
+
+      <?php if ($hasNew): ?>
+      <script>
+         const originalTitle = document.title;
+         const newTitle = "(<?php echo $count; ?>) Pending Approval | VRF";
+
+         setInterval(function () {
+            flashTitlePending(originalTitle, newTitle);
+         }, 1000);
+      </script>
+      <?php endif; 
+   }
 ?>
-
-<?php if ($hasNew): ?>
-<script>
-   const originalTitle = document.title;
-   const newTitle = "(<?php echo $count; ?>) Pending Approval | VRF";
-
-   setInterval(function () {
-      flashTitlePending(originalTitle, newTitle);
-   }, 1000);
-</script>
-<?php endif; ?>
 
 </body>
 </html>
