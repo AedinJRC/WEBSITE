@@ -4138,8 +4138,9 @@ if ($_SESSION['role'] == 'User') {
    }
    function summaryReport()
    {
-     
-  ?>
+      include 'summary_all.php';
+
+      ?>
          <input class="search" type="text" id="search" data-page="approved" placeholder="Search reservation">
          <div class="maintitle">
             <h1>Reservation Approved</h1>
@@ -4659,9 +4660,6 @@ if ($_SESSION['role'] == 'User') {
             ?>
             </div>
       <?php
-   
-
-         
   
    }
    function maintenanceReport()
