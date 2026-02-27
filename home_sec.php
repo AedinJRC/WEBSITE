@@ -111,7 +111,7 @@ $result = $stmt->get_result();
   }
 
   .height{
-      height: 70vh;
+      height: 100vh;
   }
 
   .container {

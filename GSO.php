@@ -939,7 +939,6 @@ if (window.innerWidth < 992) {
                         else if($_SESSION['role']=='Accountant')
                         {
                            $status2 = "(gsoassistant_status='Approved' AND accounting_status='Pending') OR (gsoassistant_status='Approved' AND accounting_status='Seen')";
-
                            $status="accounting_status";
                         }
                         else if ($_SESSION['role'] == 'User') {
