@@ -52,7 +52,6 @@ $vehicles = $conn->query($sql);
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f5f7fa;
     color: #333;
 }

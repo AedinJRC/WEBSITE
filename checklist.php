@@ -57,7 +57,6 @@ $checklist_items = [
     <title>Vehicle Maintenance Checklist</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f7fa;
             margin: 0;
         }
