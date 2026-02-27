@@ -4120,12 +4120,11 @@ if ($_SESSION['role'] == 'User') {
    }
    function summaryReport()
    {
-      include 'summary_all.php';
 
       ?>
          <input class="search" type="text" id="search" data-page="approved" placeholder="Search reservation">
          <div class="maintitle">
-            <h1>Reservation Approved</h1>
+            <h1>Summary Results</h1>
             <?php
                if($_SESSION['role']=='Secretary')
                {
@@ -4155,6 +4154,9 @@ if ($_SESSION['role'] == 'User') {
          <div class="whitespace"></div>
          <div class="whitespace2"></div>
          <div style="text-align: center; margin-bottom: 2vh;">
+            <?php
+            include 'summary_all.php';
+            ?>
             <a href="GSO.php?rapp=a&show_old=<?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '0' : '1'; ?>" style="text-decoration: none;">
                <button type="button" style="padding: 0.8vh 1.6vh; background-color: <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '#80050d' : '#ffffff'; ?>; color: <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '#ffffff' : '#80050d'; ?>; border: 0.2vh solid #80050d; border-radius: 0.8vh; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
                   <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? 'Showing All Records' : 'Show Records Within Month'; ?>
