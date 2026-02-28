@@ -1208,13 +1208,24 @@ footer .column > a:hover {
                     <p class="forgot-password">Forgot your password?</p>
                 </form>
                 <?php
-                    if(isset($_POST["logbtn"]))
+
+                if(isset($_POST["logbtn"]))
+                {
+                    include("config.php");
+
+                    $employeeid = $_POST["employee-number"];
+                    $password = $_POST["password"];
+
+                    // Get user FIRST
+                    $loginselect = "SELECT * FROM usertb WHERE employeeid = '$employeeid'";
+                    $loginquery = mysqli_query($conn, $loginselect);
+
+                    if(mysqli_num_rows($loginquery) == 1)
                     {
-                        include("config.php");
-                        $loginselect = "SELECT * FROM usertb WHERE employeeid = '".$_POST["employee-number"]."' AND pword = '".$_POST["password"]."'";
-                        $loginquery = mysqli_query($conn, $loginselect);
-                        $loginrow = mysqli_fetch_array($loginquery);
-                        if($loginrow)
+                        $loginrow = mysqli_fetch_assoc($loginquery);
+
+                        // Verify hashed password
+                        if(password_verify($password, $loginrow["pword"]))
                         {
                             $_SESSION["employeeid"] = $loginrow["employeeid"];
                             $_SESSION["ppicture"] = $loginrow["ppicture"];
@@ -1224,15 +1235,20 @@ footer .column > a:hover {
                             $_SESSION["department"] = $loginrow["department"];
                             $_SESSION["created_at"] = $loginrow["created_at"];
                             $_SESSION["updated_at"] = $loginrow["updated_at"];
-                            $logincount = mysqli_num_rows($loginquery);
-                            if($logincount == 1)
-                                header("location: GSO.php");
+
+                            header("Location: GSO.php");
+                            exit();
                         }
                         else
                         {
                             echo "<script>alert('Invalid login credentials.')</script>";
                         }
                     }
+                    else
+                    {
+                        echo "<script>alert('Invalid login credentials.')</script>";
+                    }
+                }
                 ?>
             </div>
             
