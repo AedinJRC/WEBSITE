@@ -1264,9 +1264,9 @@ if($_SESSION['role'] != 'User')
 function home()
 {
 if ($_SESSION['role'] == 'User') {
-    include 'home_sec.php';
-    echo '<div style="margin-top: 100vh;">'; // <-- space between home and calendar
     include 'calendar.php';
+    echo '<div style="margin-top: 25vh;">'; // <-- space between home and calendar
+    include 'home_sec.php';
     echo '</div>';
 } elseif (in_array($_SESSION['role'], ['Secretary', 'Admin', 'Director'])) {
     include 'home_sec.php';
@@ -1516,7 +1516,7 @@ if ($_SESSION['role'] == 'User') {
                      </div>
 
                      <div class="input-container-2">
-                        <select name="vrfvehicle[0]" id="vehicle-1" required>
+                        <select name="vrfvehicle[0]" id="vehicle-1">
                            <option value="" disabled selected></option>
                            <?= $vehicleOptions ?>
                         </select>
@@ -1524,7 +1524,7 @@ if ($_SESSION['role'] == 'User') {
                      </div>
 
                      <div class="input-container-2">
-                        <select name="vrfdriver[0]" id="driver-1" required>
+                        <select name="vrfdriver[0]" id="driver-1">
                            <option value="" disabled selected></option>
                            <?= $driverOptions ?>
                         </select>
@@ -1589,7 +1589,7 @@ if ($_SESSION['role'] == 'User') {
                         const id = name.replace(/^vrf/, '');
                         return `
                               <div class="input-container-2">
-                                 <select name="${name}[${index-1}]" id="${id}-${index}" required>
+                                 <select name="${name}[${index-1}]" id="${id}-${index}">
                                     <option value="" disabled selected></option>
                                     ${options}
                                  </select>
@@ -2021,6 +2021,11 @@ if ($_SESSION['role'] == 'User') {
                   $date_filed = htmlspecialchars($_POST['vrfdate_filed']);
                   $budget_no = htmlspecialchars($_POST['vrfbudget_no']);
                   $destination = htmlspecialchars($_POST['vrfdestination']);
+                  // Prevent submission when activity, destination, and purpose are identical (case-insensitive)
+                  if (mb_strtolower(trim($activity)) === mb_strtolower(trim($destination)) && mb_strtolower(trim($activity)) === mb_strtolower(trim($purpose))) {
+                     echo "<script>alert('Activity, Destination and Purpose cannot be identical. Please correct the form.');window.history.back();</script>";
+                     exit;
+                  }
                   $transportation_cost = htmlspecialchars($_POST['vrftransportation_cost']);
                   $passenger_count = isset($_POST['vrfpassenger_count']) ? htmlspecialchars($_POST['vrfpassenger_count']) : null;
                   $immediatehead_status = 'Pending'; // default
@@ -2099,7 +2104,7 @@ if ($_SESSION['role'] == 'User') {
                      // ===== INSERT vrf_detailstb =====
                      if (!empty($_POST['vrfdeparture']) && is_array($_POST['vrfdeparture'])) {
                            $detail_stmt = $conn->prepare(
-                              "INSERT INTO vrf_detailstb (vrf_id, departure, `return`, vehicle, driver) VALUES (?, ?, ?, ?, ?)"
+                              "INSERT INTO vrf_detailstb (vrf_id, departure, `return`, vehicle, driver) VALUES (?, ?, ?, NULLIF(?,''), NULLIF(?,''))"
                            );
                            if (!$detail_stmt) throw new Exception("Prepare for vrf_detailstb failed.");
 
@@ -2108,13 +2113,18 @@ if ($_SESSION['role'] == 'User') {
                               $vehicle  = $_POST['vrfvehicle'][$idx] ?? null;
                               $driver   = $_POST['vrfdriver'][$idx]  ?? null;
 
-                              if (!$dep_raw || !$ret_raw || !$vehicle || !$driver) continue;
+                              // Only require departure and return; vehicle and driver are optional
+                              if (!$dep_raw || !$ret_raw) continue;
 
                               // convert datetime-local to MySQL DATETIME
                               $dep = (new DateTime($dep_raw))->format('Y-m-d H:i:s');
                               $ret = (new DateTime($ret_raw))->format('Y-m-d H:i:s');
 
-                              $detail_stmt->bind_param("sssss", $id, $dep, $ret, $vehicle, $driver);
+                              // Normalize vehicle/driver to empty string so NULLIF in SQL will convert to NULL
+                              $vehicle_param = $vehicle ?? '';
+                              $driver_param  = $driver  ?? '';
+
+                              $detail_stmt->bind_param("sssss", $id, $dep, $ret, $vehicle_param, $driver_param);
                               if (!$detail_stmt->execute()) throw new Exception("Detail insert failed for tab {$idx}: " . $detail_stmt->error);
                            }
                            $detail_stmt->close();
@@ -3093,12 +3103,9 @@ if ($_SESSION['role'] == 'User') {
                   ?>
                      <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if($_SESSION['role']!='User')
-                     {
-                       if($rowvrf[$status] != "Seen")
-                        { 
-                           ?> <div class="info-box"> <?php 
-                        }
+                     if($rowvrf[$status] != "Seen")
+                     { 
+                        ?> <div class="info-box"> <?php 
                      }
                      else
                      { 
@@ -3107,12 +3114,9 @@ if ($_SESSION['role'] == 'User') {
                         ?>
                            <div class="pending">
                               <?php
-                                 if($_SESSION['role']!='User')
+                                 if($rowvrf[$status] == "Pending")
                                  {
-                                    if($rowvrf[$status] == "Pending")
-                                    {
-                                       echo '<div class="circle"></div>';
-                                    }
+                                    echo '<div class="circle"></div>';
                                  }
                               ?>
                               <span class="time">
@@ -4190,9 +4194,9 @@ if ($_SESSION['role'] == 'User') {
          <?php
             $showOld = isset($_GET['show_old']) && $_GET['show_old'] == 1;
             if ($showOld) {
-               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' AND name = '".$_SESSION['fname'].' '.$_SESSION['lname']."' ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
             } else {
-               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' AND name = '".$_SESSION['fname'].' '.$_SESSION['lname']."' AND updated_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' AND updated_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY date_filed DESC, id DESC";
             }
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
