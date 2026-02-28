@@ -1,9 +1,9 @@
 <?php
 include('config.php');
 
-
 $statusFilter = isset($_GET['status']) ? $_GET['status'] : 'Pending';
 $searchTerm   = isset($_GET['search']) ? trim($_GET['search']) : '';
+$dateFilter   = isset($_GET['date']) ? $_GET['date'] : 'Upcoming'; // NEW
 
 $sql = "
 SELECT 
@@ -16,27 +16,29 @@ FROM vrftb v
 INNER JOIN vrf_detailstb d ON d.vrf_id = v.id
 WHERE 
     v.immediatehead_status = 'Approved'
-    AND d.departure >= CURDATE()
     AND v.user_cancelled = 'No'
 ";
+
+/* ================= DATE FILTER (NEW) ================= */
+if ($dateFilter === 'Upcoming') {
+    $sql .= " AND d.departure >= CURDATE()";
+} elseif ($dateFilter === 'Past') {
+    $sql .= " AND d.departure < CURDATE()";
+}
+// If "All" → no date condition added
+
 
 $params = [];
 $param_types = "";
 
-/* =========================================================
-   ROLE-BASED ACCESS
-   Secretary & Director → ALL
-   Others → OWN RECORDS ONLY
-========================================================= */
+/* ================= ROLE-BASED ACCESS ================= */
 if ($_SESSION['role'] !== 'Secretary' && $_SESSION['role'] !== 'Director') {
-    // Filter by the logged-in user's full name
     $sql .= " AND v.name = ?";
-    $params[] = $_SESSION['fname'] . ' ' . $_SESSION['lname']; // concatenate first + last name from session
-    $param_types .= "s"; // string!
+    $params[] = $_SESSION['fname'] . ' ' . $_SESSION['lname'];
+    $param_types .= "s";
 }
 
-
-/* ================== GSODIRECTOR STATUS ================== */
+/* ================= STATUS FILTER ================= */
 if ($statusFilter === 'Pending') {
     $sql .= " AND (v.gsodirector_status = 'Pending' OR v.gsodirector_status = 'Seen')";
 } else {
@@ -45,7 +47,7 @@ if ($statusFilter === 'Pending') {
     $param_types .= "s";
 }
 
-/* ====================== SEARCH ========================== */
+/* ================= SEARCH ================= */
 if ($searchTerm !== '') {
     $sql .= " AND (
         v.name LIKE ? OR 
@@ -65,7 +67,7 @@ if ($searchTerm !== '') {
 
 $sql .= " ORDER BY d.departure ASC";
 
-/* ================== PREPARE & EXECUTE =================== */
+/* ================= EXECUTE ================= */
 $stmt = $conn->prepare($sql);
 
 if (!empty($params)) {
@@ -458,13 +460,23 @@ table {
 
   <!-- Filter and Search Form -->
 <form method="get" action="" class="filter-search-form">
-  <!-- Left side: Filter label + select -->
+  <!-- STATUS FILTER -->
   <div class="filter-group">
-    <label for="status">Filter by GSODirector Status:</label>
-    <select id="status" name="status" aria-label="Filter vehicle requests by status" onchange="this.form.submit()">
+    <label for="status">GSODirector Status:</label>
+    <select id="status" name="status" onchange="this.form.submit()">
       <option value="Pending" <?= $statusFilter == 'Pending' ? 'selected' : '' ?>>Pending</option>
       <option value="Approved" <?= $statusFilter == 'Approved' ? 'selected' : '' ?>>Approved</option>
       <option value="Rejected" <?= $statusFilter == 'Rejected' ? 'selected' : '' ?>>Rejected</option>
+    </select>
+  </div>
+
+  <!-- NEW DATE FILTER -->
+  <div class="filter-group">
+    <label for="date">Date:</label>
+    <select id="date" name="date" onchange="this.form.submit()">
+      <option value="Upcoming" <?= $dateFilter == 'Upcoming' ? 'selected' : '' ?>>Upcoming</option>
+      <option value="Past" <?= $dateFilter == 'Past' ? 'selected' : '' ?>>Past</option>
+      <option value="All" <?= $dateFilter == 'All' ? 'selected' : '' ?>>All</option>
     </select>
   </div>
 
