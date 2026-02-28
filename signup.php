@@ -532,24 +532,39 @@
                     window.location.href = 'index.php?log=a';
                 </script>";
             } else {
-                $insertUser = "INSERT INTO usertb (employeeid, ppicture, fname, lname, pword, department) 
-                            VALUES (?, ?, ?, ?, ?, ?)";
-                $stmtInsert = $conn->prepare($insertUser);
-                $stmtInsert->bind_param("ssssss", $employeeid, $ppicture, $fname, $lname, $pword, $departmen);
 
-                if ($stmtInsert->execute()) {
-                    echo "<script>
-                        alert('Account created successfully! You can now log in.');
-                        window.location.href = 'index.php?log=a'; 
-                    </script>";
-                } else {
-                    echo "<script>
-                        alert('Something went wrong during signup. Please try again.');
-                        window.history.back();
-                    </script>";
-                }
+            // HASH PASSWORD FIRST
+            $hashedPassword = password_hash($pword, PASSWORD_DEFAULT);
 
-                $stmtInsert->close();
+            $insertUser = "INSERT INTO usertb 
+            (employeeid, ppicture, fname, lname, pword, department) 
+            VALUES (?, ?, ?, ?, ?, ?)";
+
+            $stmtInsert = $conn->prepare($insertUser);
+            $stmtInsert->bind_param(
+                "ssssss",
+                $employeeid,
+                $ppicture,
+                $fname,
+                $lname,
+                $hashedPassword, 
+                $departmen
+            );
+
+            if ($stmtInsert->execute()) {
+                echo "<script>
+                    alert('Account created successfully! You can now log in.');
+                    window.location.href = 'index.php?log=a'; 
+                </script>";
+            } else {
+                echo "<script>
+                    alert('Something went wrong during signup. Please try again.');
+                    window.history.back();
+                </script>";
+            }
+
+            $stmtInsert->close();
+
             }
 
             $stmtUser->close();
