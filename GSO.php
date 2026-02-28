@@ -3093,9 +3093,12 @@ if ($_SESSION['role'] == 'User') {
                   ?>
                      <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
-                     if($rowvrf[$status] != "Seen")
-                     { 
-                        ?> <div class="info-box"> <?php 
+                     if($_SESSION['role']!='User')
+                     {
+                       if($rowvrf[$status] != "Seen")
+                        { 
+                           ?> <div class="info-box"> <?php 
+                        }
                      }
                      else
                      { 
@@ -3104,9 +3107,12 @@ if ($_SESSION['role'] == 'User') {
                         ?>
                            <div class="pending">
                               <?php
-                                 if($rowvrf[$status] == "Pending")
+                                 if($_SESSION['role']!='User')
                                  {
-                                    echo '<div class="circle"></div>';
+                                    if($rowvrf[$status] == "Pending")
+                                    {
+                                       echo '<div class="circle"></div>';
+                                    }
                                  }
                               ?>
                               <span class="time">
@@ -4175,7 +4181,7 @@ if ($_SESSION['role'] == 'User') {
             <?php
             include 'summary_all.php';
             ?>
-            <a href="GSO.php?rapp=a&show_old=<?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '0' : '1'; ?>" style="text-decoration: none;">
+            <a href="GSO.php?srep=a&show_old=<?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '0' : '1'; ?>" style="text-decoration: none;">
                <button type="button" style="padding: 0.8vh 1.6vh; background-color: <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '#80050d' : '#ffffff'; ?>; color: <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? '#ffffff' : '#80050d'; ?>; border: 0.2vh solid #80050d; border-radius: 0.8vh; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
                   <?php echo isset($_GET['show_old']) && $_GET['show_old'] == 1 ? 'Showing All Records' : 'Show Records Within Month'; ?>
                </button>
@@ -4184,9 +4190,9 @@ if ($_SESSION['role'] == 'User') {
          <?php
             $showOld = isset($_GET['show_old']) && $_GET['show_old'] == 1;
             if ($showOld) {
-               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' AND name = '".$_SESSION['fname'].' '.$_SESSION['lname']."' ORDER BY date_filed DESC, id DESC";
             } else {
-               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' AND updated_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY date_filed DESC, id DESC";
+               $selectvrf = "SELECT * FROM vrftb WHERE gsoassistant_status='Approved' AND immediatehead_status='Approved' AND gsodirector_status='Approved' AND accounting_status='Approved' AND name = '".$_SESSION['fname'].' '.$_SESSION['lname']."' AND updated_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY date_filed DESC, id DESC";
             }
             $resultvrf = $conn->query($selectvrf);
             if ($resultvrf->num_rows > 0) {
@@ -4195,7 +4201,7 @@ if ($_SESSION['role'] == 'User') {
             <?php
                while($rowvrf = $resultvrf->fetch_assoc()) {
                   ?>
-                     <a href="GSO.php?rapp=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
+                     <a href="GSO.php?srep=a&vrfid=<?php echo $rowvrf['id']; ?>#vrespopup" class="link" style="text-decoration:none;">
                   <?php
                      if($_SESSION['role'] != 'User')
                      {
@@ -4317,7 +4323,7 @@ if ($_SESSION['role'] == 'User') {
                      <div id="vrespopup">
                         <div class="vres">
                            <form class="vehicle-reservation-form" method="post" enctype="multipart/form-data">
-                              <a href="GSO.php?rapp=a" class="closepopup">×</a>
+                              <a href="GSO.php?srep=a" class="closepopup">×</a>
                               <img src="PNG/CSA_Logo.png" alt="">
                               <span class="header">
                                  <span id="csab">Colegio San Agustin-Biñan</span>
