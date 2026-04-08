@@ -1263,19 +1263,14 @@ if($_SESSION['role'] != 'User')
 <?php
 function home()
 {
-if ($_SESSION['role'] == 'User') {
+
+    // Always show home_sec.php first
+    include 'home_sec.php';
+
+    // Then show calendar.php for all roles
     include 'calendar.php';
-    echo '<div style="margin-top: 25vh;">'; // <-- space between home and calendar
-    include 'home_sec.php';
-    echo '</div>';
-} elseif (in_array($_SESSION['role'], ['Secretary', 'Admin', 'Director'])) {
-    include 'home_sec.php';
-} else {
-    include 'home_sec.php';
-    echo '<div style="margin-top: 10vh;">'; // <-- space here too
-    include 'calendar.php';
-    echo '</div>';
-}
+
+  
 
    }
    function vehicleReservationForm()
