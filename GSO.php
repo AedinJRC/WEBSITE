@@ -1228,7 +1228,7 @@ if (window.innerWidth < 992) {
 </script>
 
 <?php
-if($_SESSION['role'] != 'User')
+if($_SESSION['role'] != 'User' && $_SESSION['role'] != 'Driver')
    {
       $hasNew = false;
       $count = 0;
