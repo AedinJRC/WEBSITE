@@ -32,7 +32,20 @@ $params = [];
 $param_types = "";
 
 /* ================= ROLE-BASED ACCESS ================= */
-if ($_SESSION['role'] !== 'Secretary' && $_SESSION['role'] !== 'Director') {
+$role = $_SESSION['role'];
+
+/* ================= ROLE-BASED ACCESS ================= */
+if (in_array($role, ['Secretary', 'Director', 'Accountant', 'Driver'])) {
+    // FULL ACCESS → no restriction
+} 
+elseif ($role === 'Immediate Head') {
+    // DEPARTMENT ACCESS
+    $sql .= " AND v.department = ?";
+    $params[] = $_SESSION['department']; // make sure this exists in session
+    $param_types .= "s";
+} 
+else {
+    // USER → OWN ONLY
     $sql .= " AND v.name = ?";
     $params[] = $_SESSION['fname'] . ' ' . $_SESSION['lname'];
     $param_types .= "s";
@@ -113,7 +126,7 @@ $result = $stmt->get_result();
   }
 
   .height{
-      height: 100vh;
+      height: 60vh;
   }
 
   .container {
@@ -397,6 +410,7 @@ table {
   justify-content: center;
   gap: 3vh;
   margin-top: 5vh;
+   margin-bottom: 15vh;
   flex-wrap: wrap;
 }
 
